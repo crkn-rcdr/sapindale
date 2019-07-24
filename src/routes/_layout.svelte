@@ -1,14 +1,6 @@
 <script>
   import Nav from "../components/Nav.svelte";
-
-  const titles = {
-    default: "Canadiana access platform administration",
-    deposit: "Deposit from preservation",
-    collection: "Collection Management"
-  };
-
   export let segment;
-  $: title = titles[segment] || titles["default"];
 </script>
 
 <style>
@@ -21,13 +13,8 @@
   }
 </style>
 
-<svelte:head>
-  <title>Sapindale — {title}</title>
-</svelte:head>
-
 <Nav {segment} />
 
 <main>
-  <h1>{title}</h1>
   <slot />
 </main>

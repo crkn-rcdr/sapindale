@@ -1,6 +1,5 @@
 <script>
   export let segment;
-  export let error;
 </script>
 
 <style>
@@ -57,17 +56,7 @@
 <nav>
   <ul>
     <li>
-      <a class={segment === undefined ? 'selected' : ''} href=".">Home</a>
-    </li>
-    <li>
-      <a class={segment === 'deposit' ? 'selected' : ''} href="/deposit">
-        Deposit from Preservation
-      </a>
-    </li>
-    <li>
-      <a class={segment === 'collection' ? 'selected' : ''} href="/collection">
-        Collections
-      </a>
+      <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
     <li class="right">
       <a href=".">Figure out auth button here</a>
