@@ -1,5 +1,27 @@
 <script>
+import {state} from '../auth.js';
+import {onMount} from 'svelte';
+let value;
   export let segment;
+
+  onMount(async () => {
+  
+    state.subscribe(checkstate => {
+     
+      console.log(checkstate);
+      if(checkstate!==401){
+        
+        document.getElementById("Welcome").style.visibility="visible";
+        
+      }
+      else{
+        
+        document.getElementById("login").style.visibility = "visible";
+        document.getElementById("Welcome").style.visibility="hidden";
+      } 
+    });
+ 
+  })
 </script>
 
 <style>
@@ -51,6 +73,16 @@
     padding: 1em 0.5em;
     display: block;
   }
+  
+  #login{
+    visibility:hidden; 
+    } 
+
+  #Welcome{
+  visibility:hidden; 
+  float: right;     
+  } 
+  
 </style>
 
 <nav>
@@ -58,8 +90,11 @@
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    <li class="right">
-      <a href=".">Figure out auth button here</a>
+    
+     <p id="Welcome">Welcome</p>
+  
+    <li class="right" id = "login">
+      <a href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca/">Login</a>
     </li>
   </ul>
 </nav>
