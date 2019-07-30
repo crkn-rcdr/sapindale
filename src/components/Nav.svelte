@@ -1,27 +1,14 @@
 <script>
-import {state} from '../auth.js';
-import {onMount} from 'svelte';
-let value;
+  import { state } from "../auth.js";
+  import { onMount } from "svelte";
+  var value;
   export let segment;
 
   onMount(async () => {
-  
     state.subscribe(checkstate => {
-     
-      console.log(checkstate);
-      if(checkstate!==401){
-        
-        document.getElementById("Welcome").style.visibility="visible";
-        
-      }
-      else{
-        
-        document.getElementById("login").style.visibility = "visible";
-        document.getElementById("Welcome").style.visibility="hidden";
-      } 
+      value = checkstate;
     });
- 
-  })
+  });
 </script>
 
 <style>
@@ -49,9 +36,9 @@ let value;
     float: left;
   }
 
-  li.right {
+  /* li.right {
     float: right;
-  }
+  } */
 
   .selected {
     position: relative;
@@ -73,16 +60,15 @@ let value;
     padding: 1em 0.5em;
     display: block;
   }
-  
-  #login{
-    visibility:hidden; 
-    } 
 
-  #Welcome{
-  visibility:hidden; 
-  float: right;     
-  } 
-  
+  #login {
+    float: right;
+  }
+
+  #Welcome {
+    /*visibility:hidden; */
+    float: right;
+  }
 </style>
 
 <nav>
@@ -90,11 +76,16 @@ let value;
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    
-     <p id="Welcome">Welcome</p>
-  
-    <li class="right" id = "login">
-      <a href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca/">Login</a>
-    </li>
+    {#if (value = 'SUCCESS')}
+      <p id="Welcome">Welcome</p>
+    {:else}
+      <li class="right" id="login">
+        <a
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca/"
+          id="login">
+          Login
+        </a>
+      </li>
+    {/if}
   </ul>
 </nav>
