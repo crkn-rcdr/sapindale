@@ -10,6 +10,9 @@ export const state = readable(value, function auth(set) {
     } else if (response.status == 401) {
       value = "FAILED";
       set(value);
+    } else if (response.status == 204) {
+      value = "PENDING";
+      set(value);
     }
   });
 });
