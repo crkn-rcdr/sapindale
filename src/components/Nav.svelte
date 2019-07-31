@@ -1,12 +1,15 @@
 <script>
   import { state } from "../auth.js";
   import { onMount } from "svelte";
-  var value;
+  var value = [];
+  var name;
   export let segment;
 
   onMount(async () => {
     state.subscribe(checkstate => {
-      value = checkstate;
+      value.push(checkstate);
+
+      name = value[2];
     });
   });
 </script>
@@ -62,11 +65,11 @@
   }
 
   #login {
+    display: block;
     float: right;
   }
 
   #Welcome {
-    /*visibility:hidden; */
     float: right;
   }
 </style>
@@ -76,14 +79,14 @@
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    {#if (value = 'SUCCESS')}
-      <p id="Welcome">Welcome</p>
+    {#if value[1] === 'SUCCESS' && value[2] !== 'undefined'}
+      <p id="Welcome">Logged in as:{name}</p>
     {:else}
       <li class="right" id="login">
         <a
           href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca/"
           id="login">
-          Login
+          Please Login
         </a>
       </li>
     {/if}
