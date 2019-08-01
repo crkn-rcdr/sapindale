@@ -1,5 +1,19 @@
 <script>
+  import { state } from "../auth.js";
+  import { onMount } from "svelte";
+  var value = [];
+  var name;
+  var redirectUrl;
   export let segment;
+
+  onMount(async () => {
+    redirectUrl = window.location.origin;
+    state.subscribe(checkstate => {
+      value.push(checkstate);
+
+      name = value[2];
+    });
+  });
 </script>
 
 <style>
@@ -27,9 +41,9 @@
     float: left;
   }
 
-  li.right {
+  /* li.right {
     float: right;
-  }
+  } */
 
   .selected {
     position: relative;
@@ -51,6 +65,15 @@
     padding: 1em 0.5em;
     display: block;
   }
+
+  #login {
+    display: block;
+    float: right;
+  }
+
+  #Welcome {
+    float: right;
+  }
 </style>
 
 <nav>
@@ -58,8 +81,16 @@
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    <li class="right">
-      <a href=".">Figure out auth button here</a>
-    </li>
+    {#if value[1] === 'SUCCESS' && value[2] !== 'undefined'}
+      <p id="Welcome">Logged in as: {name}</p>
+    {:else}
+      <li class="right" id="login">
+        <a
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
+          id="login">
+          Please Login
+        </a>
+      </li>
+    {/if}
   </ul>
 </nav>
