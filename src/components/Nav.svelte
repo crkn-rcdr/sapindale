@@ -84,7 +84,7 @@
     {:else}
       <li class="right" id="login">
         <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca/"
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca:8443"
           id="login">
           Please Login
         </a>
