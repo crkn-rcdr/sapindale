@@ -7,8 +7,7 @@
   export let segment;
 
   onMount(async () => {
-    var ref = window.location.origin;
-    redirectUrl = ref;
+    redirectUrl = window.location.origin;
     state.subscribe(checkstate => {
       value.push(checkstate);
 
@@ -83,7 +82,7 @@
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
     {#if value[1] === 'SUCCESS' && value[2] !== 'undefined'}
-      <p id="Welcome">Logged in as:{name}</p>
+      <p id="Welcome">Logged in as: {name}</p>
     {:else}
       <li class="right" id="login">
         <a
