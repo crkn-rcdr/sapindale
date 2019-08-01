@@ -3,9 +3,12 @@
   import { onMount } from "svelte";
   var value = [];
   var name;
+  var redirectUrl;
   export let segment;
 
   onMount(async () => {
+    var ref = window.location.origin;
+    redirectUrl = ref;
     state.subscribe(checkstate => {
       value.push(checkstate);
 
@@ -84,7 +87,7 @@
     {:else}
       <li class="right" id="login">
         <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl=http://admin.canadiana.ca:8443"
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
           id="login">
           Please Login
         </a>
