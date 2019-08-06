@@ -1,12 +1,5 @@
 <script>
-  import { state } from "../auth.js";
-  var value;
-  state.subscribe(updateState => {
-    if ($state.status === "SUCCESS") {
-      name = $state.name;
-      value = $state.token;
-    }
-  });
+  import { state as authState } from "../auth.js";
 </script>
 
 <style>
@@ -23,7 +16,7 @@
 
 <h2>Tools</h2>
 <ul>
-  {#if $state.status === 'SUCCESS'}
+  {#if $authState.status === 'SUCCESS'}
     <li>
       <a href="/deposit">Deposit from preservation</a>
     </li>
@@ -32,7 +25,7 @@
     </li>
     <li>
       <a
-        href="https://upholstery.canadiana.ca/cookie?token={value}"
+        href="https://upholstery.canadiana.ca/cookie?token={$authState.token}"
         id="Futon"
         target="_blank">
         Futon
