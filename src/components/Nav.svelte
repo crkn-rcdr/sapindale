@@ -1,18 +1,11 @@
 <script>
-  import { state } from "../auth.js";
+  import { state as authState } from "../auth.js";
   import { onMount } from "svelte";
-  var value = [];
-  var name;
   var redirectUrl;
   export let segment;
 
   onMount(async () => {
     redirectUrl = window.location.origin;
-    state.subscribe(checkstate => {
-      value.push(checkstate);
-
-      name = value[2];
-    });
   });
 </script>
 
@@ -69,6 +62,7 @@
   #login {
     display: block;
     float: right;
+    position: relative;
   }
 
   #Welcome {
@@ -81,8 +75,8 @@
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    {#if value[1] === 'SUCCESS' && value[2] !== 'undefined'}
-      <p id="Welcome">Logged in as: {name}</p>
+    {#if $authState.status === 'SUCCESS'}
+      <p id="Welcome">Logged in as: {$authState.name}</p>
     {:else}
       <li class="right" id="login">
         <a

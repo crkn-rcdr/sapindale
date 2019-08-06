@@ -1,20 +1,25 @@
 import { get, readable } from "svelte/store";
-var value = "LOADING";
-export const state = readable(value, function auth(set) {
+export const state = readable({ status: "LOADING" }, function auth(set) {
   fetch("https://auth.canadiana.ca/1/auth", {
     credentials: "include"
   })
     .then(function(response) {
       if (response.status >= 200 && response.status < 300) {
-        value = "SUCCESS";
-        set(value);
+        return response.json();
       } else if (response.status >= 400) {
-        value = "FAILED";
-        set(value);
+        return Promise.resolve({});
       }
-      return response.json();
     })
     .then(function(out) {
-      set(out.name);
+      if (out.token) {
+        set({
+          status: "SUCCESS",
+          name: out.name,
+          token: out.token,
+          email: out.email
+        });
+      } else {
+        set({ status: "FAILED" });
+      }
     });
 });
