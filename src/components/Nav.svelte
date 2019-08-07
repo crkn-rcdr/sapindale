@@ -34,9 +34,9 @@
     float: left;
   }
 
-  /* li.right {
+  li.right {
     float: right;
-  } */
+  }
 
   .selected {
     position: relative;
@@ -82,7 +82,7 @@
         <a
           href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
           id="login">
-          Please Login
+          Login
         </a>
       </li>
     {/if}
