@@ -58,16 +58,6 @@
     padding: 1em 0.5em;
     display: block;
   }
-
-  #login {
-    display: block;
-    float: right;
-    position: relative;
-  }
-
-  #Welcome {
-    float: right;
-  }
 </style>
 
 <nav>
@@ -75,16 +65,16 @@
     <li>
       <a class:selected={segment === undefined} href="/.">Home</a>
     </li>
-    {#if $authState.status === 'SUCCESS'}
-      <p id="Welcome">Logged in as: {$authState.name}</p>
-    {:else}
-      <li class="right" id="login">
+    <li class="right">
+      {#if $authState.status === 'SUCCESS'}
+        <span>Logged in as: {$authState.name}</span>
+      {:else}
         <a
           href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
           id="login">
           Login
         </a>
-      </li>
-    {/if}
+      {/if}
+    </li>
   </ul>
 </nav>
