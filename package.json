@@ -1,5 +1,5 @@
 {
-  "name": "maple",
+  "name": "sapindale",
   "description": "Canadiana platform administration",
   "version": "0.0.1",
   "license": "MIT",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "compression": "^1.7.4",
+    "nano": "^8.1.0",
     "polka": "^0.5.2",
     "sirv": "^0.4.2"
   },
