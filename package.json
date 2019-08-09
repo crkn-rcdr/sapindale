@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8443 sapper dev",
+    "dev": "PORT=8443 COUCH=https://upholstery.canadiana.ca sapper dev",
     "build": "NODE_ENV=production sapper build -p 8443",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "nano": "^8.1.0",
     "polka": "^0.5.2",
     "sirv": "^0.4.2"
   },

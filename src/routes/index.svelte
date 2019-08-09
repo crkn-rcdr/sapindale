@@ -23,11 +23,14 @@
     </li>
     <li>
       <a
-        href="https://upholstery.canadiana.ca/cookie?token={$authState.token}"
+        href="{process.env.COUCH}/cookie?token={$authState.token}"
         id="Futon"
         target="_blank">
         Futon
       </a>
+    </li>
+    <li>
+      <a href="/coltitles">Collection titles</a>
     </li>
   </ul>
 {:else}
