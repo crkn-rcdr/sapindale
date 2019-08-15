@@ -7,24 +7,12 @@
   let viewContents = [];
   $: token = $authState.token;
 
-  function checkToken() {
-    fetch("https://auth.canadiana.ca/1/auth").then(function(res) {
-      if (res.status === 401) {
-        console.log("EXPIRED");
-      }
-    });
-  }
   onMount(async () => {
-    const interval = setInterval(() => {
-      try {
-        viewContents = view(token, dbname, ddoc, viewname, options).rows;
-      } catch (err) {
-        viewContents = [err];
-      }
-      if (!token) {
-        checkToken();
-      }
-    }, 10000);
+    try {
+      viewContents = await view(token, dbname, ddoc, viewname, options).rows;
+    } catch (err) {
+      viewContents = [err];
+    }
   });
 </script>
 
