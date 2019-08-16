@@ -15,28 +15,6 @@
     font-weight: 300;
   }
 
-  /* ul {
-    margin: 0;
-    padding: 0;
-    max-width: none;
-  }
- */
-  /* clearfix */
-  /* ul::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  li {
-    display: block;
-    float: left;
-  }
-
-  li.right {
-    float: right;
-  } */
-
   .selected {
     position: relative;
     display: inline-block;
@@ -66,17 +44,27 @@
     margin: 1em;
     padding: 0;
     max-width: none;
+    font-weight: 400;
   }
   a {
     margin: 1em;
     padding: 0;
     max-width: none;
     float: left;
+    font-weight: 400;
   }
   a::after {
     content: "";
     display: block;
     clear: both;
+  }
+  p {
+    text-align: justify;
+    margin-top: 1em;
+    position: relative;
+    padding: 5em;
+    float: left;
+    font-weight: 400;
   }
 </style>
 
@@ -84,15 +72,13 @@
 
   <a class:selected={segment === undefined} href="/." id="anchor">Home</a>
   {#if $authState.status === 'SUCCESS'}
-    <slot>
-      <!--  <span>Logged in as: {$authState.name}</span> -->
-    </slot>
+    <slot />
   {:else}
     <a
       href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
       id="login">
       Login
     </a>
+    <p>Please login (using the link above) to access administration tools.</p>
   {/if}
-
 </main>
