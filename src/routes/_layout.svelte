@@ -1,5 +1,4 @@
 <script>
-  /*  import Nav from "../components/Nav.svelte"; */
   import { state as authState } from "../auth.js";
   import { onMount } from "svelte";
   var redirectUrl;
@@ -16,14 +15,14 @@
     font-weight: 300;
   }
 
-  ul {
+  /* ul {
     margin: 0;
     padding: 0;
     max-width: none;
   }
-
+ */
   /* clearfix */
-  ul::after {
+  /* ul::after {
     content: "";
     display: block;
     clear: both;
@@ -36,7 +35,7 @@
 
   li.right {
     float: right;
-  }
+  } */
 
   .selected {
     position: relative;
@@ -62,34 +61,38 @@
   #anchor {
     border-bottom: 1px solid rgba(33, 33, 33, 0.1);
   }
+  #login {
+    float: right;
+    margin: 1em;
+    padding: 0;
+    max-width: none;
+  }
+  a {
+    margin: 1em;
+    padding: 0;
+    max-width: none;
+    float: left;
+  }
+  a::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
 </style>
 
 <main {segment}>
-  <ul>
-    <li>
-      <a class:selected={segment === undefined} href="/." id="anchor">Home</a>
-    </li>
-    <li class="right">
-      {#if $authState.status === 'SUCCESS'}
-        <span>Logged in as: {$authState.name}</span>
-      {:else}
-        <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
-          id="login">
-          Login
-        </a>
-      {/if}
-    </li>
-  </ul>
-  <slot>
-    {#if $authState.status === 'SUCCESS'}
-      <span>Logged in as: {$authState.name}</span>
-    {:else}
-      <a
-        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
-        id="login">
-        Login
-      </a>
-    {/if}
-  </slot>
+
+  <a class:selected={segment === undefined} href="/." id="anchor">Home</a>
+  {#if $authState.status === 'SUCCESS'}
+    <slot>
+      <!--  <span>Logged in as: {$authState.name}</span> -->
+    </slot>
+  {:else}
+    <a
+      href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
+      id="login">
+      Login
+    </a>
+  {/if}
+
 </main>
