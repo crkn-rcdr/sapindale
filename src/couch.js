@@ -6,7 +6,8 @@ function view(token, db, ddoc, view, options) {
     url.searchParams.append(key, options[key])
   );
   url.searchParams.append("token", token);
-  return fetch(url);
+
+  return fetch(url).then(response => response.json());
 }
 
 export { view };
