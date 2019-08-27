@@ -5,6 +5,7 @@ function view(token, db, ddoc, view, options) {
   Object.keys(options).forEach(key =>
     url.searchParams.append(key, options[key])
   );
+  console.log("url", url);
   url.searchParams.append("token", token);
 
   return fetch(url).then(response => response.json());

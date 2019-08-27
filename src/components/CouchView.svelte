@@ -5,12 +5,20 @@
 
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
+  export let kval = false;
+  export let viewReduce = [];
   $: token = $authState.token;
 
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
       viewContents = response.rows;
+      viewContents.forEach(function(key, value) {
+        console.log("ele", typeof JSON.stringify(key));
+        if (typeof key === String) {
+          kval = true;
+        }
+      });
     } catch (err) {
       viewContents = [err];
     }
@@ -34,6 +42,7 @@
   }
 </style>
 
+<slot>{viewContents}</slot>
 {#if $authState.status === 'SUCCESS'}
   <table>
     <tr>
@@ -41,7 +50,9 @@
     </tr>
     {#each viewContents as data}
       <tr>
-        <td>{data.key}</td>
+        <td>
+          <a href="/coltCollection">{data.key}</a>
+        </td>
         <td>{data.value}</td>
       </tr>
     {/each}
