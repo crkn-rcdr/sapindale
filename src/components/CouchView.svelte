@@ -6,23 +6,48 @@
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
   export let kval = false;
-  export let viewReduce = [];
+  //export let viewReduce = [];
+  export let reduce = false;
+  export let startkey;
+  export let endkey;
+  export let pathname;
   $: token = $authState.token;
 
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
       viewContents = response.rows;
-      viewContents.forEach(function(key, value) {
-        console.log("ele", typeof JSON.stringify(key));
-        if (typeof key === String) {
-          kval = true;
-        }
-      });
     } catch (err) {
+      startkey;
       viewContents = [err];
     }
   });
+  function method(reduce, startkey, endkey) {
+    viewContents.forEach(function(viewcontent, index) {
+      console.log("Index of for each:" + index);
+      if (index === 0) {
+        if (Array.isArray(viewcontent.key)) {
+          startkey = viewcontent.key;
+          endkey = viewContents[viewContents.length - 1].key;
+          pathname = "/reduce=false?startkey=" + startkey + "?endkey=" + endkey;
+          console.log("Path name :" + pathname);
+          window.location.pathname = pathname;
+
+          console.log(
+            "viewcontent is an array " + startkey + "End Key" + endkey
+          );
+        } else {
+          startkey = viewcontent.key;
+          endkey = viewContents[viewContents.length - 1].key;
+          console.log("Viewcontent is of type :" + typeof viewcontent.key);
+        }
+      }
+      if (Array.isArray(viewcontent)) {
+        //window.location.pathname = "/reduce=false?startkey=key";
+      }
+      console.log("view1", kval);
+    });
+  }
 </script>
 
 <style>
@@ -42,7 +67,7 @@
   }
 </style>
 
-<slot>{viewContents}</slot>
+<!-- <slot>{viewContents}</slot> -->
 {#if $authState.status === 'SUCCESS'}
   <table>
     <tr>
@@ -50,11 +75,13 @@
     </tr>
     {#each viewContents as data}
       <tr>
-        <td>
-          <a href="/coltCollection">{data.key}</a>
+        <td on:click={method(reduce)}>
+          {data.key}
+          <!-- <a href="/coltCollection">{data.key}</a> -->
         </td>
         <td>{data.value}</td>
       </tr>
     {/each}
   </table>
 {/if}
+[]
