@@ -2,10 +2,11 @@
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
   import { view } from "../couch.js";
+  import { couchUrl } from "../couch.js";
 
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
-  export let kval = false;
+  export let kval;
   //export let viewReduce = [];
   export let reduce = false;
   export let startkey;
@@ -16,6 +17,7 @@
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
+      kval = response;
       viewContents = response.rows;
     } catch (err) {
       startkey;
@@ -29,7 +31,22 @@
         if (Array.isArray(viewcontent.key)) {
           startkey = viewcontent.key;
           endkey = viewContents[viewContents.length - 1].key;
-          pathname = "/reduce=false?startkey=" + startkey + "?endkey=" + endkey;
+          pathname =
+            couchUrl +
+            "/" +
+            dbname +
+            "/" +
+            "_design" +
+            "/" +
+            ddoc +
+            "/" +
+            "_view" +
+            "/" +
+            viewname +
+            "/reduce=false?startkey=" +
+            startkey +
+            "?endkey=" +
+            endkey;
           console.log("Path name :" + pathname);
           window.location.pathname = pathname;
 
@@ -75,7 +92,7 @@
     </tr>
     {#each viewContents as data}
       <tr>
-        <td on:click={method(reduce)}>
+        <td on:click={method}>
           {data.key}
           <!-- <a href="/coltCollection">{data.key}</a> -->
         </td>

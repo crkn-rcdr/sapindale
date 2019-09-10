@@ -12,3 +12,4 @@ function view(token, db, ddoc, view, options) {
 }
 
 export { view };
+export { couchUrl };
