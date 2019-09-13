@@ -6,8 +6,7 @@
 
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
-  export let kval;
-  //export let viewReduce = [];
+
   export let reduce = false;
   export let startkey;
   export let endkey;
@@ -17,52 +16,36 @@
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
-      kval = response;
       viewContents = response.rows;
     } catch (err) {
-      startkey;
       viewContents = [err];
     }
   });
-  function method(reduce, startkey, endkey) {
+  function method() {
     viewContents.forEach(function(viewcontent, index) {
-      console.log("Index of for each:" + index);
       if (index === 0) {
         if (Array.isArray(viewcontent.key)) {
-          startkey = viewcontent.key;
-          endkey = viewContents[viewContents.length - 1].key;
-          pathname =
-            couchUrl +
-            "/" +
-            dbname +
-            "/" +
-            "_design" +
-            "/" +
-            ddoc +
-            "/" +
-            "_view" +
-            "/" +
-            viewname +
-            "/reduce=false?startkey=" +
-            startkey +
-            "?endkey=" +
-            endkey;
-          console.log("Path name :" + pathname);
-          window.location.pathname = pathname;
-
-          console.log(
-            "viewcontent is an array " + startkey + "End Key" + endkey
-          );
+          startkey = JSON.stringify(viewcontent.key);
+          endkey = JSON.stringify(viewContents[viewContents.length - 1].key);
+          let options = {
+            group: true,
+            group_level: 1,
+            startkey: startkey,
+            endkey: endkey
+          };
+          let response = view(token, dbname, ddoc, viewname, options);
         } else {
-          startkey = viewcontent.key;
-          endkey = viewContents[viewContents.length - 1].key;
-          console.log("Viewcontent is of type :" + typeof viewcontent.key);
+          startkey = JSON.stringify(viewcontent.key);
+          endkey = JSON.stringify(viewContents[viewContents.length - 1].key);
+          let options = {
+            group: false,
+            reduce: false,
+            startkey: startkey,
+            endkey: endkey
+          };
+          let response = view(token, dbname, ddoc, viewname, options);
         }
       }
-      if (Array.isArray(viewcontent)) {
-        //window.location.pathname = "/reduce=false?startkey=key";
-      }
-      console.log("view1", kval);
     });
   }
 </script>
@@ -86,7 +69,7 @@
 
 <!-- <slot>{viewContents}</slot> -->
 {#if $authState.status === 'SUCCESS'}
-  <table>
+  <table id="table">
     <tr>
       <th>{viewname}</th>
     </tr>
@@ -101,4 +84,3 @@
     {/each}
   </table>
 {/if}
-[]
