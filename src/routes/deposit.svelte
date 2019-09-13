@@ -1,5 +1,5 @@
 <script>
-
+  import TypeAhead from "../components/TypeAhead.svelte";
 </script>
 
 <svelte:head>
@@ -7,3 +7,4 @@
 </svelte:head>
 
 <h1>Deposit from preservation</h1>
+<TypeAhead db="dipstaging" />
