@@ -17,7 +17,8 @@ ENV NODE_ENV=production \
   SSL_DIR=/sapindale/ssl \
   HTTPS=1 \
   PORT=8443 \
-  HTTP_PORT=8080
+  HTTP_PORT=8080 \
+  COUCH=https://upholstery.canadiana.ca
 
 EXPOSE 8443
 EXPOSE 8080

@@ -1,4 +1,5 @@
-import { get, readable } from "svelte/store";
+import { readable } from "svelte/store";
+
 export const state = readable({ status: "LOADING" }, function auth(set) {
   fetch("https://auth.canadiana.ca/1/auth", {
     credentials: "include"
