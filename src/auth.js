@@ -11,13 +11,11 @@ export const state = readable({ status: "LOADING" }, function auth(set) {
         return Promise.resolve({});
       }
     })
-    .then(function(out) {
-      if (out.token) {
+    .then(function(data) {
+      if (data.token) {
         set({
           status: "SUCCESS",
-          name: out.name,
-          token: out.token,
-          email: out.email
+          ...data
         });
       } else {
         set({ status: "FAILED" });
