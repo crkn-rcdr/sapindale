@@ -3,31 +3,9 @@
 </script>
 
 <style>
-  main {
-    float: right;
-    padding: 0;
-    font-weight: 400;
-    margin: 1em;
-  }
-  h1 {
-    padding: 1.5em;
-  }
-  h2 {
-    padding-left: 4em;
-  }
-  ul {
-    padding-left: 4em;
-  }
-  li {
-    font-weight: 400;
-    padding-left: 4em;
-    list-style-position: inside;
-  }
+
 </style>
 
-<main>
-  <span>Logged in as: {$authState.name}</span>
-</main>
 <svelte:head>
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>

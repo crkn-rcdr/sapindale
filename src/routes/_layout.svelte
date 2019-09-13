@@ -2,7 +2,6 @@
   import { state as authState } from "../auth.js";
   import { onMount } from "svelte";
   var redirectUrl;
-  export let segment;
 
   onMount(async () => {
     redirectUrl = window.location.origin;
@@ -10,75 +9,65 @@
 </script>
 
 <style>
-  main {
-    padding: 1em;
-    font-weight: 300;
-  }
-
-  .selected {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px solid rgba(33, 33, 33, 0.1);
-  }
-
-  .selected::after {
-    position: absolute;
-    content: "";
-    width: calc(100% - 1em);
-    height: 2px;
-    background-color: var(--brand-color);
-    display: block;
-    bottom: -1px;
-  }
-
-  li > * {
-    text-decoration: none;
-    padding: 1em 0.5em;
-    display: block;
-  }
-  #anchor {
-    border-bottom: 1px solid rgba(33, 33, 33, 0.1);
-  }
-  #login {
-    float: right;
-    margin: 1em;
+  ul {
+    list-style-type: none;
+    margin: 0;
     padding: 0;
-    max-width: none;
-    font-weight: 400;
+    max-width: 100vw;
   }
-  a {
-    margin: 1em;
-    padding: 0;
-    max-width: none;
-    float: left;
-    font-weight: 400;
-  }
-  a::after {
+
+  ul::after {
     content: "";
     display: block;
     clear: both;
   }
-  p {
-    text-align: justify;
-    margin-top: 1em;
-    position: relative;
-    padding: 5em;
+
+  nav li {
+    padding: 2ch;
     float: left;
-    font-weight: 400;
+  }
+
+  nav li.login {
+    float: right;
+  }
+
+  main {
+    position: relative;
+    max-width: 56em;
+    background-color: white;
+    padding: 2em;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 </style>
 
-<main {segment}>
+<svelte:head>
+  <title>Sapindale — Canadiana access platform administration</title>
+</svelte:head>
 
-  <a class:selected={segment === undefined} href="/." id="anchor">Home</a>
+<nav>
+  <ul>
+    <li>
+      <a href="/">Home</a>
+    </li>
+    <li class="login">
+      {#if $authState.status === 'SUCCESS'}
+        Logged in as: {$authState.name}
+      {:else}
+        <a
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
+          Login
+        </a>
+      {/if}
+    </li>
+  </ul>
+</nav>
+
+<main>
   {#if $authState.status === 'SUCCESS'}
     <slot />
   {:else}
-    <a
-      href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}"
-      id="login">
-      Login
-    </a>
-    <p>Please login (using the link above) to access administration tools.</p>
+    <h1>Canadiana access platform administration</h1>
+    <p>Please log in to continue.</p>
   {/if}
 </main>
