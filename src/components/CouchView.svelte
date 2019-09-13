@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
   import { view } from "../couch.js";
-  import { couchUrl } from "../couch.js";
 
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
