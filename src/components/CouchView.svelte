@@ -9,10 +9,11 @@
   export let reduce = false;
   export let startkey;
   export let endkey;
+  export let endkeyIn;
   export let selectedVal;
 
   $: token = $authState.token;
-
+  //$: key = $value;
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
@@ -31,43 +32,42 @@
         if (this.parentNode.nodeName == "THEAD") {
           return;
         }
-        var cells = this.cells;
-        updateKey = document.getElementById("tdata");
-        updateKey.value = cells[0].innerHTML;
-        selectedVal = updateKey.value;
-        viewContents.forEach(function(viewcontent, index) {
-          if (index === 0) {
-            if (Array.isArray(viewcontent.key)) {
-              startkey = JSON.stringify(selectedVal);
-              console.log("start", startkey);
-              endkey = JSON.stringify(
-                viewContents[viewContents.length - 1].key
-              );
-              let options = {
-                group: true,
-                group_level: 1,
-                startkey: startkey,
-                endkey: endkey
-              };
-              let response = view(token, dbname, ddoc, viewname, options);
-            } else {
-              startkey = JSON.stringify(viewcontent.key);
-              endkey = JSON.stringify(
-                viewContents[viewContents.length - 1].key
-              );
-              let options = {
-                group: false,
-                reduce: false,
-                startkey: startkey,
-                endkey: endkey
-              };
-              let response = view(token, dbname, ddoc, viewname, options);
-            }
-          }
-        });
+        var rowNumber = this.rowIndex;
+        //console.log("Row Index: ", this.rowIndex);
+
+        if (Array.isArray(viewContents[rowNumber - 1].key)) {
+          startkey = viewContents[rowNumber - 1].key;
+          // console.log("s", startkey);
+          viewContents.forEach(item => {
+            (endkeyIn = item.key), item.key.push({});
+            endkey = endkeyIn;
+          });
+          //console.log("endK", endkey);
+
+          let options = {
+            group: true,
+            group_level: 1,
+            startkey: startkey,
+            endkey: endkey
+          };
+          let response = view(token, dbname, ddoc, viewname, options);
+        } else {
+          startkey = JSON.stringify(viewcontent.key);
+          endkey = JSON.stringify(viewContents[viewContents.length - 1].key);
+          let options = {
+            group: false,
+            reduce: false,
+            startkey: startkey,
+            endkey: endkey
+          };
+          let response = view(token, dbname, ddoc, viewname, options);
+        }
       };
+      //   });
     }
   }
+  // }
+  function handleClear() {}
 </script>
 
 <style>
