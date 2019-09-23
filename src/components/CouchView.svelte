@@ -10,7 +10,7 @@
   export let startkey;
   export let endkey;
   export let endkeyIn;
-  export let selectedVal;
+  export let selectedVal = [];
 
   $: token = $authState.token;
   //$: key = $value;
@@ -36,21 +36,27 @@
         //console.log("Row Index: ", this.rowIndex);
 
         if (Array.isArray(viewContents[rowNumber - 1].key)) {
-          startkey = viewContents[rowNumber - 1].key;
-          // console.log("s", startkey);
+          startkey = JSON.stringify(viewContents[rowNumber - 1].key);
+          console.log("s", startkey);
           viewContents.forEach(item => {
             (endkeyIn = item.key), item.key.push({});
-            endkey = endkeyIn;
+            endkey = JSON.stringify(endkeyIn);
           });
-          //console.log("endK", endkey);
+          console.log("endK", endkey);
 
-          let options = {
+          let newOptions = {
             group: true,
-            group_level: 1,
+            group_level: group_level + 1,
             startkey: startkey,
             endkey: endkey
           };
-          let response = view(token, dbname, ddoc, viewname, options);
+          let response = view(token, dbname, ddoc, viewname, newOptions).then(
+            function(response) {
+              selectedVal = response.rows;
+              console.log(selectedVal);
+              return response.rows;
+            }
+          );
         } else {
           startkey = JSON.stringify(viewcontent.key);
           endkey = JSON.stringify(viewContents[viewContents.length - 1].key);
@@ -67,7 +73,6 @@
     }
   }
   // }
-  function handleClear() {}
 </script>
 
 <style>
@@ -97,6 +102,12 @@
       <tr>
         <td id="tdata" on:click={reduceView}>{data.key}</td>
         <td>{data.value}</td>
+      </tr>
+    {/each}
+    {#each selectedVal as result}
+      <tr>
+        <td>{result.key}</td>
+        <td>{result.value}</td>
       </tr>
     {/each}
   </table>
