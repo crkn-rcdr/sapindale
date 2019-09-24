@@ -5,8 +5,7 @@
 
   export let dbname, ddoc, viewname, options;
   export let viewContents = [];
-  export let build = [];
-  export let reduce = false;
+  export let group_level = 1;
   export let startkey;
   export let endkey;
   export let endkeyIn;
@@ -46,7 +45,7 @@
 
           let newOptions = {
             group: true,
-            group_level: group_level + 1,
+            group_level: group_level,
             startkey: startkey,
             endkey: endkey
           };
@@ -64,7 +63,7 @@
             group: false,
             reduce: false,
             startkey: startkey,
-            endkey: endkey
+            endkey: endkey`\uFFEF`
           };
           let response = view(token, dbname, ddoc, viewname, options);
         }
@@ -93,8 +92,11 @@
 </style>
 
 <!-- <slot>{viewContents}</slot> -->
+
 {#if $authState.status === 'SUCCESS'}
   <table id="table">
+    <label for="group_level">Group Level</label>
+    <input type="number" bind:value={group_level} />
     <tr>
       <th>{viewname}</th>
     </tr>
