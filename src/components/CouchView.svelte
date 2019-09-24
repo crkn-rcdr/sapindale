@@ -12,7 +12,6 @@
   export let selectedVal = [];
 
   $: token = $authState.token;
-  //$: key = $value;
   onMount(async () => {
     try {
       let response = await view(token, dbname, ddoc, viewname, options);
@@ -32,16 +31,12 @@
           return;
         }
         var rowNumber = this.rowIndex;
-        //console.log("Row Index: ", this.rowIndex);
-
         if (Array.isArray(viewContents[rowNumber - 1].key)) {
           startkey = JSON.stringify(viewContents[rowNumber - 1].key);
-          console.log("s", startkey);
           viewContents.forEach(item => {
             (endkeyIn = item.key), item.key.push({});
             endkey = JSON.stringify(endkeyIn);
           });
-          console.log("endK", endkey);
 
           let newOptions = {
             group: true,
@@ -52,7 +47,6 @@
           let response = view(token, dbname, ddoc, viewname, newOptions).then(
             function(response) {
               selectedVal = response.rows;
-              console.log(selectedVal);
               return response.rows;
             }
           );
@@ -68,10 +62,8 @@
           let response = view(token, dbname, ddoc, viewname, options);
         }
       };
-      //   });
     }
   }
-  // }
 </script>
 
 <style>
@@ -106,11 +98,10 @@
         <td>{data.value}</td>
       </tr>
     {/each}
-    {#each selectedVal as result}
-      <tr>
-        <td>{result.key}</td>
-        <td>{result.value}</td>
-      </tr>
-    {/each}
   </table>
+  <ul>
+    {#each selectedVal as result}
+      <li>{result.key} {result.value}</li>
+    {/each}
+  </ul>
 {/if}
