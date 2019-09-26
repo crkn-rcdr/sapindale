@@ -83,8 +83,6 @@
   }
 </style>
 
-<!-- <slot>{viewContents}</slot> -->
-
 {#if $authState.status === 'SUCCESS'}
   <table id="table">
     <label for="group_level">Group Level</label>
