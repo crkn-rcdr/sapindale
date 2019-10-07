@@ -57,7 +57,7 @@
             group: false,
             reduce: false,
             startkey: startkey,
-            endkey: endkey`\uFFEF`
+            endkey: `${endkey}\uFFEF`
           };
           let response = view(token, dbname, ddoc, viewname, options);
         }
