@@ -2,19 +2,19 @@
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
   import { all_docs } from "../couch.js";
+  import Option from "../components/Option.svelte";
+  import selectedId from "../components/Option.svelte";
+
   let token = $authState.token;
 
   export let db;
-  let value = "";
-  let results = [];
-
+  export let value = "";
+  export let results = [];
+  var showResults = true;
   onMount(async () => {
     await keyup();
   });
-  function getEventTarget(e) {
-    e = e || window.event;
-    return e.target || e.srcElement;
-  }
+
   let keyup = async _event => {
     try {
       results = (await all_docs(token, db, {
@@ -25,12 +25,15 @@
     } catch (ignore) {
       results = ["Cannot retrieve results."];
     }
-    var ul = document.getElementById("test");
-    ul.onclick = function(event) {
-      var target = getEventTarget(event);
-      value = target.innerHTML;
-    };
   };
+  function selectId(event) {
+    value = event.detail.text;
+    showResults = false;
+  }
+  function refresh() {
+    showResults = true;
+    value = "";
+  }
 </script>
 
 <style>
@@ -38,37 +41,52 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
+    font-size: 16px;
   }
+  input {
+    width: 150px;
+    height: 25px;
+    box-sizing: border-box;
+    border: 1px solid #98012e;
 
-  .highlight li {
-    position: relative;
-    list-style: none;
-    line-height: 1.8em;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+  }
+  input[type="text"]:focus {
+    width: 30%;
+  }
+  button {
+    display: inline-block;
+    padding: 5px 5px;
+    font-size: 14px;
     cursor: pointer;
-    -webkit-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #98012e;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 9px #999;
   }
-
-  .highlight li:hover {
-    color: #98012e;
+  button:hover {
+    background-color: #55011a;
   }
-
-  .highlight li:after {
-    position: absolute;
-    top: 2.1em;
-    left: 0.9em;
-    width: 2px;
-    height: calc(100% - 2em);
-    content: "";
-    z-index: 0;
+  button:active {
+    background-color: #55011a;
+    box-shadow: 0 5px #999;
+    transform: translateY(4px);
   }
 </style>
 
 <div>
-  <input type="text" bind:value on:keyup={keyup} />
-  <ul id="test" class="highlight">
-    {#each results as result}
-      <li class="highlight">{result.id}</li>
-    {/each}
-  </ul>
+  <input type="text" bind:value on:keyup={keyup} placeholder="Search" />
+  <button type="reset" on:click={refresh}>Refresh</button>
+  {#if showResults}
+    <ul id="test" class="highlight">
+      {#each results as result}
+        <Option id={result.id} on:message={selectId} />
+      {/each}
+    </ul>
+  {/if}
 </div>
