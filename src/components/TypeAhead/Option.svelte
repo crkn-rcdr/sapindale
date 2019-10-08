@@ -1,11 +1,7 @@
 <script>
-  import TypeAhead from "../components/TypeAhead.svelte";
-  import result from "../components/TypeAhead.svelte";
-  import results from "../components/TypeAhead.svelte";
-  import value from "../components/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
-  export let id = results.id;
+  export let id;
   $: selectedId = "";
 
   function filterId() {

@@ -2,14 +2,13 @@
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
   import { all_docs } from "../couch.js";
-  import Option from "../components/Option.svelte";
-  import selectedId from "../components/Option.svelte";
+  import Option from "./TypeAhead/Option.svelte";
 
   let token = $authState.token;
 
   export let db;
-  export let value = "";
-  export let results = [];
+  let value = "";
+  let results = [];
   var showResults = true;
   onMount(async () => {
     await keyup();
@@ -25,14 +24,11 @@
     } catch (ignore) {
       results = ["Cannot retrieve results."];
     }
+    showResults = true;
   };
   function selectId(event) {
     value = event.detail.text;
     showResults = false;
-  }
-  function refresh() {
-    showResults = true;
-    value = "";
   }
 </script>
 
@@ -55,33 +51,10 @@
   input[type="text"]:focus {
     width: 30%;
   }
-  button {
-    display: inline-block;
-    padding: 5px 5px;
-    font-size: 14px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
-    color: #fff;
-    background-color: #98012e;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 9px #999;
-  }
-  button:hover {
-    background-color: #55011a;
-  }
-  button:active {
-    background-color: #55011a;
-    box-shadow: 0 5px #999;
-    transform: translateY(4px);
-  }
 </style>
 
 <div>
   <input type="text" bind:value on:keyup={keyup} placeholder="Search" />
-  <button type="reset" on:click={refresh}>Refresh</button>
   {#if showResults}
     <ul id="test" class="highlight">
       {#each results as result}
