@@ -4,10 +4,13 @@
   import { all_docs } from "../couch.js";
   import Option from "./TypeAhead/Option.svelte";
 
+  import { createEventDispatcher } from "svelte";
+  const dispatch1 = createEventDispatcher();
+
   let token = $authState.token;
 
   export let db;
-  let value = "";
+  export let value = "";
   let results = [];
   var showResults = true;
   onMount(async () => {
@@ -26,9 +29,13 @@
     }
     showResults = true;
   };
-  function selectId(event) {
+  export function selectId(event) {
     value = event.detail.text;
     showResults = false;
+
+    dispatch1("message", {
+      text: value
+    });
   }
 </script>
 
