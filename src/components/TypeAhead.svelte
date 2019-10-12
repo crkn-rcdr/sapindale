@@ -1,41 +1,47 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
   import { all_docs } from "../couch.js";
   import Option from "./TypeAhead/Option.svelte";
-
-  import { createEventDispatcher } from "svelte";
-  const dispatch1 = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
   let token = $authState.token;
 
   export let db;
-  export let value = "";
+  let idFragment = "";
   let results = [];
   var showResults = true;
   onMount(async () => {
-    await keyup();
+    await lookupIds();
   });
 
-  let keyup = async _event => {
-    try {
-      results = (await all_docs(token, db, {
-        startkey: JSON.stringify(value),
-        endkey: JSON.stringify(`${value}\uFFEF`),
-        limit: 20
-      })).rows.filter(row => !row.key.startsWith("_design"));
-    } catch (ignore) {
-      results = ["Cannot retrieve results."];
+  async function lookupIds(event) {
+    if (
+      event &&
+      event.key == "Enter" &&
+      results[0] &&
+      results[0].id == idFragment
+    ) {
+      dispatch("typeahead.idselected", { id: idFragment });
+      showResults = false;
+    } else {
+      dispatch("typeahead.iddeselected");
+      try {
+        results = (await all_docs(token, db, {
+          startkey: JSON.stringify(idFragment),
+          endkey: JSON.stringify(`${idFragment}\uFFEF`),
+          limit: 20
+        })).rows.filter(row => !row.key.startsWith("_design"));
+      } catch (ignore) {
+        results = ["Cannot retrieve results."];
+      }
+      showResults = true;
     }
-    showResults = true;
-  };
-  export function selectId(event) {
-    value = event.detail.text;
-    showResults = false;
+  }
 
-    dispatch1("message", {
-      text: value
-    });
+  function selectId(event) {
+    idFragment = event.detail.id;
+    showResults = false;
   }
 </script>
 
@@ -47,25 +53,23 @@
     font-size: 16px;
   }
   input {
-    width: 150px;
-    height: 25px;
-    box-sizing: border-box;
-    border: 1px solid #98012e;
-
-    -webkit-transition: width 0.4s ease-in-out;
-    transition: width 0.4s ease-in-out;
-  }
-  input[type="text"]:focus {
-    width: 30%;
+    border: 1px solid var(--brand-color);
   }
 </style>
 
 <div>
-  <input type="text" bind:value on:keyup={keyup} placeholder="Search" />
+  <input
+    type="text"
+    bind:value={idFragment}
+    on:keyup={lookupIds}
+    placeholder="Search" />
   {#if showResults}
-    <ul id="test" class="highlight">
+    <ul>
       {#each results as result}
-        <Option id={result.id} on:message={selectId} />
+        <Option
+          id={result.id}
+          on:typeahead.idselected
+          on:typeahead.idselected={selectId} />
       {/each}
     </ul>
   {/if}
