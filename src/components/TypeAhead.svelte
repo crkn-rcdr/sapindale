@@ -1,46 +1,57 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
   import { all_docs } from "../couch.js";
+  const dispatch = createEventDispatcher();
+
   let token = $authState.token;
 
   export let db;
-  let value = "";
+  let idFragment = "";
   let results = [];
-
   onMount(async () => {
-    await keyup();
+    await lookupIds();
   });
 
-  let keyup = async _event => {
+  async function lookupIds(event) {
+    dispatch("typeahead.iddeselected");
     try {
       results = (await all_docs(token, db, {
-        startkey: JSON.stringify(value),
-        endkey: JSON.stringify(`${value}\uFFEF`),
-        limit: 20
+        startkey: JSON.stringify(idFragment),
+        endkey: JSON.stringify(`${idFragment}\uFFEF`),
+        limit: 12
       })).rows.filter(row => !row.key.startsWith("_design"));
     } catch (ignore) {
       results = ["Cannot retrieve results."];
     }
-  };
+  }
+
+  function selectId(event) {
+    dispatch("typeahead.idselected", { id: idFragment });
+  }
 </script>
 
 <style>
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
+  input {
+    border: 1px solid var(--brand-color);
+    font-size: 120%;
+    width: 30ch;
+    padding: 10px;
   }
 </style>
 
 <div>
-  <input type="text" bind:value on:keyup={keyup} />
-  <ul>
+  <label for="typeaheadInput">Input a document ID:</label>
+  <input
+    type="text"
+    id="typeaheadInput"
+    list="typeaheadData"
+    bind:value={idFragment}
+    on:input={lookupIds}
+    on:change={selectId} />
+  <datalist id="typeaheadData">
     {#each results as result}
-      <li>{result.id}</li>
+      <option>{result.id}</option>
     {/each}
-  </ul>
+  </datalist>
 </div>
