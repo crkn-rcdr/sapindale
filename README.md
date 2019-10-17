@@ -11,8 +11,10 @@ $ yarn run dev
 
 ## Docker
 
+```
 $ yarn run build
 $ docker build -t sapindale:latest .
+```
 
 ## Deployment
 

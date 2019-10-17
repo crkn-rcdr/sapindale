@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "PORT=8443 COUCH=https://upholstery.canadiana.ca sapper dev",
-    "build": "NODE_ENV=production sapper build -p 8443",
+    "build": "NODE_ENV=production COUCH=https://upholstery.canadiana.ca sapper build -p 8443",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
     "cy:open": "cypress open",

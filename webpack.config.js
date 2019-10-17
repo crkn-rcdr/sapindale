@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const path = require("path");
 const config = require("sapper/config/webpack.js");
 const pkg = require("./package.json");
 
@@ -6,6 +7,7 @@ const mode = process.env.NODE_ENV;
 const couch = process.env.COUCH;
 const dev = mode === "development";
 
+const alias = { svelte: path.resolve("node_modules", "svelte") };
 const extensions = [".mjs", ".js", ".json", ".svelte", ".html"];
 const mainFields = ["svelte", "module", "browser", "main"];
 
@@ -13,7 +15,7 @@ module.exports = {
   client: {
     entry: config.client.entry(),
     output: config.client.output(),
-    resolve: { extensions, mainFields },
+    resolve: { alias, extensions, mainFields },
     module: {
       rules: [
         {
@@ -23,7 +25,7 @@ module.exports = {
             options: {
               dev,
               hydratable: true,
-              hotReload: false // pending https://github.com/sveltejs/svelte/issues/2377
+              hotReload: false
             }
           }
         }
@@ -31,14 +33,12 @@ module.exports = {
     },
     mode,
     plugins: [
-      // pending https://github.com/sveltejs/svelte/issues/2377
-      // dev && new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
         "process.env.COUCH": JSON.stringify(couch)
       })
-    ].filter(Boolean),
+    ],
     devtool: dev && "inline-source-map"
   },
 
