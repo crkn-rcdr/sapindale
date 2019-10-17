@@ -14,13 +14,6 @@ $ yarn run dev
 $ yarn run build
 $ docker build -t sapindale:latest .
 
-## TODO
+## Deployment
 
-A lot.
-
-- Dockerization
-- Authentication
-- Porting over the collection manager
-- Deposit from preservation
-- Generic pages for Couch views?
-- Interaction with Couch, period
+See relevant environment variables in the Dockerfile.
