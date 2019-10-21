@@ -54,6 +54,8 @@
   function previousResult(event) {
     showResult = true;
   }
+  // }
+  function handleClear() {}
 </script>
 
 <style>
