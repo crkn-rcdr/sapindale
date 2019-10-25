@@ -1,12 +1,10 @@
+import qs from "query-string";
+
 const couchUrl = process.env.COUCH;
 
 async function _request(token, path, options) {
-  let url = new URL([couchUrl, path].join("/"));
-  if (options) {
-    Object.keys(options).forEach(key =>
-      url.searchParams.append(key, options[key])
-    );
-  }
+  let url = [couchUrl, path].join("/");
+  if (options) url = `${url}?${qs.stringify(options)}`;
 
   let response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }

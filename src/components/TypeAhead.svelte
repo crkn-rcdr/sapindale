@@ -11,6 +11,8 @@
 
   let token = $authState.token;
 
+  export let value = "";
+
   export let db = undefined;
   export let ddoc = undefined;
   export let label = "Please provide a label for this component.";
@@ -19,7 +21,8 @@
   let datalistId = `data.${uid}`;
   let inputId = `input.${uid}`;
 
-  let itemFragment = "";
+  console.log(`typeahead initialized with value = ${value}`);
+
   let datalist = [];
 
   onMount(async () => {
@@ -42,8 +45,8 @@
       }
       if (mode == "documents") {
         datalist = (await documents(token, db, {
-          startkey: JSON.stringify(itemFragment),
-          endkey: JSON.stringify(`${itemFragment}\uFFEF`),
+          startkey: JSON.stringify(value),
+          endkey: JSON.stringify(`${value}\uFFEF`),
           limit: 12
         })).map(row => row.id);
       }
@@ -51,7 +54,7 @@
   }
 
   function selectItem(event) {
-    dispatch("selected", { value: itemFragment });
+    dispatch("selected", { value });
   }
 </script>
 
@@ -62,7 +65,7 @@
     id={inputId}
     list={datalistId}
     disabled={datalist.length < 1}
-    bind:value={itemFragment}
+    bind:value
     on:input={lookupIds}
     on:change={selectItem} />
   <datalist id={datalistId}>
