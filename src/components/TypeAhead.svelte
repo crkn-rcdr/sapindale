@@ -55,15 +55,6 @@
   }
 </script>
 
-<style>
-  input {
-    border: 1px solid var(--brand-color);
-    font-size: 120%;
-    width: 30ch;
-    padding: 10px;
-  }
-</style>
-
 <div>
   <label for={inputId}>{label}</label>
   <input

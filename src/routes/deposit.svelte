@@ -2,7 +2,7 @@
   import TypeAhead, { value } from "../components/TypeAhead.svelte";
   let id;
   function select(event) {
-    id = event.detail.id;
+    id = event.detail.value;
   }
   function clear() {
     id = undefined;

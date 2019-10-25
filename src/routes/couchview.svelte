@@ -2,7 +2,7 @@
   import TypeAhead from "../components/TypeAhead.svelte";
   import { state as authState } from "../auth.js";
   import { view as fetchView } from "../couch.js";
-  let db, ddoc, view, startkey, endkey, inclusive, group, reduce;
+  let db, ddoc, view, startkey, endkey, inclusive, group, reduce, limit;
 
   function inclusiveArray(key) {
     return key.concat([{}]);
@@ -27,22 +27,36 @@
     startkey: startkey ? JSON.stringify(parsedKey(startkey)) : undefined,
     endkey: endkey ? JSON.stringify(parsedKey(endkey, inclusive)) : undefined,
     reduce,
-    group_level: group
+    group_level: group,
+    limit
   };
 
   let token = $authState.token;
-  let viewContents;
+  let viewContents = [];
   async function update() {
     if (db && ddoc && view) {
-      console.log(options);
       let sanitizedOptions = Object.keys(options).reduce((acc, key) => {
         if (options[key] !== undefined) acc[key] = options[key];
         return acc;
       }, {});
+      if (!sanitizedOptions.limit) sanitizedOptions.limit = 500;
       viewContents = await fetchView(token, db, ddoc, view, sanitizedOptions);
     }
   }
 </script>
+
+<style>
+  table {
+    border-collapse: collapse;
+  }
+
+  td,
+  th {
+    border: 1px solid var(--brand-color);
+    padding: 0.5rem;
+    text-align: left;
+  }
+</style>
 
 <svelte:head>
   <title>Sapindale — Couch view output</title>
@@ -101,8 +115,31 @@
     <input type="number" min="0" max="9" id="groupInput" bind:value={group} />
   {/if}
   <br />
+  <label for="limitInput">Limit:</label>
+  <input
+    type="number"
+    min="100"
+    max="500"
+    step="100"
+    id="limitInput"
+    bind:value={limit} />
   <button on:click={update}>Update</button>
 </div>
 
-<p>{JSON.stringify(options)}</p>
-<p>{JSON.stringify(viewContents)}</p>
+{#if viewContents.length > 0}
+  <h2>View output</h2>
+  <table>
+    <thead>
+      <th>Key</th>
+      <th>Value</th>
+    </thead>
+    <tbody>
+      {#each viewContents as row}
+        <tr>
+          <td>{JSON.stringify(row.key)}</td>
+          <td>{row.value}</td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+{/if}
