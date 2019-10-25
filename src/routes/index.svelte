@@ -29,6 +29,6 @@
     </a>
   </li>
   <li>
-    <a href="/coltitles">Collection titles</a>
+    <a href="/couchview">Couch view output</a>
   </li>
 </ul>

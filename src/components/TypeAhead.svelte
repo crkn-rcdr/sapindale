@@ -1,33 +1,57 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
-  import { all_docs } from "../couch.js";
+  import {
+    databases,
+    documents,
+    design_docs,
+    design_doc_views
+  } from "../couch.js";
   const dispatch = createEventDispatcher();
 
   let token = $authState.token;
 
-  export let db;
-  let idFragment = "";
-  let results = [];
+  export let db = undefined;
+  export let ddoc = undefined;
+  export let label = "Please provide a label for this component.";
+  export let mode = db ? "documents" : "databases";
+  let uid = `${mode}.${db ? db : "nil"}.${ddoc ? ddoc : "nil"}`;
+  let datalistId = `data.${uid}`;
+  let inputId = `input.${uid}`;
+
+  let itemFragment = "";
+  let datalist = [];
+
   onMount(async () => {
     await lookupIds();
   });
 
   async function lookupIds(event) {
-    dispatch("typeahead.iddeselected");
+    dispatch("deselected");
     try {
-      results = (await all_docs(token, db, {
-        startkey: JSON.stringify(idFragment),
-        endkey: JSON.stringify(`${idFragment}\uFFEF`),
-        limit: 12
-      })).rows.filter(row => !row.key.startsWith("_design"));
-    } catch (ignore) {
-      results = ["Cannot retrieve results."];
-    }
+      if (datalist.length < 1) {
+        if (mode == "databases") {
+          datalist = await databases(token);
+        } else if (mode == "design_doc_views" && db && ddoc) {
+          datalist = Object.keys(await design_doc_views(token, db, ddoc));
+        } else if (mode == "design_docs" && db) {
+          datalist = (await design_docs(token, db)).map(row =>
+            row.id.substring(8)
+          );
+        }
+      }
+      if (mode == "documents") {
+        datalist = (await documents(token, db, {
+          startkey: JSON.stringify(itemFragment),
+          endkey: JSON.stringify(`${itemFragment}\uFFEF`),
+          limit: 12
+        })).map(row => row.id);
+      }
+    } catch (ignore) {}
   }
 
-  function selectId(event) {
-    dispatch("typeahead.idselected", { id: idFragment });
+  function selectItem(event) {
+    dispatch("selected", { value: itemFragment });
   }
 </script>
 
@@ -41,17 +65,18 @@
 </style>
 
 <div>
-  <label for="typeaheadInput">Input a document ID:</label>
+  <label for={inputId}>{label}</label>
   <input
     type="text"
-    id="typeaheadInput"
-    list="typeaheadData"
-    bind:value={idFragment}
+    id={inputId}
+    list={datalistId}
+    disabled={datalist.length < 1}
+    bind:value={itemFragment}
     on:input={lookupIds}
-    on:change={selectId} />
-  <datalist id="typeaheadData">
-    {#each results as result}
-      <option>{result.id}</option>
+    on:change={selectItem} />
+  <datalist id={datalistId}>
+    {#each datalist as item}
+      <option>{item}</option>
     {/each}
   </datalist>
 </div>

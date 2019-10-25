@@ -15,9 +15,11 @@
 
 <h1>Deposit from preservation</h1>
 <TypeAhead
+  mode="documents"
   db="dipstaging"
-  on:typeahead.idselected={select}
-  on:typeahead.iddeselected={clear} />
+  label="Input an AIP ID:"
+  on:selected={select}
+  on:deselected={clear} />
 <p>
   {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
 </p>

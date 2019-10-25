@@ -1,26 +1,48 @@
 const couchUrl = process.env.COUCH;
 
-function _request(token, path, options) {
+async function _request(token, path, options) {
   let url = new URL([couchUrl, path].join("/"));
-  Object.keys(options).forEach(key =>
-    url.searchParams.append(key, options[key])
-  );
+  if (options) {
+    Object.keys(options).forEach(key =>
+      url.searchParams.append(key, options[key])
+    );
+  }
 
-  return fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then(
-    response => response.json()
-  );
+  let response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return await response.json();
 }
 
-function all_docs(token, db, options) {
-  return _request(token, [db, "_all_docs"].join("/"), options);
+async function databases(token) {
+  return await _request(token, "_all_dbs");
 }
 
-function view(token, db, ddoc, view, options) {
-  return _request(
+async function documents(token, db, options) {
+  let result = await _request(token, [db, "_all_docs"].join("/"), options);
+  return result.rows.filter(row => !row.key.startsWith("_design"));
+}
+
+async function design_docs(token, db) {
+  let result = await _request(token, [db, "_all_docs"].join("/"), {
+    startkey: JSON.stringify("_design"),
+    endkey: JSON.stringify("_design\uFFEF")
+  });
+  return result.rows;
+}
+
+async function design_doc_views(token, db, ddoc) {
+  if (ddoc.substring(0, 8) !== "_design") ddoc = `_design/${ddoc}`;
+  return (await _request(token, [db, ddoc].join("/"))).views || {};
+}
+
+async function view(token, db, ddoc, view, options) {
+  let result = await _request(
     token,
     [db, "_design", ddoc, "_view", view].join("/"),
     options
   );
+  return result.rows;
 }
 
-export { view, all_docs };
+export { databases, documents, design_docs, design_doc_views, view };
