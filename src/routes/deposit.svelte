@@ -2,7 +2,7 @@
   import TypeAhead, { value } from "../components/TypeAhead.svelte";
   let id;
   function select(event) {
-    id = event.detail.id;
+    id = event.detail.value;
   }
   function clear() {
     id = undefined;
@@ -16,8 +16,10 @@
 <h1>Deposit from preservation</h1>
 <TypeAhead
   db="dipstaging"
-  on:typeahead.idselected={select}
-  on:typeahead.iddeselected={clear} />
+  id="aip"
+  label="Input an AIP ID:"
+  on:selected={select}
+  on:deselected={clear} />
 <p>
   {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
 </p>

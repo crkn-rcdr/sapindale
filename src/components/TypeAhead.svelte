@@ -1,57 +1,50 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
-  import { all_docs } from "../couch.js";
+  import { documents } from "../couch.js";
   const dispatch = createEventDispatcher();
 
   let token = $authState.token;
+  let value = "";
 
-  export let db;
-  let idFragment = "";
-  let results = [];
+  export let id, db;
+  export let label = "Please provide a label for this component.";
+
+  let datalist = [];
+
   onMount(async () => {
     await lookupIds();
   });
 
   async function lookupIds(event) {
-    dispatch("typeahead.iddeselected");
+    dispatch("deselected");
     try {
-      results = (await all_docs(token, db, {
-        startkey: JSON.stringify(idFragment),
-        endkey: JSON.stringify(`${idFragment}\uFFEF`),
+      datalist = (await documents(token, db, {
+        startkey: JSON.stringify(value),
+        endkey: JSON.stringify(`${value}\uFFEF`),
         limit: 12
-      })).rows.filter(row => !row.key.startsWith("_design"));
-    } catch (ignore) {
-      results = ["Cannot retrieve results."];
-    }
+      })).map(row => row.id);
+    } catch (ignore) {}
   }
 
-  function selectId(event) {
-    dispatch("typeahead.idselected", { id: idFragment });
+  function selectItem(event) {
+    dispatch("selected", { value });
   }
 </script>
 
-<style>
-  input {
-    border: 1px solid var(--brand-color);
-    font-size: 120%;
-    width: 30ch;
-    padding: 10px;
-  }
-</style>
-
 <div>
-  <label for="typeaheadInput">Input a document ID:</label>
+  <label for={`${id}.input`}>{label}</label>
   <input
     type="text"
-    id="typeaheadInput"
-    list="typeaheadData"
-    bind:value={idFragment}
+    id={`${id}.input`}
+    list={`${id}.datalist`}
+    disabled={datalist.length < 1}
+    bind:value
     on:input={lookupIds}
-    on:change={selectId} />
-  <datalist id="typeaheadData">
-    {#each results as result}
-      <option>{result.id}</option>
+    on:change={selectItem} />
+  <datalist id={`${id}.datalist`}>
+    {#each datalist as item}
+      <option>{item}</option>
     {/each}
   </datalist>
 </div>
