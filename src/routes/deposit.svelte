@@ -15,8 +15,8 @@
 
 <h1>Deposit from preservation</h1>
 <TypeAhead
-  mode="documents"
   db="dipstaging"
+  id="aip"
   label="Input an AIP ID:"
   on:selected={select}
   on:deselected={clear} />

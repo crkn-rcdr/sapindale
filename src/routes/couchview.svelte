@@ -1,10 +1,9 @@
 <script>
-  import CouchViewControls from "../components/CouchViewControls.svelte";
+  import CouchView from "../components/CouchView.svelte";
 </script>
 
 <svelte:head>
   <title>Sapindale — Couch view output</title>
 </svelte:head>
 
-<h1>Couch view output</h1>
-<CouchViewControls />
+<CouchView />
