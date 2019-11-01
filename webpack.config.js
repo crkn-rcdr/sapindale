@@ -1,10 +1,11 @@
 const webpack = require("webpack");
 const path = require("path");
+const glob = require("glob");
 const config = require("sapper/config/webpack.js");
 const pkg = require("./package.json");
 
-const PurgeSvelte = require("purgecss-from-svelte");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const PurgecssPlugin = require("purgecss-webpack-plugin");
 
 const mode = process.env.NODE_ENV;
 const couch = process.env.COUCH;
@@ -13,16 +14,6 @@ const dev = mode === "development";
 const alias = { svelte: path.resolve("node_modules", "svelte") };
 const extensions = [".mjs", ".js", ".json", ".svelte", ".html"];
 const mainFields = ["svelte", "module", "browser", "main"];
-
-const purgeCSSOptions = {
-  content: ["./src/**/*.svelte"],
-  extractors: [
-    {
-      extractor: PurgeSvelte,
-      extensions: ["svelte"]
-    }
-  ]
-};
 
 let cssRules = {
   test: /\.css$/,
@@ -36,19 +27,22 @@ let cssRules = {
           require("postcss-import"),
           require("tailwindcss")("./tailwind.config.js"),
           require("postcss-custom-properties"),
-          require("autoprefixer"),
-          mode === "PRODUCTION" &&
-            require("@fullhuman/postcss-purgecss")(purgeCSSOptions)
+          require("autoprefixer")
         ].filter(Boolean)
       }
     }
   ]
 };
 
-let cssPlugin = new MiniCssExtractPlugin({
-  filename: "[name].css",
-  chunkFilename: "[id].css"
-});
+let plugins = [
+  new MiniCssExtractPlugin({
+    filename: "[name].[hash].css",
+    chunkFilename: "[id].[hash].css"
+  }),
+  new PurgecssPlugin({
+    paths: glob.sync("./src/**/*.svelte", { nodir: true })
+  })
+];
 
 module.exports = {
   client: {
@@ -78,7 +72,7 @@ module.exports = {
         "process.env.NODE_ENV": JSON.stringify(mode),
         "process.env.COUCH": JSON.stringify(couch)
       }),
-      cssPlugin
+      ...plugins
     ],
     devtool: dev && "inline-source-map"
   },
@@ -105,7 +99,7 @@ module.exports = {
         cssRules
       ]
     },
-    plugins: [cssPlugin],
+    plugins,
     mode,
     performance: {
       hints: false // it doesn't matter if server.js is large
