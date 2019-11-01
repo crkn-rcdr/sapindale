@@ -1,19 +1,22 @@
 <script>
+
   import { state as authState } from "../auth.js";
 </script>
 
 <style>
-
+.leading-relaxed {
+    height: 3em;
+  }
 </style>
 
 <svelte:head>
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 
-<h1>Canadiana access platform administration</h1>
+<h1 class="leading-relaxed text-2xl">Canadiana access platform administration</h1>
 
-<h2>Tools</h2>
-<ul>
+<h2 class="leading-relaxed text-xl">Tools</h2>
+<ul class="list-inside list-disc">
   <li>
     <a href="/deposit">Deposit from preservation</a>
   </li>
