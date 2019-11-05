@@ -9,36 +9,7 @@
 </script>
 
 <style>
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    max-width: 100vw;
-  }
 
-  ul::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  nav li {
-    padding: 2ch;
-    float: left;
-  }
-
-  nav li.login {
-    float: right;
-  }
-
-  main {
-    position: relative;
-    max-width: 56em;
-    background-color: white;
-    padding: 2em;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
 </style>
 
 <svelte:head>
@@ -46,21 +17,19 @@
 </svelte:head>
 
 <nav>
-  <ul>
-    <li>
-      <a href="/">Home</a>
-    </li>
-    <li class="login">
-      {#if $authState.status === 'SUCCESS'}
-        Logged in as: {$authState.name}
-      {:else}
-        <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-          Login
-        </a>
-      {/if}
-    </li>
-  </ul>
+  <div class="flex float-left p-4">
+    <a href="/">Home</a>
+  </div>
+  <div class="flex float-right p-4">
+    {#if $authState.status === 'SUCCESS'}
+      Logged in as: {$authState.name}
+    {:else}
+      <a
+        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
+        Login
+      </a>
+    {/if}
+  </div>
 </nav>
 
 <main>
@@ -68,6 +37,6 @@
     <slot />
   {:else}
     <h1>Canadiana access platform administration</h1>
-    <p>Please log in to continue.</p>
+    <p class="layout">Please log in to continue.</p>
   {/if}
 </main>

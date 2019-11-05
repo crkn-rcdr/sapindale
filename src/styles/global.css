@@ -2,18 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
 :root {
-  --brand-color: #98012e;
-  --text-color: #333;
-  --background-color: #fff;
   --measure: 60ch;
 
   margin: 0;
-  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   line-height: 1.5;
-  color: var(--text-color);
+  @apply text-uniform;
+  @apply font-sans;
 }
 
 * {
@@ -37,9 +32,22 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--brand-color);
+  @apply text-canadiana;
 }
 
 a {
   color: inherit;
+}
+h1 {
+  @apply text-2xl pl-5 pt-20;
+  @apply font-sans;
+}
+h2 {
+  @apply text-lg pl-5 pt-5;
+}
+.layout {
+  @apply m-5 mt-10;
+}
+.list {
+  @apply list-inside list-disc pt-10 pl-5;
 }
