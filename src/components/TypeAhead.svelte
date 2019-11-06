@@ -32,11 +32,12 @@
   }
 </script>
 
-<div>
+<div class="container mx-auto">
   <label for={`${id}.input`}>{label}</label>
   <input
     type="text"
     id={`${id}.input`}
+    class="data-list"
     list={`${id}.datalist`}
     disabled={datalist.length < 1}
     bind:value

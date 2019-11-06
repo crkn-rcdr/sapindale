@@ -89,6 +89,7 @@
   .controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-gap: 1.5rem;
   }
 
   table {
@@ -103,82 +104,95 @@
   }
 </style>
 
-<h1>Couch view display</h1>
+<div class="container mx-auto">
+  <h1>Couch view display</h1>
 
-<div class="controls">
-  <div>
-    <label for="db.select">Database:</label>
-    <select id="db.select" bind:value={db} on:change={reselectView}>
-      {#each Object.keys(views) as database}
-        <option selected={database === db}>{database}</option>
-      {/each}
-    </select>
-    <br />
-    <label for="view.select">View:</label>
-    <select id="view.select" bind:value={view} disabled={!db}>
-      {#if db && views[db]}
-        {#each Object.keys(views[db]) as ddoc (ddoc)}
-          <optgroup label={ddoc}>
-            {#each views[db][ddoc] as v}
-              <option value={`${ddoc}/${v}`} selected={`${ddoc}/${v}` === view}>
-                {v}
-              </option>
-            {/each}
-          </optgroup>
+  <div class="controls layout">
+    <div>
+      <label for="db.select">Database:</label>
+      <select id="db.select" bind:value={db} on:change={reselectView}>
+        {#each Object.keys(views) as database}
+          <option selected={database === db}>{database}</option>
         {/each}
+      </select>
+      <br />
+    </div>
+    <div>
+      <label for="view.select">View:</label>
+      <select id="view.select" bind:value={view} disabled={!db}>
+        {#if db && views[db]}
+          {#each Object.keys(views[db]) as ddoc (ddoc)}
+            <optgroup label={ddoc}>
+              {#each views[db][ddoc] as v}
+                <option
+                  value={`${ddoc}/${v}`}
+                  selected={`${ddoc}/${v}` === view}>
+                  {v}
+                </option>
+              {/each}
+            </optgroup>
+          {/each}
+        {/if}
+      </select>
+    </div>
+    <div>
+      <label for="startkeyInput">Start key:</label>
+      <input type="text" id="startkeyInput" bind:value={options.startkey} />
+      <br />
+    </div>
+    <div>
+      <label for="endkeyInput">End key:</label>
+      <input type="text" id="endkeyInput" bind:value={options.endkey} />
+    </div>
+    <div>
+      <label for="inclusiveCheck">Inclusive?</label>
+      <input
+        type="checkbox"
+        id="inclusiveCheck"
+        bind:checked={options.inclusive} />
+      <br />
+      <label for="reduceCheck">Reduce?</label>
+      <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
+    </div>
+    <div>
+      {#if options.reduce}
+        <label for="groupInput">Grouping level:</label>
+        <input
+          type="number"
+          min="0"
+          max="9"
+          id="groupInput"
+          bind:value={options.group} />
       {/if}
-    </select>
-  </div>
-  <div>
-    <label for="startkeyInput">Start key:</label>
-    <input type="text" id="startkeyInput" bind:value={options.startkey} />
-    <br />
-    <label for="endkeyInput">End key:</label>
-    <input type="text" id="endkeyInput" bind:value={options.endkey} />
-    <label for="inclusiveCheck">Inclusive?</label>
-    <input
-      type="checkbox"
-      id="inclusiveCheck"
-      bind:checked={options.inclusive} />
-    <br />
-    <label for="reduceCheck">Reduce?</label>
-    <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
-    {#if options.reduce}
-      <label for="groupInput">Grouping level:</label>
+    </div>
+    <div>
+      <label for="limitInput">Limit:</label>
       <input
         type="number"
-        min="0"
-        max="9"
-        id="groupInput"
-        bind:value={options.group} />
-    {/if}
-    <br />
-    <label for="limitInput">Limit:</label>
-    <input
-      type="number"
-      min="100"
-      max="500"
-      step="100"
-      id="limitInput"
-      bind:value={options.limit} />
+        min="100"
+        max="500"
+        step="100"
+        id="limitInput"
+        bind:value={options.limit} />
+    </div>
     <button on:click={update}>Update</button>
   </div>
-</div>
 
-{#if viewContents.length > 0}
-  <h2>View output</h2>
-  <table>
-    <thead>
-      <th>Key</th>
-      <th>Value</th>
-    </thead>
-    <tbody>
-      {#each viewContents as row}
-        <tr>
-          <td>{JSON.stringify(row.key)}</td>
-          <td>{JSON.stringify(row.value)}</td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-{/if}
+  {#if viewContents.length > 0}
+    <h2>View output</h2>
+    <table>
+      <thead>
+        <th>Key</th>
+        <th>Value</th>
+      </thead>
+      <tbody>
+        {#each viewContents as row}
+          <tr>
+            <td>{JSON.stringify(row.key)}</td>
+            <td>{JSON.stringify(row.value)}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
+</div>

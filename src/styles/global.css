@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --measure: 60ch;
+  /* --measure: 60ch; */
 
   margin: 0;
   line-height: 1.5;
@@ -12,7 +12,7 @@
 }
 
 * {
-  max-width: var(--measure);
+  /*  max-width: var(--measure); */
   box-sizing: border-box;
 }
 
@@ -50,4 +50,8 @@ h2 {
 }
 .list {
   @apply list-inside list-disc pt-10 pl-5;
+}
+
+.data-list {
+  @apply border-solid border-black;
 }
