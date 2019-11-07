@@ -92,16 +92,6 @@
     grid-gap: 1.5rem;
   }
 
-  table {
-    border-collapse: collapse;
-  }
-
-  td,
-  th {
-    border: 1px solid var(--brand-color);
-    padding: 0.5rem;
-    text-align: left;
-  }
 </style>
 
 <div class="container mx-auto">
@@ -116,8 +106,6 @@
         {/each}
       </select>
       <br />
-    </div>
-    <div>
       <label for="view.select">View:</label>
       <select id="view.select" bind:value={view} disabled={!db}>
         {#if db && views[db]}
@@ -139,12 +127,8 @@
       <label for="startkeyInput">Start key:</label>
       <input type="text" id="startkeyInput" bind:value={options.startkey} />
       <br />
-    </div>
-    <div>
       <label for="endkeyInput">End key:</label>
       <input type="text" id="endkeyInput" bind:value={options.endkey} />
-    </div>
-    <div>
       <label for="inclusiveCheck">Inclusive?</label>
       <input
         type="checkbox"
@@ -153,8 +137,7 @@
       <br />
       <label for="reduceCheck">Reduce?</label>
       <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
-    </div>
-    <div>
+      
       {#if options.reduce}
         <label for="groupInput">Grouping level:</label>
         <input
@@ -164,8 +147,7 @@
           id="groupInput"
           bind:value={options.group} />
       {/if}
-    </div>
-    <div>
+      <div>
       <label for="limitInput">Limit:</label>
       <input
         type="number"
@@ -174,13 +156,14 @@
         step="100"
         id="limitInput"
         bind:value={options.limit} />
-    </div>
+        </div>  
     <button on:click={update}>Update</button>
-  </div>
-
+    </div>
+    </div>
+  
   {#if viewContents.length > 0}
     <h2>View output</h2>
-    <table>
+    <table class="layout text-left w-full border-collapse">
       <thead>
         <th>Key</th>
         <th>Value</th>
@@ -188,8 +171,8 @@
       <tbody>
         {#each viewContents as row}
           <tr>
-            <td>{JSON.stringify(row.key)}</td>
-            <td>{JSON.stringify(row.value)}</td>
+            <td class="py-2 px-2">{JSON.stringify(row.key)}</td>
+            <td class="py-2 px-2">{JSON.stringify(row.value)}</td>
           </tr>
         {/each}
       </tbody>
