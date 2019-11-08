@@ -15,28 +15,29 @@
 <svelte:head>
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
+<div class="container mx-auto">
+  <nav>
+    <div class="flex float-left p-4">
+      <a href="/">Home</a>
+    </div>
+    <div class="flex float-right p-4">
+      {#if $authState.status === 'SUCCESS'}
+        Logged in as: {$authState.name}
+      {:else}
+        <a
+          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
+          Login
+        </a>
+      {/if}
+    </div>
+  </nav>
 
-<nav>
-  <div class="flex float-left p-4">
-    <a href="/">Home</a>
-  </div>
-  <div class="flex float-right p-4">
+  <main>
     {#if $authState.status === 'SUCCESS'}
-      Logged in as: {$authState.name}
+      <slot />
     {:else}
-      <a
-        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-        Login
-      </a>
+      <h1>Canadiana access platform administration</h1>
+      <p class="layout">Please log in to continue.</p>
     {/if}
-  </div>
-</nav>
-
-<main>
-  {#if $authState.status === 'SUCCESS'}
-    <slot />
-  {:else}
-    <h1>Canadiana access platform administration</h1>
-    <p class="layout">Please log in to continue.</p>
-  {/if}
-</main>
+  </main>
+</div>

@@ -53,9 +53,9 @@ h2 {
 }
 
 .data-list {
-  @apply border-solid border-black;
+  @apply border-solid border-canadiana;
 }
 
-button{
-  @apply bg-canadiana text-white p-0 border border-canadiana rounded
+button {
+  @apply bg-canadiana text-white p-0 border border-canadiana rounded;
 }

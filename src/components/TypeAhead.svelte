@@ -37,7 +37,7 @@
   <input
     type="text"
     id={`${id}.input`}
-    class="data-list"
+    class= "data-list border"
     list={`${id}.datalist`}
     disabled={datalist.length < 1}
     bind:value

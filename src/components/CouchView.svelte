@@ -91,7 +91,6 @@
     grid-template-columns: 1fr 1fr;
     grid-gap: 1.5rem;
   }
-
 </style>
 
 <div class="container mx-auto">
@@ -99,68 +98,100 @@
 
   <div class="controls layout">
     <div>
-      <label for="db.select">Database:</label>
-      <select id="db.select" bind:value={db} on:change={reselectView}>
-        {#each Object.keys(views) as database}
-          <option selected={database === db}>{database}</option>
-        {/each}
-      </select>
-      <br />
-      <label for="view.select">View:</label>
-      <select id="view.select" bind:value={view} disabled={!db}>
-        {#if db && views[db]}
-          {#each Object.keys(views[db]) as ddoc (ddoc)}
-            <optgroup label={ddoc}>
-              {#each views[db][ddoc] as v}
-                <option
-                  value={`${ddoc}/${v}`}
-                  selected={`${ddoc}/${v}` === view}>
-                  {v}
-                </option>
-              {/each}
-            </optgroup>
+      <div class="p-2">
+        <label for="db.select">Database:</label>
+        <select
+          class="data-list border"
+          id="db.select"
+          bind:value={db}
+          on:change={reselectView}>
+          {#each Object.keys(views) as database}
+            <option selected={database === db}>{database}</option>
           {/each}
-        {/if}
-      </select>
+        </select>
+        <br />
+      </div>
+      <div class="p-2">
+        <label for="view.select">View:</label>
+        <select
+          class="data-list border"
+          id="view.select"
+          bind:value={view}
+          disabled={!db}>
+          {#if db && views[db]}
+            {#each Object.keys(views[db]) as ddoc (ddoc)}
+              <optgroup label={ddoc}>
+                {#each views[db][ddoc] as v}
+                  <option
+                    value={`${ddoc}/${v}`}
+                    selected={`${ddoc}/${v}` === view}>
+                    {v}
+                  </option>
+                {/each}
+              </optgroup>
+            {/each}
+          {/if}
+        </select>
+      </div>
     </div>
     <div>
-      <label for="startkeyInput">Start key:</label>
-      <input type="text" id="startkeyInput" bind:value={options.startkey} />
+      <div class="p-2">
+        <label for="startkeyInput">Start key:</label>
+        <input
+          type="text"
+          class="data-list border"
+          id="startkeyInput"
+          bind:value={options.startkey} />
+      </div>
       <br />
-      <label for="endkeyInput">End key:</label>
-      <input type="text" id="endkeyInput" bind:value={options.endkey} />
-      <label for="inclusiveCheck">Inclusive?</label>
-      <input
-        type="checkbox"
-        id="inclusiveCheck"
-        bind:checked={options.inclusive} />
+      <div class="p-2">
+        <label for="endkeyInput">End key:</label>
+        <input
+          type="text"
+          class="data-list border"
+          id="endkeyInput"
+          bind:value={options.endkey} />
+        <label for="inclusiveCheck">Inclusive?</label>
+        <input
+          type="checkbox"
+          class="data-list border"
+          id="inclusiveCheck"
+          bind:checked={options.inclusive} />
+      </div>
       <br />
-      <label for="reduceCheck">Reduce?</label>
-      <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
-      
-      {#if options.reduce}
-        <label for="groupInput">Grouping level:</label>
+      <div class="p-2">
+        <label for="reduceCheck">Reduce?</label>
+        <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
+
+        {#if options.reduce}
+          <label for="groupInput">Grouping level:</label>
+          <input
+            type="number"
+            class="data-list border"
+            min="0"
+            max="9"
+            id="groupInput"
+            bind:value={options.group} />
+        {/if}
+      </div>
+      <div class="p-2">
+        <label for="limitInput">Limit:</label>
         <input
           type="number"
-          min="0"
-          max="9"
-          id="groupInput"
-          bind:value={options.group} />
-      {/if}
-      <div>
-      <label for="limitInput">Limit:</label>
-      <input
-        type="number"
-        min="100"
-        max="500"
-        step="100"
-        id="limitInput"
-        bind:value={options.limit} />
-        </div>  
-    <button on:click={update}>Update</button>
+          class="data-list border"
+          min="100"
+          max="500"
+          step="100"
+          id="limitInput"
+          bind:value={options.limit} />
+      </div>
+      <br />
+      <div class="p-2">
+        <button on:click={update}>Update</button>
+      </div>
     </div>
-    </div>
-  
+  </div>
+
   {#if viewContents.length > 0}
     <h2>View output</h2>
     <table class="layout text-left w-full border-collapse">
