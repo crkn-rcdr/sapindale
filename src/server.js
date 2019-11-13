@@ -5,6 +5,7 @@ import * as sapper from "@sapper/server";
 import { createServer as https } from "https";
 import { createServer as http } from "http";
 import { readFileSync } from "fs";
+import "./styles/global.css";
 
 const { NODE_ENV, PORT, HTTP_PORT, SSL_DIR, HTTPS } = process.env;
 const dev = NODE_ENV === "development";

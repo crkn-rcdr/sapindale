@@ -2,7 +2,7 @@ FROM node:lts as builder
 
 WORKDIR /sapindale
 
-COPY package.json yarn.lock webpack.config.js ./
+COPY package.json yarn.lock tailwind.config.js webpack.config.js ./
 COPY src ./src/
 
 RUN yarn install
