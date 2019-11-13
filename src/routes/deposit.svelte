@@ -12,9 +12,9 @@
 <svelte:head>
   <title>Sapindale — Deposit from preservation</title>
 </svelte:head>
-<div class="container mx-auto">
+<div class="mx-auto">
   <h1>Deposit from preservation</h1>
-  <div class="layout">
+  <div>
     <TypeAhead
       db="dipstaging"
       id="aip"
@@ -22,7 +22,7 @@
       on:selected={select}
       on:deselected={clear} />
   </div>
-  <p class="layout">
+  <p>
     {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
   </p>
 </div>

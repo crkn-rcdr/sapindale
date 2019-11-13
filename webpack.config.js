@@ -40,6 +40,7 @@ let plugins = [
     chunkFilename: "[id].[hash].css"
   }),
   new PurgecssPlugin({
+    whitelist: ["html", "body"],
     paths: glob.sync("./src/**/*.svelte", { nodir: true })
   })
 ];

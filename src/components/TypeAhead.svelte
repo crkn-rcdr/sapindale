@@ -32,20 +32,18 @@
   }
 </script>
 
-<div class="container mx-auto">
-  <label for={`${id}.input`}>{label}</label>
-  <input
-    type="text"
-    id={`${id}.input`}
-    class= "data-list border"
-    list={`${id}.datalist`}
-    disabled={datalist.length < 1}
-    bind:value
-    on:input={lookupIds}
-    on:change={selectItem} />
-  <datalist id={`${id}.datalist`}>
-    {#each datalist as item}
-      <option>{item}</option>
-    {/each}
-  </datalist>
-</div>
+<label for={`${id}.input`}>{label}</label>
+<input
+  type="text"
+  id={`${id}.input`}
+  class="data-list border"
+  list={`${id}.datalist`}
+  disabled={datalist.length < 1}
+  bind:value
+  on:input={lookupIds}
+  on:change={selectItem} />
+<datalist id={`${id}.datalist`}>
+  {#each datalist as item}
+    <option>{item}</option>
+  {/each}
+</datalist>
