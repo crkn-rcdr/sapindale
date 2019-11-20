@@ -1,11 +1,17 @@
 <script>
   import TypeAhead, { value } from "../components/TypeAhead.svelte";
+  import BulkLookup, { metaIdList } from "../components/BulkLookup.svelte";
   let id;
+
   function select(event) {
     id = event.detail.value;
   }
   function clear() {
     id = undefined;
+  }
+  function search(event) {
+    id = event.detail.metaIdList;
+    console.log("in deposit", id);
   }
 </script>
 
@@ -25,4 +31,21 @@
   <p>
     {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
   </p>
+</div>
+<div>
+  <BulkLookup
+    db="dipstaging"
+    id="aip"
+    label="Paste your ID's to lookup"
+    on:submit={search} />
+</div>
+<div>
+  {#if id !== undefined}
+    <table>
+      <th>List of ID's</th>
+      <tr>
+        <td class="py-2 px-2">{id}</td>
+      </tr>
+    </table>
+  {/if}
 </div>
