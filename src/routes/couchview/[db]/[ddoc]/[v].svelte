@@ -5,6 +5,8 @@
     const view = `${ddoc}/${v}`;
     const options = page.query;
 
+    options.reduce = options.reduce === "true";
+
     return { db, view, options };
   }
 </script>
@@ -14,10 +16,6 @@
 
   export let db, view, options;
 </script>
-
-<style>
-
-</style>
 
 <svelte:head>
   <title>Sapindale — Couch view output</title>

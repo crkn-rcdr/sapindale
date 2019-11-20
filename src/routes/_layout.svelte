@@ -12,7 +12,7 @@
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 
-<div class="mx-auto">
+<div class="max-w-6xl mx-auto">
   <nav class="flex">
     <a href="/">Home</a>
     <div class="ml-auto">

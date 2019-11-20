@@ -9,8 +9,13 @@
     view = undefined, // if the view is found at '_design/$ddoc/_view/$v', this will be '$ddoc/$v'
     options = {};
 
+  if (!options.reduce) {
+    delete options.group;
+  }
+
   let token = $authState.token;
   let views = {};
+  let onlyIDs = false;
 
   onMount(async () => {
     try {
@@ -76,11 +81,17 @@
   }
 
   async function update() {
+    if (!options.reduce) {
+      delete options.group;
+    }
+    onlyIDs = false;
+
     history.pushState(
       { id: history.state.id + 1 },
       "",
       `/couchview/${db}/${view}?${qs.stringify(options)}`
     );
+
     await loadView();
   }
 </script>
@@ -88,121 +99,123 @@
 <style>
   .controls {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 1.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 </style>
 
 <h1>Couch view display</h1>
 
+<h2>Controls</h2>
 <div class="controls">
   <div>
-    <div class="p-2">
-      <label for="db.select">Database:</label>
-      <select
-        class="data-list border"
-        id="db.select"
-        bind:value={db}
-        on:change={reselectView}>
-        {#each Object.keys(views) as database}
-          <option selected={database === db}>{database}</option>
+    <label for="db.select">Database</label>
+    <select
+      class="data-list border"
+      id="db.select"
+      bind:value={db}
+      on:change={reselectView}>
+      {#each Object.keys(views) as database}
+        <option selected={database === db}>{database}</option>
+      {/each}
+    </select>
+    <br />
+    <label for="view.select">View</label>
+    <select
+      class="data-list border"
+      id="view.select"
+      bind:value={view}
+      disabled={!db}>
+      {#if db && views[db]}
+        {#each Object.keys(views[db]) as ddoc (ddoc)}
+          <optgroup label={ddoc}>
+            {#each views[db][ddoc] as v}
+              <option value={`${ddoc}/${v}`} selected={`${ddoc}/${v}` === view}>
+                {v}
+              </option>
+            {/each}
+          </optgroup>
         {/each}
-      </select>
-      <br />
-    </div>
-    <div class="p-2">
-      <label for="view.select">View:</label>
-      <select
-        class="data-list border"
-        id="view.select"
-        bind:value={view}
-        disabled={!db}>
-        {#if db && views[db]}
-          {#each Object.keys(views[db]) as ddoc (ddoc)}
-            <optgroup label={ddoc}>
-              {#each views[db][ddoc] as v}
-                <option
-                  value={`${ddoc}/${v}`}
-                  selected={`${ddoc}/${v}` === view}>
-                  {v}
-                </option>
-              {/each}
-            </optgroup>
-          {/each}
-        {/if}
-      </select>
-    </div>
+      {/if}
+    </select>
+    <br />
+    <br />
+    <button on:click={update}>Update</button>
   </div>
   <div>
-    <div class="p-2">
-      <label for="startkeyInput">Start key:</label>
-      <input
-        type="text"
-        class="data-list border"
-        id="startkeyInput"
-        bind:value={options.startkey} />
-    </div>
+    <label for="startkeyInput">Start key</label>
+    <input
+      type="text"
+      class="data-list border"
+      id="startkeyInput"
+      bind:value={options.startkey} />
     <br />
-    <div class="p-2">
-      <label for="endkeyInput">End key:</label>
-      <input
-        type="text"
-        class="data-list border"
-        id="endkeyInput"
-        bind:value={options.endkey} />
-      <label for="inclusiveCheck">Inclusive?</label>
-      <input
-        type="checkbox"
-        class="data-list border"
-        id="inclusiveCheck"
-        bind:checked={options.inclusive} />
-    </div>
+    <label for="endkeyInput">End key</label>
+    <input
+      type="text"
+      class="data-list border"
+      id="endkeyInput"
+      bind:value={options.endkey} />
     <br />
-    <div class="p-2">
-      <label for="reduceCheck">Reduce?</label>
-      <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
-
-      {#if options.reduce}
-        <label for="groupInput">Grouping level:</label>
-        <input
-          type="number"
-          class="data-list border"
-          min="0"
-          max="9"
-          id="groupInput"
-          bind:value={options.group} />
-      {/if}
-    </div>
-    <div class="p-2">
-      <label for="limitInput">Limit:</label>
+    <label for="inclusiveCheck">Make end key inclusive?</label>
+    <input
+      type="checkbox"
+      class="data-list border"
+      id="inclusiveCheck"
+      bind:checked={options.inclusive} />
+  </div>
+  <div>
+    <label for="reduceCheck">Reduce?</label>
+    <input type="checkbox" id="reduceCheck" bind:checked={options.reduce} />
+    <br />
+    {#if options.reduce}
+      <label for="groupInput">Grouping level:</label>
       <input
         type="number"
         class="data-list border"
-        min="100"
-        max="500"
-        step="100"
-        id="limitInput"
-        bind:value={options.limit} />
-    </div>
-    <br />
-    <div class="p-2">
-      <button on:click={update}>Update</button>
-    </div>
+        min="0"
+        max="9"
+        id="groupInput"
+        bind:value={options.group} />
+      <br />
+    {/if}
+    <label for="limitInput">Limit</label>
+    <input
+      type="number"
+      class="data-list border"
+      min="100"
+      max="500"
+      step="100"
+      id="limitInput"
+      bind:value={options.limit} />
   </div>
 </div>
 
 {#if viewContents.length > 0}
-  <h2>View output</h2>
-  <table class="text-left w-full border-collapse">
+  <h2>Output</h2>
+  {#if viewContents[0].id}
+    <label for="onlyIDs">Hide keys and values</label>
+    <input type="checkbox" id="onlyIDs" bind:checked={onlyIDs} />
+  {/if}
+  <table class="border-collapse">
     <thead>
-      <th>Key</th>
-      <th>Value</th>
+      {#if !onlyIDs}
+        <th>Key</th>
+        <th>Value</th>
+      {/if}
+      {#if viewContents[0].id}
+        <th>ID</th>
+      {/if}
     </thead>
     <tbody>
       {#each viewContents as row}
         <tr>
-          <td class="py-2 px-2">{JSON.stringify(row.key)}</td>
-          <td class="py-2 px-2">{JSON.stringify(row.value)}</td>
+          {#if !onlyIDs}
+            <td>{JSON.stringify(row.key)}</td>
+            <td>{JSON.stringify(row.value)}</td>
+          {/if}
+          {#if row.id}
+            <td>{row.id}</td>
+          {/if}
         </tr>
       {/each}
     </tbody>

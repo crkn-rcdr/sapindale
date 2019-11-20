@@ -22,6 +22,10 @@ footer {
   max-width: none;
 }
 
+.measure {
+  max-width: var(--measure);
+}
+
 h1,
 h2,
 h3,
@@ -56,6 +60,23 @@ select {
   @apply border-solid border-canadiana;
 }
 
+label::after {
+  content: "\A";
+  white-space: pre;
+}
+
 button {
-  @apply bg-canadiana text-white p-0 border border-canadiana rounded;
+  @apply bg-canadiana text-white p-2;
+}
+
+table {
+  @apply border-collapse border-2 border-canadiana;
+}
+
+th {
+  @apply border border-gray-400 px-4 py-2 font-bold text-center;
+}
+
+td {
+  @apply border border-gray-400 px-4 py-2 text-left;
 }
