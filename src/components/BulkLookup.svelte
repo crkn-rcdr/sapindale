@@ -20,6 +20,8 @@
 
 <div>
   <label for={id}>{label}</label>
-  <textarea {id} bind:value={metaIdList} />
+  <textarea class="border" {id} bind:value={metaIdList} />
+</div>
+<div>
   <button type="submit" on:click={bulkIdLookup}>Submit</button>
 </div>

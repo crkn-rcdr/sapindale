@@ -49,7 +49,7 @@
     label="Paste your ID's to lookup"
     on:submit={search} />
 </div>
-<div>
+<div class="pt-2">
   {#if bulkId !== undefined}
     <table>
       <th>List of Found ID's</th>
