@@ -1,7 +1,10 @@
 <script>
   import TypeAhead, { value } from "../components/TypeAhead.svelte";
-  import BulkLookup, { metaIdList } from "../components/BulkLookup.svelte";
+  import BulkLookup, { metaList } from "../components/BulkLookup.svelte";
   let id;
+  let bulkId;
+  var idInList = [];
+  var idNotInList = [];
 
   function select(event) {
     id = event.detail.value;
@@ -10,8 +13,15 @@
     id = undefined;
   }
   function search(event) {
-    id = event.detail.metaIdList;
-    console.log("in deposit", id);
+    bulkId = event.detail.metaList;
+    let resultant = bulkId.rows.filter(row => row.id);
+    let notfound = bulkId.rows.filter(row => !row.id);
+    idInList = resultant.map(function(result) {
+      return result.id;
+    });
+    idNotInList = notfound.map(function(result) {
+      return result.key;
+    });
   }
 </script>
 
@@ -40,12 +50,20 @@
     on:submit={search} />
 </div>
 <div>
-  {#if id !== undefined}
+  {#if bulkId !== undefined}
     <table>
-      <th>List of ID's</th>
-      <tr>
-        <td class="py-2 px-2">{id}</td>
-      </tr>
+      <th>List of Found ID's</th>
+      {#each idInList as id}
+        <tr>
+          <td class="py-2 px-2">{id}</td>
+        </tr>
+      {/each}
+      <th>List of Not found ID's</th>
+      {#each idNotInList as id}
+        <tr>
+          <td class="py-2 px-2">{id}</td>
+        </tr>
+      {/each}
     </table>
   {/if}
 </div>

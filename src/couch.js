@@ -15,19 +15,16 @@ async function _request(token, path, options) {
   return await response.json();
 }
 
-async function _requestAll(token, path, content) {
-  payload =
-    `{
-    "keys": [` +
-    content +
-    `]
-  }`;
+async function _requestAll(token, path, contentarr) {
+  content = JSON.stringify(contentarr);
+  payload = {
+    keys: {}
+  };
+  payload.keys = contentarr;
   let url = [couchUrl, path].join("/");
-  /* if (options) url = `${url}?${qs.stringify(options)}`; */
-
   let response = await fetch(url, {
     method: "POST",
-    body: payload,
+    body: JSON.stringify(payload),
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json"
@@ -37,28 +34,21 @@ async function _requestAll(token, path, content) {
 }
 async function documents(token, db, options) {
   let result = await _request(token, [db, "_all_docs"].join("/"), options);
-  console.log("res", result);
   return result.rows.filter(row => !row.key.startsWith("_design"));
 }
 
 async function bulkId(token, db, metaIdList) {
-  console.log("insideBulk");
   var contentarr = [];
   contentarr = metaIdList.split("\n");
-  console.log("Split:-> ", contentarr);
-  var arrlength = contentarr.length;
-  content = "";
-  for (var index = 0; index < arrlength; index++) {
-    if (index != arrlength - 1) {
-      content = content + '"' + contentarr[index] + '",';
-    } else {
-      content = content + '"' + contentarr[index] + '"';
-    }
-    console.log("contentcheck-> ", content);
-  }
-  let result = await _requestAll(token, [db, "_all_docs"].join("/"), content);
-  /* return result.rows.filter(row => !row.key.startsWith("_design")); */
-  return result.metaId.filter();
+  contentarr = contentarr.map(function(content) {
+    return content;
+  });
+  let result = await _requestAll(
+    token,
+    [db, "_all_docs"].join("/"),
+    contentarr
+  );
+  return result;
 }
 
 async function design_doc_views(token) {

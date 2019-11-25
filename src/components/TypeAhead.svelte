@@ -24,7 +24,6 @@
         endkey: JSON.stringify(`${value}\uFFEF`),
         limit: 12
       })).map(row => row.id);
-      console.log("data", datalist);
     } catch (ignore) {}
   }
 

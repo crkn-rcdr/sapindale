@@ -5,12 +5,8 @@
 
   const dispatch = createEventDispatcher();
   let token = $authState.token;
-  export let metaId = "";
-  let metaIdList = metaId.split("\n");
-  let contentarr = [];
-  let content;
+  let metaIdList;
   let metaList = [];
-  let contentcheck;
   export let id, db;
   export let label = "Please provide a label for this Component";
 
@@ -18,12 +14,12 @@
     try {
       metaList = await bulkId(token, db, metaIdList);
     } catch (ignore) {}
-    dispatch("submit", { metaIdList });
+    dispatch("submit", { metaList });
   }
 </script>
 
 <div>
-  <label for={`${metaId}`}>{label}</label>
-  <textarea id={`${metaId}`} bind:value={metaIdList} />
+  <label for={id}>{label}</label>
+  <textarea {id} bind:value={metaIdList} />
   <button type="submit" on:click={bulkIdLookup}>Submit</button>
 </div>
