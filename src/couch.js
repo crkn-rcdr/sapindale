@@ -1,53 +1,33 @@
 import qs from "query-string";
 
-var value;
 const couchUrl = process.env.COUCH;
-var payload;
-var metaIdList, content;
 
-async function _request(token, path, options) {
+async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
 
-  let response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return await response.json();
-}
-
-async function _requestAll(token, path, contentarr) {
-  content = JSON.stringify(contentarr);
-  payload = {
-    keys: {}
-  };
-  payload.keys = contentarr;
-  let url = [couchUrl, path].join("/");
-  let response = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(payload),
+  let fetchOptions = {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json"
     }
-  });
+  };
+  if (method) fetchOptions.method = method;
+  if (payload) fetchOptions.body = JSON.stringify(payload);
+
+  let response = await fetch(url, fetchOptions);
   return await response.json();
 }
+
 async function documents(token, db, options) {
   let result = await _request(token, [db, "_all_docs"].join("/"), options);
   return result.rows.filter(row => !row.key.startsWith("_design"));
 }
 
-async function bulkId(token, db, metaIdList) {
-  var contentarr = [];
-  contentarr = metaIdList.split("\n");
-  contentarr = contentarr.map(function(content) {
-    return content;
+async function idLookup(token, db, idList) {
+  let result = await _request(token, [db, "_all_docs"].join("/"), {}, "POST", {
+    keys: idList
   });
-  let result = await _requestAll(
-    token,
-    [db, "_all_docs"].join("/"),
-    contentarr
-  );
   return result;
 }
 
@@ -86,4 +66,4 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-export { bulkId, documents, design_doc_views, view };
+export { idLookup, documents, design_doc_views, view };

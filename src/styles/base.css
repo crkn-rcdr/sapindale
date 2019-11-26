@@ -57,7 +57,7 @@ h5 {
 
 input,
 select {
-  @apply border-solid border-canadiana;
+  @apply border border-solid border-canadiana;
 }
 
 label::after {
@@ -81,5 +81,5 @@ td {
   @apply border border-gray-400 px-4 py-2 text-left;
 }
 textarea {
-  @apply border-solid border-canadiana;
+  @apply border border-solid border-canadiana;
 }

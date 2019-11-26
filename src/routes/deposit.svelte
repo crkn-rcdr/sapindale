@@ -1,6 +1,6 @@
 <script>
-  import TypeAhead, { value } from "../components/TypeAhead.svelte";
-  import BulkLookup, { metaList } from "../components/BulkLookup.svelte";
+  import TypeAhead from "../components/TypeAhead.svelte";
+  import BulkLookup from "../components/BulkLookup.svelte";
   let id;
   let bulkId;
   var idInList = [];
@@ -13,7 +13,8 @@
     id = undefined;
   }
   function search(event) {
-    bulkId = event.detail.metaList;
+    console.log(event);
+    bulkId = event.detail.results;
     let resultant = bulkId.rows.filter(row => row.id);
     let notfound = bulkId.rows.filter(row => !row.id);
     idInList = resultant.map(function(result) {
@@ -28,27 +29,24 @@
 <svelte:head>
   <title>Sapindale — Deposit from preservation</title>
 </svelte:head>
-<div class="mx-auto">
-  <h1>Deposit from preservation</h1>
-  <div>
-    <TypeAhead
-      db="dipstaging"
-      id="aip"
-      label="Input an AIP ID:"
-      on:selected={select}
-      on:deselected={clear} />
-  </div>
-  <p>
-    {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
-  </p>
-</div>
-<div>
-  <BulkLookup
-    db="dipstaging"
-    id="aip"
-    label="Paste your ID's to lookup"
-    on:submit={search} />
-</div>
+<h1>Deposit from preservation</h1>
+<h2>Select one AIP</h2>
+<TypeAhead
+  db="dipstaging"
+  id="aip"
+  label="Input an AIP ID:"
+  on:selected={select}
+  on:deselected={clear} />
+<p>
+  {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
+</p>
+<h2>Select multiple AIPs</h2>
+<BulkLookup
+  db="dipstaging"
+  id="aip"
+  hasPrefix={true}
+  label="List of AIP IDs, separated by newline"
+  on:submit={search} />
 <div class="pt-2">
   {#if bulkId !== undefined}
     <table>
