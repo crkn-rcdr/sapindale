@@ -22,7 +22,7 @@
     var old_g = ev.dataTransfer.getData("item");
     const item = list.splice(old_g, 1)[0];
     list.push(item);
-    $: list = list;
+    list = list;
   }
   async function view(ev, item) {
     selectedName = item.name;
