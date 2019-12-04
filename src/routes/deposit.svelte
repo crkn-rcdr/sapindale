@@ -1,7 +1,6 @@
 <script>
   import TypeAhead from "../components/TypeAhead.svelte";
   import BulkLookup from "../components/BulkLookup.svelte";
-  import SortableList from "svelte-sortable-list/SortableList.svelte";
   import ManifestView from "../components/ManifestView.svelte";
   let id;
   let bulkId;
