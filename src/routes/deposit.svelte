@@ -2,7 +2,7 @@
   import TypeAhead from "../components/TypeAhead.svelte";
   import BulkLookup from "../components/BulkLookup.svelte";
   import ManifestView from "../components/ManifestView.svelte";
-  import SortableList from "svelte-sortable-list/SortableList.svelte";
+  import SortableList from "../components/SortableList.svelte";
   let id;
   let bulkId;
   var idInList = [];
@@ -83,5 +83,5 @@
   <ManifestView {item} {index} on:click={view} />
 </SortableList>
 {#if selectedName !== undefined}
-  <span>{selectedName.name}</span>
+  <span class="border border-canadiana p-2">{selectedName.name}</span>
 {/if}
