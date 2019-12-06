@@ -1,5 +1,6 @@
 <script>
-  //SortableList.svelte FROM svelte-sortable-list package
+  // fork of https://github.com/brunomolteni/svelte-sortable-list
+
   import { quintOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
