@@ -2,10 +2,19 @@
   import TypeAhead from "../components/TypeAhead.svelte";
   import BulkLookup from "../components/BulkLookup.svelte";
   import ManifestView from "../components/ManifestView.svelte";
+  import SortableList from "svelte-sortable-list/SortableList.svelte";
   let id;
   let bulkId;
   var idInList = [];
   var idNotInList = [];
+  let list = [
+    { id: 1, name: "oocihm" },
+    { id: 2, name: "asm" },
+    { id: 3, name: "detaildesign" }
+  ];
+  let sortList = ev => {
+    list = ev.detail;
+  };
 
   function select(event) {
     id = event.detail.value;
@@ -66,5 +75,6 @@
     </table>
   {/if}
 </div>
-
-<ManifestView />
+<SortableList {list} key="id" on:sort={sortList} let:item let:index>
+  <ManifestView {item} {index} />
+</SortableList>
