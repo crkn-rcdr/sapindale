@@ -12,9 +12,13 @@
     { id: 2, name: "asm" },
     { id: 3, name: "detaildesign" }
   ];
+  let selectedName;
   let sortList = ev => {
     list = ev.detail;
   };
+  function view(event) {
+    selectedName = event.detail.item;
+  }
 
   function select(event) {
     id = event.detail.value;
@@ -76,5 +80,8 @@
   {/if}
 </div>
 <SortableList {list} key="id" on:sort={sortList} let:item let:index>
-  <ManifestView {item} {index} />
+  <ManifestView {item} {index} on:click={view} />
 </SortableList>
+{#if selectedName !== undefined}
+  <span>{selectedName.name}</span>
+{/if}

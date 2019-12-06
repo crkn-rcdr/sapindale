@@ -1,13 +1,12 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
-
+  const dispatch = createEventDispatcher();
   export let item;
   export let index;
-  let selectedName;
 
-  function view(ev, item) {
-    selectedName = item.name;
+  function clickForview(event) {
+    dispatch("click", { item });
   }
 </script>
 
@@ -25,10 +24,7 @@
 </style>
 
 <ul>
-  <li class="border border-canadiana" on:click={event => view(event, item)}>
+  <li class="border border-canadiana" on:click={clickForview}>
     {index + 1} {item.name}
   </li>
 </ul>
-{#if selectedName !== undefined}
-  <span>{selectedName}</span>
-{/if}
