@@ -83,5 +83,7 @@
   <ManifestView {item} {index} on:click={view} />
 </SortableList>
 {#if selectedName !== undefined}
-  <span class="border border-canadiana p-2">{selectedName.name}</span>
+  <span class="border border-canadiana p-2">
+    {selectedName.id} {selectedName.name}
+  </span>
 {/if}

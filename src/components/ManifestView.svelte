@@ -25,6 +25,6 @@
 
 <ul>
   <li class="border border-canadiana" on:click={clickForview}>
-    {index + 1} {item.name}
+    {item.id} {item.name}
   </li>
 </ul>
