@@ -27,5 +27,8 @@
     <li>
       <a href="/couchview">Couch view output</a>
     </li>
+    <li>
+      <a href="/manifestview">Manifest editor</a>
+    </li>
   </ul>
 </div>
