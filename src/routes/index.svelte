@@ -25,6 +25,14 @@
       </a>
     </li>
     <li>
+      <a
+        href="{process.env.PACKAGING}/cookie?token={$authState.token}"
+        id="Packaging"
+        target="_blank">
+        Packaging (test)
+      </a>
+    </li>
+    <li>
       <a href="/couchview">Couch view output</a>
     </li>
   </ul>
