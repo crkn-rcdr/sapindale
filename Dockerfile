@@ -9,7 +9,7 @@ RUN yarn install
 
 ENV NODE_ENV=production \
   COUCH=https://upholstery.canadiana.ca \
-  PACKAGING=https://packaging-test.canadiana.ca
+  PACKAGING=https://packaging.canadiana.ca
 
 RUN yarn run build
 
