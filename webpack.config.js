@@ -9,6 +9,7 @@ const PurgecssPlugin = require("purgecss-webpack-plugin");
 
 const mode = process.env.NODE_ENV;
 const couch = process.env.COUCH;
+const packaging = process.env.PACKAGING;
 const dev = mode === "development";
 
 const alias = { svelte: path.resolve("node_modules", "svelte") };
@@ -71,7 +72,8 @@ module.exports = {
       new webpack.DefinePlugin({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
-        "process.env.COUCH": JSON.stringify(couch)
+          "process.env.COUCH": JSON.stringify(couch),
+        "process.env.PACKAGING": JSON.stringify(packaging)
       }),
       ...plugins
     ],

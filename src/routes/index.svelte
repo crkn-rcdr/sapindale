@@ -21,7 +21,15 @@
         href="{process.env.COUCH}/cookie?token={$authState.token}"
         id="Futon"
         target="_blank">
-        Futon
+        Futon (Please do not edit unless you know what you are doing)
+      </a>
+    </li>
+    <li>
+      <a
+        href="{process.env.PACKAGING}/cookie?token={$authState.token}"
+        id="Packaging"
+        target="_blank">
+        Packaging (legacy tools)
       </a>
     </li>
     <li>
