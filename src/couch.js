@@ -1,4 +1,5 @@
 import qs from "query-string";
+//import Item from "../components/CanvasEditor.svelte";
 
 const couchUrl = process.env.COUCH;
 
@@ -66,4 +67,10 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-export { idLookup, documents, design_doc_views, view };
+async function canvasSelection() {
+  let url = "https://placekitten.com/g/300/500?image=";
+  let response = await fetch(url);
+  return await response;
+}
+
+export { idLookup, documents, design_doc_views, view, canvasSelection };

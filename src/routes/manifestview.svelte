@@ -1,20 +1,37 @@
 <script>
   import ManifestView from "../components/ManifestView.svelte";
   import SortableList from "../components/SortableList.svelte";
+  import CanvasEditor, { Item } from "../components/CanvasEditor.svelte";
+  import { setContext } from "svelte";
+  import { readable } from "svelte/store";
 
-  let list = [
+  /* let list = [
     { id: 1, name: "oocihm" },
     { id: 2, name: "asm" },
-    { id: 3, name: "detaildesign" }
-  ];
+    { id: 3, name: "detaildesign" },
+    { id: 4, name: "fourth" },
+    { id: 5, name: "fifth" },
+    { id: 6, name: "sixth" },
+    { id: 7, name: "seventh" }
+  ]; */
+  let list = [Item];
+
   let selectedName;
+  let activeItem;
   let sortList = ev => {
     list = ev.detail;
   };
-  function view(event) {
+  export function view(event) {
     selectedName = event.detail.item;
+    activeItem = selectedName;
   }
 </script>
+
+<style>
+  .view {
+    overflow-x: scroll;
+  }
+</style>
 
 <svelte:head>
   <title>Sapindale — Manifest Editor</title>
@@ -27,6 +44,13 @@
   </span>
 {/if}
 <br />
-<SortableList {list} key="id" on:sort={sortList} let:item let:index>
-  <ManifestView {item} {index} on:click={view} />
-</SortableList>
+<!--<div class="view">
+  <SortableList {list} key="id" on:sort={sortList} let:item let:index>
+    <ManifestView {item} {index} on:click={view} />
+  </SortableList>
+</div>-->
+<div>
+
+  <CanvasEditor />
+
+</div>
