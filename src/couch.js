@@ -67,10 +67,16 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-async function canvasSelection() {
-  let url = "https://placekitten.com/g/300/500?image=";
-  let response = await fetch(url);
-  return await response;
+function testManifest(entries) {
+  let entry = num => {
+    return {
+      full: `https://placekitten.com/g/600/800?image=${num}`,
+      thumbnail: `https://placekitten.com/g/150/150?image=${num}`,
+      label: `image ${num}`
+    };
+  };
+
+  return { items: [...Array(entries).keys()].map(n => entry(n)) };
 }
 
-export { idLookup, documents, design_doc_views, view, canvasSelection };
+export { idLookup, documents, design_doc_views, view, testManifest };
