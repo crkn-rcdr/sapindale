@@ -72,7 +72,8 @@ function testManifest(entries) {
     return {
       full: `https://placekitten.com/g/600/800?image=${num}`,
       thumbnail: `https://placekitten.com/g/150/150?image=${num}`,
-      label: `image ${num}`
+      label: `image ${num}`,
+      id: `${num}`
     };
   };
 

@@ -4,6 +4,7 @@
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
 
+  let current = "";
   // FLIP ANIMATION
   const [send, receive] = crossfade({
     duration: d => Math.sqrt(d * 200),
@@ -28,7 +29,7 @@
   const getDraggedParent = node =>
     (node.dataset.index && node.dataset) || getDraggedParent(node.parentNode);
   const start = ev => {
-    ev.dataTransfer.setData("source", ev.target.dataset.index);
+    ev.dataTransfer.setData("source", ev.currentTarget.dataset.index);
   };
   const over = ev => {
     ev.preventDefault();
@@ -53,8 +54,8 @@
   const dispatch = createEventDispatcher();
   const reorder = ({ from, to }) => {
     let newList = [...list];
-    newList[from] = [newList[to], (newList[to] = newList[from])][0];
-
+    let sortItem = newList.splice(from, 1)[0];
+    newList.splice(to, 0, sortItem);
     dispatch("sort", newList);
   };
 
@@ -67,39 +68,53 @@
 </script>
 
 <style>
-  ul {
+  /*  ul {
     list-style: none;
     padding: 0;
-  }
-  li {
-    /* border: 2px dotted transparent; */
-    transition: border 0.1s linear;
+  } */
+  /* li { */
+  /* border: 2px dotted transparent; */
+  /*  transition: border 0.1s linear;
     display: inline-block;
-  }
+  } */
   .over {
     border-color: rgba(48, 12, 200, 0.2);
+  }
+  .thumbList {
+    display: flex;
+    margin-top: 1em;
+    width: 100%;
+    overflow-x: scroll;
+  }
+  .thumbList * + * {
+    margin-left: 1em;
   }
 </style>
 
 {#if list && list.length}
-  <ul>
-    {#each list as item, index (getKey(item))}
-      <li
-        data-index={index}
-        data-id={JSON.stringify(getKey(item))}
-        draggable="true"
-        on:dragstart={start}
-        on:dragover={over}
-        on:dragleave={leave}
-        on:drop={drop}
-        in:receive={{ key: getKey(item) }}
-        out:send={{ key: getKey(item) }}
-        animate:flip={{ duration: 300 }}
-        class:over={getKey(item) === isOver}>
-        <slot {item} {index}>
-          <p>{getKey(item)}</p>
-        </slot>
-      </li>
-    {/each}
+
+  <ul id="list12">
+    <div class="thumbList">
+      {#each list as item, index (getKey(item))}
+        <li
+          data-index={index}
+          data-id={JSON.stringify(getKey(item))}
+          draggable="true"
+          on:dragstart={start}
+          on:dragover={over}
+          on:dragleave={leave}
+          on:drop={drop}
+          class={current === 'True' ? 'active' : ''}
+          in:receive={{ key: getKey(item) }}
+          out:send={{ key: getKey(item) }}
+          animate:flip={{ duration: 300 }}
+          class:over={getKey(item) === isOver}>
+          <slot {item} {index}>
+            <p>{getKey(item)}</p>
+            <p>{item.id}</p>
+          </slot>
+        </li>
+      {/each}
+    </div>
   </ul>
 {/if}
