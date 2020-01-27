@@ -11,7 +11,10 @@
   }
 </script>
 
-<img
-  src={item.thumbnail}
-  alt={`thumbnail for image: ${item.label}`}
-  on:click={clickForview} />
+<figure>
+  <img
+    src={item.thumbnail}
+    alt={`thumbnail for image: ${item.label}`}
+    on:click={clickForview} />
+  <figcaption>{item.label}</figcaption>
+</figure>
