@@ -11,10 +11,6 @@
   }
 </script>
 
-<style>
-
-</style>
-
 <img
   src={item.thumbnail}
   alt={`thumbnail for image: ${item.label}`}

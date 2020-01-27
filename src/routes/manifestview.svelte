@@ -27,28 +27,16 @@
   }
 </script>
 
-<style>
-  .view {
-    overflow-x: scroll;
-  }
-</style>
-
 <svelte:head>
   <title>Sapindale — Manifest Editor</title>
 </svelte:head>
 <h1>Manifest Editor</h1>
-<br />
 {#if selectedName !== undefined}
   <span class="border border-canadiana p-2">
     {selectedName.id} {selectedName.name}
   </span>
 {/if}
 <br />
-<!--<div class="view">
-  <SortableList {list} key="id" on:sort={sortList} let:item let:index>
-    <ManifestView {item} {index} on:click={view} />
-  </SortableList>
-</div>-->
 <div>
 
   <CanvasEditor />
