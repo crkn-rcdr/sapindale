@@ -11,38 +11,40 @@
   let item;
   let index;
   let list;
+  let fullImage;
   onMount(async () => {
     manifest = testManifest(10);
     list = manifest.items;
     selected = manifest.items[0];
-    console.log("selected value", manifest.items);
+    /* console.log("selected value", manifest.items); */
   });
   let sortList = ev => {
     list = ev.detail;
   };
   function view(event) {
-    let fullImage = event.detail.item;
-    console.log("image", fullImage);
+    fullImage = event.detail.item;
+    /* console.log("image", fullImage); */
   }
 </script>
 
 <style>
-  .thumbList {
+  /* .thumbList {
     display: flex;
     margin-top: 1em;
     width: 100%;
     overflow-x: scroll;
+    display: inline-block;
   }
   .thumbList * + * {
     margin-left: 1em;
-  }
+  } */
 </style>
 
-{#if selected}
-  <img src={selected.full} alt={selected.label} />
+{#if fullImage}
+  <img src={fullImage.full} alt={fullImage.label} />
 {/if}
 {#if manifest.items}
-  <div class="thumbList">
+  <div>
     <SortableList {list} key="id" on:sort={sortList} let:item let:index>
       <CanvasViewer {item} {index} on:click={view} />
     </SortableList>

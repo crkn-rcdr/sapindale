@@ -68,22 +68,22 @@
 </script>
 
 <style>
-  /*  ul {
+  /* ul {
     list-style: none;
     padding: 0;
   } */
-  /* li { */
-  /* border: 2px dotted transparent; */
-  /*  transition: border 0.1s linear;
+  li {
+    /* border: 2px dotted transparent; */
+    transition: border 0.1s linear;
     display: inline-block;
-  } */
+  }
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
   .thumbList {
     display: flex;
     margin-top: 1em;
-    width: 100%;
+    width: 500%;
     overflow-x: scroll;
   }
   .thumbList * + * {
@@ -93,7 +93,7 @@
 
 {#if list && list.length}
 
-  <ul id="list12">
+  <ul>
     <div class="thumbList">
       {#each list as item, index (getKey(item))}
         <li
