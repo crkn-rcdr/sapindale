@@ -11,6 +11,14 @@
   }
 </script>
 
+<style>
+  figcaption {
+    text-align: center;
+    color: #98012e;
+    text-transform: capitalize;
+  }
+</style>
+
 <figure>
   <img
     src={item.thumbnail}
