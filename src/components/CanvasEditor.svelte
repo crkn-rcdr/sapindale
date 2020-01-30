@@ -12,18 +12,26 @@
   let index;
   let list;
   let fullImage;
+  let changed;
   onMount(async () => {
+    await typeLabel();
+  });
+  async function typeLabel(event) {
+    dispatch("deselected");
     manifest = testManifest(10);
     list = manifest.items;
-    selected = manifest.items[0];
+    /* selected = manifest.items[0]; */
     /* console.log("selected value", manifest.items); */
-  });
+  }
   let sortList = ev => {
     list = ev.detail;
   };
   function view(event) {
     fullImage = event.detail.item;
     /* console.log("image", fullImage); */
+  }
+  function changeImg(event) {
+    dispatch("changed", { fullImage });
   }
 </script>
 
@@ -38,10 +46,20 @@
   .thumbList * + * {
     margin-left: 1em;
   } */
+  /* figcaption {
+    text-align: center;
+    color: #98012e;
+    text-transform: capitalize;
+  } */
 </style>
 
 {#if fullImage}
   <img src={fullImage.full} alt={fullImage.label} />
+  <input
+    type="text"
+    bind:value={fullImage.label}
+    on:input={changeImg}
+    on:clear={typeLabel} />
 {/if}
 {#if manifest.items}
   <div>

@@ -15,7 +15,7 @@
     { id: 7, name: "seventh" }
   ]; */
   let list = [Item];
-
+  let typeLabel;
   let selectedName;
   let activeItem;
   let sortList = ev => {
@@ -24,6 +24,13 @@
   export function view(event) {
     selectedName = event.detail.item;
     activeItem = selectedName;
+  }
+  function changeImg(event) {
+    typeLabel = event.detail.fullImage;
+    console.log("type", typeLabel);
+  }
+  function clear(event) {
+    typeLabel = undefined;
   }
 </script>
 
@@ -39,6 +46,6 @@
 <br />
 <div>
 
-  <CanvasEditor />
+  <CanvasEditor on:changed={changeImg} on:deselected={clear} />
 
 </div>
