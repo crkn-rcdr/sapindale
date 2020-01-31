@@ -15,6 +15,7 @@
   let changed;
   onMount(async () => {
     await typeLabel();
+    fullImage = manifest.items[0];
   });
   async function typeLabel(event) {
     dispatch("deselected");

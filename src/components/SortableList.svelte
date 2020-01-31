@@ -72,49 +72,47 @@
     list-style: none;
     padding: 0;
   } */
-  li {
-    /* border: 2px dotted transparent; */
-    transition: border 0.1s linear;
-    display: inline-block;
-  }
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
   .thumbList {
     display: flex;
     margin-top: 1em;
-    width: 500%;
-    overflow-x: scroll;
+    overflow-x: auto;
+    max-width: none;
   }
-  .thumbList * + * {
+
+  .thumbList li {
+    min-width: 150px;
+  }
+
+  .thumbList li + li {
     margin-left: 1em;
   }
 </style>
 
 {#if list && list.length}
 
-  <ul>
-    <div class="thumbList">
-      {#each list as item, index (getKey(item))}
-        <li
-          data-index={index}
-          data-id={JSON.stringify(getKey(item))}
-          draggable="true"
-          on:dragstart={start}
-          on:dragover={over}
-          on:dragleave={leave}
-          on:drop={drop}
-          class={current === 'True' ? 'active' : ''}
-          in:receive={{ key: getKey(item) }}
-          out:send={{ key: getKey(item) }}
-          animate:flip={{ duration: 300 }}
-          class:over={getKey(item) === isOver}>
-          <slot {item} {index}>
-            <p>{getKey(item)}</p>
-            <p>{item.id}</p>
-          </slot>
-        </li>
-      {/each}
-    </div>
+  <ul class="thumbList">
+    {#each list as item, index (getKey(item))}
+      <li
+        data-index={index}
+        data-id={JSON.stringify(getKey(item))}
+        draggable="true"
+        on:dragstart={start}
+        on:dragover={over}
+        on:dragleave={leave}
+        on:drop={drop}
+        class={current === 'True' ? 'active' : ''}
+        in:receive={{ key: getKey(item) }}
+        out:send={{ key: getKey(item) }}
+        animate:flip={{ duration: 300 }}
+        class:over={getKey(item) === isOver}>
+        <slot {item} {index}>
+          <p>{getKey(item)}</p>
+          <p>{item.id}</p>
+        </slot>
+      </li>
+    {/each}
   </ul>
 {/if}

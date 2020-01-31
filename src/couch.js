@@ -77,7 +77,10 @@ function testManifest(entries) {
     };
   };
 
-  return { items: [...Array(entries).keys()].map(n => entry(n)) };
+  return {
+    label: "Test Manifest Title",
+    items: [...Array(entries).keys()].map(n => entry(n))
+  };
 }
 
 export { idLookup, documents, design_doc_views, view, testManifest };
