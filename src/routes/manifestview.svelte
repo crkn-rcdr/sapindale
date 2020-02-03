@@ -27,7 +27,6 @@
   }
   function changeImg(event) {
     typeLabel = event.detail.fullImage;
-    console.log("type", typeLabel);
   }
   function clear(event) {
     typeLabel = undefined;

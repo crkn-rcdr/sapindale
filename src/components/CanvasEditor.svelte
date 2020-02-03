@@ -22,16 +22,19 @@
     manifest = testManifest(10);
     list = manifest.items;
     /* selected = manifest.items[0]; */
-    /* console.log("selected value", manifest.items); */
   }
   let sortList = ev => {
     list = ev.detail;
   };
   function view(event) {
     fullImage = event.detail.item;
-    /* console.log("image", fullImage); */
   }
   function changeImg(event) {
+    let inputId = fullImage.label.charAt(fullImage.label.length - 1);
+    fullImage.id = inputId;
+    fullImage.full = fullImage.full.replace(/.$/, inputId);
+    fullImage.thumbnail = fullImage.thumbnail.replace(/.$/, inputId);
+
     dispatch("changed", { fullImage });
   }
 </script>
@@ -52,16 +55,36 @@
     color: #98012e;
     text-transform: capitalize;
   } */
+  /*  .labelField {
+    float: right;
+  } */
+  .labelField {
+    display: flex;
+    /* list-style: none; */
+    width: 100%;
+  }
+  .labelField li + li {
+    display: inline-block;
+    padding: 30% 0% 0% 2%;
+  }
 </style>
 
 {#if fullImage}
-  <img src={fullImage.full} alt={fullImage.label} />
-  <input
-    type="text"
-    bind:value={fullImage.label}
-    on:input={changeImg}
-    on:clear={typeLabel} />
+  <ul class="labelField">
+    <li>
+      <img src={fullImage.full} alt={fullImage.label} />
+    </li>
+    <li>
+      <input
+        type="text"
+        bind:value={fullImage.label}
+        on:input={changeImg}
+        on:clear={typeLabel} />
+    </li>
+
+  </ul>
 {/if}
+
 {#if manifest.items}
   <div>
     <SortableList {list} key="id" on:sort={sortList} let:item let:index>
