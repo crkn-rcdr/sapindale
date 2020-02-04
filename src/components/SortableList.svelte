@@ -3,6 +3,7 @@
   import { quintOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
+  import CanvasThumbnail from "./CanvasThumbnail.svelte";
 
   let current = "";
   // FLIP ANIMATION
@@ -59,19 +60,12 @@
     dispatch("sort", newList);
   };
 
-  // UTILS
-  const getKey = item => (key ? item[key] : item);
-
   // PROPS
   export let list;
-  export let key;
+  export let selectedIndex;
 </script>
 
 <style>
-  /* ul {
-    list-style: none;
-    padding: 0;
-  } */
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
@@ -94,24 +88,25 @@
 {#if list && list.length}
 
   <ul class="thumbList">
-    {#each list as item, index (getKey(item))}
+    {#each list as item, index (item.id)}
       <li
         data-index={index}
-        data-id={JSON.stringify(getKey(item))}
+        data-id={JSON.stringify(item.id)}
         draggable="true"
         on:dragstart={start}
         on:dragover={over}
         on:dragleave={leave}
         on:drop={drop}
         class={current === 'True' ? 'active' : ''}
-        in:receive={{ key: getKey(item) }}
-        out:send={{ key: getKey(item) }}
+        in:receive={{ key: item.id }}
+        out:send={{ key: item.id }}
         animate:flip={{ duration: 300 }}
-        class:over={getKey(item) === isOver}>
-        <slot {item} {index}>
-          <p>{getKey(item)}</p>
-          <p>{item.id}</p>
-        </slot>
+        class:over={item.id === isOver}>
+        <CanvasThumbnail
+          {item}
+          {index}
+          selected={index === selectedIndex}
+          on:canvasSelected />
       </li>
     {/each}
   </ul>
