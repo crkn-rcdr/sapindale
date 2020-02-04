@@ -4,17 +4,20 @@
   import { testManifest } from "../couch.js";
   import SortableList from "../components/SortableList.svelte";
 
-  const dispatch = createEventDispatcher();
-  export let manifest;
+  export let items;
   let selectedIndex = 0;
-  $: selected = manifest.items[selectedIndex];
 
   let sortList = ev => {
-    manifest.items = ev.detail;
+    items = ev.detail;
   };
 
   let selectCanvas = ev => {
     selectedIndex = ev.detail;
+  };
+
+  const dispatch = createEventDispatcher();
+  let update = _ev => {
+    dispatch("manifestUpdate", true);
   };
 </script>
 
@@ -34,18 +37,22 @@
 </style>
 
 <div class="selected">
-  <img src={selected.full} alt={selected.label} />
+  <img src={items[selectedIndex].full} alt={items[selectedIndex].label} />
   <div class="labelSection">
     <div class="labelSectionInner">
       <label for="labelEdit">Edit canvas label</label>
-      <input type="text" id="labelEdit" bind:value={selected.label} />
+      <input
+        type="text"
+        id="labelEdit"
+        bind:value={items[selectedIndex].label}
+        on:input={update} />
     </div>
   </div>
 </div>
 
-{#if manifest.items}
+{#if items}
   <SortableList
-    list={manifest.items}
+    list={items}
     {selectedIndex}
     on:sort={sortList}
     on:canvasSelected={selectCanvas} />

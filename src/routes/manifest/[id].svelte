@@ -14,6 +14,12 @@
 
   export let id;
   let manifest = testManifest(10);
+  $: m = JSON.stringify(manifest, null, 2);
+
+  let update = _ev => {
+    // triggers a reactive update of the manifest
+    manifest = manifest;
+  };
 </script>
 
 <svelte:head>
@@ -21,5 +27,5 @@
 </svelte:head>
 
 <h1>Editing manifest: {id}</h1>
-<CanvasEditor {manifest} />
-<pre>{JSON.stringify(manifest, null, 2)}</pre>
+<CanvasEditor items={manifest.items} on:manifestUpdate={update} />
+<pre>{m}</pre>
