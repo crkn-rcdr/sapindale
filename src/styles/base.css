@@ -64,7 +64,9 @@ label::after {
   content: "\A";
   white-space: pre;
 }
-
+label {
+  @apply text-canadiana;
+}
 button {
   @apply bg-canadiana text-white p-2;
 }

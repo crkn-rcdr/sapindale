@@ -1,4 +1,5 @@
 import qs from "query-string";
+//import Item from "../components/CanvasEditor.svelte";
 
 const couchUrl = process.env.COUCH;
 
@@ -66,4 +67,20 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-export { idLookup, documents, design_doc_views, view };
+function testManifest(entries) {
+  let entry = num => {
+    return {
+      full: `https://placekitten.com/g/600/800?image=${num}`,
+      thumbnail: `https://placekitten.com/g/150/150?image=${num}`,
+      label: `image ${num}`,
+      id: `${num}`
+    };
+  };
+
+  return {
+    label: "Test Manifest Title",
+    items: [...Array(entries).keys()].map(n => entry(n))
+  };
+}
+
+export { idLookup, documents, design_doc_views, view, testManifest };
