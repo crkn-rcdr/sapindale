@@ -26,6 +26,7 @@
     display: flex;
     /* list-style: none; */
     width: 100%;
+    padding-top: 10px;
   }
   .labelSection {
     display: flex;

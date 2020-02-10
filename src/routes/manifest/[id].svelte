@@ -20,12 +20,28 @@
     // triggers a reactive update of the manifest
     manifest = manifest;
   };
+  let changeLabel = changeText => {
+    {
+      let changedLabel = manifest.label;
+      return changedLabel;
+    }
+  };
 </script>
+
+<style>
+
+</style>
 
 <svelte:head>
   <title>Sapindale — Manifest Editor</title>
 </svelte:head>
 
 <h1>Editing manifest: {id}</h1>
+<label for="manifestEdit">Edit Manifest Label</label>
+<input
+  id="manifestEdit"
+  type="text"
+  bind:value={manifest.label}
+  on:Input={changeLabel} />
 <CanvasEditor items={manifest.items} on:manifestUpdate={update} />
 <pre>{m}</pre>
