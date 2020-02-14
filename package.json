@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8443 COUCH=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 sapper dev",
+    "dev": "PORT=8080 COUCH=https://upholstery.canadiana.ca CANTALOUPE=CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
@@ -33,6 +33,6 @@
     "svelte": "^3.6.4",
     "svelte-loader": "^2.13.4",
     "tailwindcss": "^1.1.3",
-    "webpack": "^4.35.2"
+    "webpack": "^4.41.6"
   }
 }
