@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8443 COUCH=https://upholstery.canadiana.ca sapper dev",
+    "dev": "PORT=8080 COUCH=https://upholstery.canadiana.ca sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
