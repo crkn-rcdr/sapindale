@@ -22,13 +22,11 @@ USER node
 
 COPY --chown=node:node package.json yarn.lock ./
 COPY --from=builder --chown=node:node /sapindale/__sapper__ ./__sapper__/
-COPY --chown=node:node ssl ./ssl/
 COPY --chown=node:node static ./static/
 
 RUN yarn install --prod
 
 ENV NODE_ENV=production \
-  SSL_DIR=/sapindale/ssl \
   PORT=8080 \
   COUCH=https://upholstery.canadiana.ca
 
