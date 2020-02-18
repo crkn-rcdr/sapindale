@@ -1,22 +1,20 @@
 import qs from "query-string";
 import testdata from "./couch/testManifest.json";
 const cantaloupeUrl = process.env.CANTALOUPE;
-function testManifestData(
-  token,
-  itentifier,
-  region,
-  size,
-  rotation,
-  quality,
-  format
-) {
-  var Jdata = testdata;
+var Jdata = testdata;
 
-  var Obj = JSON.parse(JSON.stringify(Jdata));
+function testManifestData(token, identifier, format) {
+  var size = Jdata[identifier].master.size;
+  console.log("identifier", size);
   let url = encodeURIComponent(
-    [cantaloupeUrl].join("/") + Obj.m0bc1df2gh3jk.slug + "/data/sip/data/files/"
+    Jdata[identifier].master.url
+      .replace(
+        "https://swift.canadiana.ca/v1/AUTH_crkn/repository",
+        cantaloupeUrl
+      )
+      .concat("/full/", { size }, "/", { format }, "?", token)
   );
-  console.log("URL : ", url);
+  return url;
 }
 
-export { testManifestData };
+export { testManifestData as default };

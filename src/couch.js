@@ -1,8 +1,9 @@
 import qs from "query-string";
-//import Item from "../components/CanvasEditor.svelte";
+import testdata from "./couch/testManifest.json";
+import testManifestData from "./cantaloupe.js";
 
 const couchUrl = process.env.COUCH;
-
+const cantaloupeUrl = process.env.CANTALOUPE;
 async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
@@ -82,5 +83,28 @@ function testManifest(entries) {
     items: [...Array(entries).keys()].map(n => entry(n))
   };
 }
+function testCantaloupe() {
+  {
+    var Jdata = testdata;
+    let listItems = Jdata.m0bc1df2gh3jk.canvases;
+    var generateList = listItems.map(n => {
+      let takeKey = {};
+      takeKey.id = n.id;
+      takeKey.label = n.label;
+      let testURL = testManifestData("Test", `${n.id}`, "jpg");
+      takeKey.full = testURL;
+      takeKey.thumbnail = testURL;
 
-export { idLookup, documents, design_doc_views, view, testManifest };
+      console.log("takeKey", takeKey);
+      return takeKey;
+    });
+  }
+}
+export {
+  idLookup,
+  documents,
+  design_doc_views,
+  view,
+  testManifest,
+  testCantaloupe
+};

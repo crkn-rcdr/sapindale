@@ -9,10 +9,10 @@
 <script>
   import CanvasEditor from "../../components/CanvasEditor.svelte";
   import { testManifest } from "../../couch.js";
-  import { testManifestData } from "../../cantaloupe.js";
+  import { testCantaloupe } from "../../couch.js";
 
   export let id;
-  let manifestData = testManifestData();
+  let manifestData = testCantaloupe();
   let manifest = testManifest(10);
   $: m = JSON.stringify(manifest, null, 2);
 
