@@ -36,7 +36,7 @@
       <a href="/couchview">Couch view output</a>
     </li>
     <li>
-      <a href="/manifest/test">Manifest editor</a>
+      <a href="/manifest/m0bc1df2gh3jk">Manifest editor</a>
     </li>
   </ul>
 </div>

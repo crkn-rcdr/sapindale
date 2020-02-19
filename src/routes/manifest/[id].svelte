@@ -12,7 +12,7 @@
   import { testCantaloupe } from "../../couch.js";
 
   export let id;
-  let manifestData = testCantaloupe();
+  let manifestData = testCantaloupe(id);
   let manifest = testManifest(10);
   $: m = JSON.stringify(manifest, null, 2);
 

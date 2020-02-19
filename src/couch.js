@@ -3,7 +3,7 @@ import testdata from "./couch/testManifest.json";
 import testManifestData from "./cantaloupe.js";
 
 const couchUrl = process.env.COUCH;
-const cantaloupeUrl = process.env.CANTALOUPE;
+
 async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
@@ -83,10 +83,10 @@ function testManifest(entries) {
     items: [...Array(entries).keys()].map(n => entry(n))
   };
 }
-function testCantaloupe() {
+
+function testCantaloupe(id) {
   {
-    var Jdata = testdata;
-    let listItems = Jdata.m0bc1df2gh3jk.canvases;
+    let listItems = testdata[id].canvases;
     var generateList = listItems.map(n => {
       let takeKey = {};
       takeKey.id = n.id;
