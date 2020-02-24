@@ -1,7 +1,7 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { state as authState } from "../auth.js";
-  import { testManifest } from "../couch.js";
+  import { testCantaloupe } from "../couch.js";
   import SortableList from "../components/SortableList.svelte";
 
   export let items;
@@ -10,7 +10,6 @@
   let sortList = ev => {
     items = ev.detail;
   };
-
   let selectCanvas = ev => {
     selectedIndex = ev.detail;
   };

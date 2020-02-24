@@ -3,7 +3,6 @@ import testdata from "./couch/testManifest.json";
 import testManifestData from "./cantaloupe.js";
 
 const couchUrl = process.env.COUCH;
-const cantaloupeUrl = process.env.CANTALOUPE;
 async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
@@ -68,43 +67,27 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-function testManifest(entries) {
-  let entry = num => {
-    return {
-      full: `https://placekitten.com/g/600/800?image=${num}`,
-      thumbnail: `https://placekitten.com/g/150/150?image=${num}`,
-      label: `image ${num}`,
-      id: `${num}`
-    };
-  };
-
-  return {
-    label: "Test Manifest Title",
-    items: [...Array(entries).keys()].map(n => entry(n))
-  };
-}
-function testCantaloupe() {
+function testCantaloupe(id, token) {
   {
-    var Jdata = testdata;
-    let listItems = Jdata.m0bc1df2gh3jk.canvases;
+    let listItems = testdata[id].canvases;
     var generateList = listItems.map(n => {
       let takeKey = {};
       takeKey.id = n.id;
       takeKey.label = n.label;
-      let testURL = testManifestData("Test", `${n.id}`, "jpg");
+      let path = testdata[n.id].master.url.replace(
+        "https://swift.canadiana.ca/v1/AUTH_crkn/repository/",
+        ""
+      );
+      let testURL = testManifestData(token, path);
       takeKey.full = testURL;
       takeKey.thumbnail = testURL;
 
-      console.log("takeKey", takeKey);
       return takeKey;
     });
+    return {
+      label: "Generate Cantaloupe files",
+      items: generateList
+    };
   }
 }
-export {
-  idLookup,
-  documents,
-  design_doc_views,
-  view,
-  testManifest,
-  testCantaloupe
-};
+export { idLookup, documents, design_doc_views, view, testCantaloupe };

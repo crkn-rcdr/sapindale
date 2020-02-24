@@ -14,8 +14,15 @@
 
 <div class="max-w-6xl mx-auto">
   <nav class="flex">
-    <a href="/">Home</a>
-    <div class="ml-auto">
+    <a
+      class=" inline-block border border-red-500 rounded py-1 px-3 bg-red-500
+      text-white"
+      href="/">
+      Home
+    </a>
+    <div
+      class="ml-auto inline-block border border-red-500 rounded py-1 px-3
+      bg-red-500 text-white">
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
       {:else if $authState.status === 'FAILED'}
