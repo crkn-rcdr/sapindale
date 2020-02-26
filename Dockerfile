@@ -9,6 +9,7 @@ RUN yarn install
 
 ENV NODE_ENV=production \
   COUCH=https://upholstery.canadiana.ca \
+  CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
   PACKAGING=https://packaging.canadiana.ca
 
 RUN yarn run build
@@ -28,7 +29,8 @@ RUN yarn install --prod
 
 ENV NODE_ENV=production \
   PORT=8080 \
-  COUCH=https://upholstery.canadiana.ca
+  COUCH=https://upholstery.canadiana.ca \
+  CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2
 
 EXPOSE 8080
 

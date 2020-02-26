@@ -3,7 +3,6 @@
 
   const dispatch = createEventDispatcher();
   export let item, index, selected;
-
   function dispatchClick(event) {
     dispatch("canvasSelected", index);
   }

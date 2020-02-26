@@ -57,7 +57,7 @@ h5 {
 
 input,
 select {
-  @apply border border-solid border-canadiana;
+  @apply border border-solid border-canadiana py-2 px-3;
 }
 
 label::after {

@@ -1,8 +1,8 @@
 import qs from "query-string";
-//import Item from "../components/CanvasEditor.svelte";
+import testdata from "./couch/testManifest.json";
+import testManifestData from "./cantaloupe.js";
 
 const couchUrl = process.env.COUCH;
-
 async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
@@ -67,20 +67,27 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-function testManifest(entries) {
-  let entry = num => {
+function testCantaloupe(id, token) {
+  {
+    let listItems = testdata[id].canvases;
+    var generateList = listItems.map(n => {
+      let takeKey = {};
+      takeKey.id = n.id;
+      takeKey.label = n.label;
+      let path = testdata[n.id].master.url.replace(
+        "https://swift.canadiana.ca/v1/AUTH_crkn/repository/",
+        ""
+      );
+      let testURL = testManifestData(token, path);
+      takeKey.full = testURL;
+      takeKey.thumbnail = testURL;
+
+      return takeKey;
+    });
     return {
-      full: `https://placekitten.com/g/600/800?image=${num}`,
-      thumbnail: `https://placekitten.com/g/150/150?image=${num}`,
-      label: `image ${num}`,
-      id: `${num}`
+      label: "Generate Cantaloupe files",
+      items: generateList
     };
-  };
-
-  return {
-    label: "Test Manifest Title",
-    items: [...Array(entries).keys()].map(n => entry(n))
-  };
+  }
 }
-
-export { idLookup, documents, design_doc_views, view, testManifest };
+export { idLookup, documents, design_doc_views, view, testCantaloupe };
