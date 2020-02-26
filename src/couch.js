@@ -2,7 +2,7 @@ import qs from "query-string";
 import testdata from "./couch/testManifest.json";
 import testManifestData from "./cantaloupe.js";
 
-const couchUrl = process.env.COUCH;
+const couchUrl = `${process.env.UPHOLSTERY}/couch`;
 async function _request(token, path, options, method, payload) {
   let url = [couchUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;

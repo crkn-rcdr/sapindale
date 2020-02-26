@@ -18,7 +18,7 @@
     </li>
     <li>
       <a
-        href="{process.env.COUCH}/cookie?token={$authState.token}"
+        href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
         id="Futon"
         target="_blank">
         Futon (Please do not edit unless you know what you are doing)

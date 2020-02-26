@@ -8,7 +8,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PurgecssPlugin = require("purgecss-webpack-plugin");
 
 const mode = process.env.NODE_ENV;
-const couch = process.env.COUCH;
+const upholstery = process.env.UPHOLSTERY;
 const cantaloupe = process.env.CANTALOUPE;
 const packaging = process.env.PACKAGING;
 const dev = mode === "development";
@@ -73,7 +73,7 @@ module.exports = {
       new webpack.DefinePlugin({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
-        "process.env.COUCH": JSON.stringify(couch),
+        "process.env.UPHOLSTERY": JSON.stringify(upholstery),
         "process.env.CANTALOUPE": JSON.stringify(cantaloupe),
         "process.env.PACKAGING": JSON.stringify(packaging)
       }),
