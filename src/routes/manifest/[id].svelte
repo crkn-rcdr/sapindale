@@ -12,9 +12,15 @@
   import { state as authState } from "../../auth.js";
 
   export let id;
-  let token = $authState.cantaloupeToken;
-  let manifestData = testCantaloupe(id, token);
-    $: m = JSON.stringify(manifestData, null, 2);
+  let manifestdata = {};
+  let itemValue;
+  let ctoken = $authState.cantaloupeToken;
+  let token = $authState.token;
+  let manifestData = testCantaloupe(id, ctoken, token);
+  Promise.resolve(manifestData).then(function(value) {
+    itemValue = value;
+  });
+  $: m = JSON.stringify(itemValue, null, 2);
 
   let update = _ev => {
     // triggers a reactive update of the manifest
@@ -28,7 +34,8 @@
 
 <h1>Editing manifest: {id}</h1>
 <label for="manifestEdit">Edit manifest label</label>
-<input id="manifestEdit" type="text" bind:value={manifestData.label} />
-<CanvasEditor items={manifestData.items} on:manifestUpdate={update} />
-
+{#if itemValue}
+  <input id="manifestEdit" type="text" bind:value={itemValue.label} />
+  <CanvasEditor items={itemValue.items} on:manifestUpdate={update} />
+{/if}
 <pre>{m}</pre>
