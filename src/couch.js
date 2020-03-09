@@ -117,7 +117,7 @@ async function testCantaloupe(id, ctoken, token) {
     return takeKey;
   });
   return {
-    label: "Generate Cantaloupe files",
+    label: cvs.label,
     items: generateList
   };
 }
