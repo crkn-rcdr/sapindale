@@ -104,17 +104,17 @@ async function testCantaloupe(id, ctoken, token) {
   let cvs = await _api_request(token, `${id}`);
   let listItems = cvs.canvases;
   var generateList = listItems.map(n => {
-    let takeKey = {};
-    takeKey.id = n.id;
-    takeKey.label = n.label;
+    let constructPath = {};
+    constructPath.id = n.id;
+    constructPath.label = n.label;
     let path = n.master.url.replace(
       "https://swift.canadiana.ca/v1/AUTH_crkn/repository/",
       ""
     );
-    let testURL = testManifestData(ctoken, path);
-    takeKey.full = testURL;
-    takeKey.thumbnail = testURL;
-    return takeKey;
+    let canvasURL = testManifestData(ctoken, path);
+    constructPath.full = canvasURL;
+    constructPath.thumbnail = canvasURL;
+    return constructPath;
   });
   return {
     label: cvs.label,
