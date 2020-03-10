@@ -30,7 +30,6 @@
   };
   let reorderList = ev => {
     rList = ev.detail;
-    console.log("rList", rList);
   };
 </script>
 
