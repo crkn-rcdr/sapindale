@@ -14,17 +14,23 @@
   export let id;
   let manifestdata = {};
   let itemValue;
+  let rList;
   let ctoken = $authState.cantaloupeToken;
   let token = $authState.token;
   let manifestData = testCantaloupe(id, ctoken, token);
   Promise.resolve(manifestData).then(function(value) {
     itemValue = value;
   });
-  $: m = JSON.stringify(itemValue, null, 2);
+
+  $: m = JSON.stringify(rList, null, 2);
 
   let update = _ev => {
     // triggers a reactive update of the manifest
     manifest = manifest;
+  };
+  let reorderList = ev => {
+    rList = ev.detail;
+    console.log("rList", rList);
   };
 </script>
 
@@ -36,6 +42,8 @@
 <label for="manifestEdit">Edit manifest label</label>
 {#if itemValue}
   <input id="manifestEdit" type="text" bind:value={itemValue.label} />
-  <CanvasEditor items={itemValue.items} on:manifestUpdate={update} />
+  <CanvasEditor
+    items={itemValue.items}
+    on:manifestUpdate={update}
+    on:reorderedList={reorderList} />
 {/if}
-<pre>{m}</pre>

@@ -6,10 +6,13 @@
 
   export let items;
   let selectedIndex = 0;
-
+  let reordered;
   let sortList = ev => {
     items = ev.detail;
+    dispatch("reorderedList", { items });
+    reordered = items;
   };
+  /*  console.log("items", reordered); */
   let selectCanvas = ev => {
     selectedIndex = ev.detail;
   };
@@ -18,6 +21,9 @@
   let update = _ev => {
     dispatch("manifestUpdate", true);
   };
+  /*  let reorderList = ev => {
+    dispatch("reorderedList", { reordered });
+  }; */
 </script>
 
 <style>
