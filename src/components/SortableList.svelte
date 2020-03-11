@@ -70,10 +70,10 @@
     border-color: rgba(48, 12, 200, 0.2);
   }
   .thumbList {
-    display: flex;
+    /* display: flex; */
     margin-top: 1em;
     overflow-x: auto;
-    max-width: none;
+    max-width: 25%;
   }
 
   .thumbList li {

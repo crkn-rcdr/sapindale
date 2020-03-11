@@ -26,8 +26,9 @@
   .selected {
     display: flex;
     /* list-style: none; */
-    width: 100%;
-    padding-top: 10px;
+    width: 75%;
+    padding-top: 60px;
+    float: right;
   }
   .labelSection {
     display: flex;

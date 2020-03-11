@@ -18,8 +18,12 @@
   }
 
   figcaption {
-    text-align: center;
+    text-align: left;
     color: #98012e;
+  }
+  img {
+    max-width: 50%;
+    height: auto;
   }
 </style>
 
