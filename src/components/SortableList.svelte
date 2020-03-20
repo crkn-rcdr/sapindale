@@ -72,7 +72,7 @@
   .thumbList {
     /* display: flex; */
     margin-top: 1em;
-    overflow-x: auto;
+    overflow-y: auto;
     max-width: 25%;
   }
 
@@ -80,9 +80,9 @@
     min-width: 150px;
   }
 
-  .thumbList li + li {
+  /* .thumbList li + li {
     margin-left: 1em;
-  }
+  } */
 </style>
 
 {#if list && list.length}

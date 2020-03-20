@@ -12,17 +12,24 @@
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 
-<div class="max-w-6xl mx-auto">
-  <nav class="flex">
-    <a
+<div class="max-w-6xl mx-auto pt-8">
+  <nav class="flex content-start flex-wrap text-right">
+    <figure class="flex content-start flex-wrap">
+      <img
+        class="object-scale-down h-50 w-20"
+        src="/canadiana-logo.svg"
+        alt="img" />
+      <h1 class="text-right text-black pl-20 pt-4">
+        Canadiana access platform administration
+      </h1>
+    </figure>
+    <!-- <a
       class=" inline-block border border-red-500 rounded py-1 px-3 bg-red-500
       text-white"
       href="/">
       Home
-    </a>
-    <div
-      class="ml-auto inline-block border border-red-500 rounded py-1 px-3
-      bg-red-500 text-white">
+    </a> -->
+    <div class="pl-20 pt-8">
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
       {:else if $authState.status === 'FAILED'}

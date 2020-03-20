@@ -24,7 +24,7 @@
 
 <style>
   .selected {
-    display: flex;
+    /* display: flex; */
     /* list-style: none; */
     width: 75%;
     padding-top: 60px;

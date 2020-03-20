@@ -14,12 +14,12 @@
   }
 
   figure.selected {
-    border: 2px #98012e solid;
+    border: 2px #1d808b solid;
   }
 
   figcaption {
     text-align: left;
-    color: #98012e;
+    color: #1d808b;
   }
   img {
     max-width: 50%;
