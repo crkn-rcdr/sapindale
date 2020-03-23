@@ -28,3 +28,11 @@
     </div>
   </div>
 </div>
+<div class="flex flex-horizontal-center pt-20 pl-2">
+  <a
+    class=" inline-block border border-primary rounded py-1 px-3 bg-primary
+    text-white"
+    href="/">
+    Back
+  </a>
+</div>
