@@ -4,7 +4,7 @@
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
   import CanvasThumbnail from "./CanvasThumbnail.svelte";
-
+  const hasAPI = "IntersectionObserver";
   let current = "";
   // FLIP ANIMATION
   const [send, receive] = crossfade({
@@ -106,7 +106,8 @@
           {item}
           {index}
           selected={index === selectedIndex}
-          on:canvasSelected />
+          on:canvasSelected
+          lazy="hasAPI" />
       </li>
     {/each}
   </ul>
