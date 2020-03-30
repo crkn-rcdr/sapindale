@@ -70,14 +70,17 @@
     border-color: rgba(48, 12, 200, 0.2);
   }
   .thumbList {
-    /* display: flex; */
+    margin-top: 1em;
+  }
+  .thumbListDiv {
     margin-top: 1em;
     overflow-y: auto;
-    max-width: 25%;
+    max-height: 1090px;
   }
 
   .thumbList li {
     min-width: 150px;
+    max-width: 200px;
   }
 
   /* .thumbList li + li {
@@ -86,29 +89,30 @@
 </style>
 
 {#if list && list.length}
-
-  <ul class="thumbList">
-    {#each list as item, index (item.id)}
-      <li
-        data-index={index}
-        data-id={JSON.stringify(item.id)}
-        draggable="true"
-        on:dragstart={start}
-        on:dragover={over}
-        on:dragleave={leave}
-        on:drop={drop}
-        class={current === 'True' ? 'active' : ''}
-        in:receive={{ key: item.id }}
-        out:send={{ key: item.id }}
-        animate:flip={{ duration: 300 }}
-        class:over={item.id === isOver}>
-        <CanvasThumbnail
-          {item}
-          {index}
-          selected={index === selectedIndex}
-          on:canvasSelected
-          lazy="hasAPI" />
-      </li>
-    {/each}
-  </ul>
+  <div class="thumbListDiv">
+    <ul class="thumbList">
+      {#each list as item, index (item.id)}
+        <li
+          data-index={index}
+          data-id={JSON.stringify(item.id)}
+          draggable="true"
+          on:dragstart={start}
+          on:dragover={over}
+          on:dragleave={leave}
+          on:drop={drop}
+          class={current === 'True' ? 'active' : ''}
+          in:receive={{ key: item.id }}
+          out:send={{ key: item.id }}
+          animate:flip={{ duration: 300 }}
+          class:over={item.id === isOver}>
+          <CanvasThumbnail
+            {item}
+            {index}
+            selected={index === selectedIndex}
+            on:canvasSelected
+            lazy="hasAPI" />
+        </li>
+      {/each}
+    </ul>
+  </div>
 {/if}

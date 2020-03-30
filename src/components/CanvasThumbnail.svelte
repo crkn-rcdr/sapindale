@@ -33,6 +33,8 @@
 <style>
   figure {
     cursor: pointer;
+    /*  display: flex; */
+    /* width: 150px; */
   }
 
   figure.selected {
@@ -40,12 +42,16 @@
   }
 
   figcaption {
-    text-align: left;
+    text-align: center;
     color: #1d808b;
   }
   img {
-    max-width: 50%;
+    max-width: 100%;
     height: auto;
+    /*  min-width: 50%; */
+    /* max-width: 100%;
+    height: auto;
+    overflow-y: scroll; */
   }
 </style>
 
