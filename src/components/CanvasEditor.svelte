@@ -6,10 +6,12 @@
 
   export let items;
   let selectedIndex = 0;
-
+  let reordered;
   let sortList = ev => {
     items = ev.detail;
+    dispatch("reorderedList", { items });
   };
+
   let selectCanvas = ev => {
     selectedIndex = ev.detail;
   };
@@ -22,10 +24,12 @@
 
 <style>
   .selected {
-    display: flex;
+    /* display: flex; */
     /* list-style: none; */
-    width: 100%;
-    padding-top: 10px;
+    width: 50%;
+    height: 100%;
+    padding-right: 2%;
+    float: right;
   }
   .labelSection {
     display: flex;
@@ -36,7 +40,7 @@
   }
 </style>
 
-<div class="selected">
+<div class="selected w-1/2 p-2">
   <img src={items[selectedIndex].full} alt={items[selectedIndex].label} />
   <div class="labelSection">
     <div class="labelSectionInner">

@@ -12,13 +12,24 @@
   import { state as authState } from "../../auth.js";
 
   export let id;
-  let token = $authState.cantaloupeToken;
-  let manifestData = testCantaloupe(id, token);
-    $: m = JSON.stringify(manifestData, null, 2);
+  let manifestdata = {};
+  let itemValue;
+  let rList;
+  let ctoken = $authState.cantaloupeToken;
+  let token = $authState.token;
+  let manifestData = testCantaloupe(id, ctoken, token);
+  Promise.resolve(manifestData).then(function(value) {
+    itemValue = value;
+  });
 
+  $: m = JSON.stringify(rList, null, 2);
+  let manifest;
   let update = _ev => {
     // triggers a reactive update of the manifest
     manifest = manifest;
+  };
+  let reorderList = ev => {
+    rList = ev.detail;
   };
 </script>
 
@@ -27,8 +38,19 @@
 </svelte:head>
 
 <h1>Editing manifest: {id}</h1>
-<label for="manifestEdit">Edit manifest label</label>
-<input id="manifestEdit" type="text" bind:value={manifestData.label} />
-<CanvasEditor items={manifestData.items} on:manifestUpdate={update} />
-
-<pre>{m}</pre>
+<div class="flex pt-4">
+  <label for="manifestEdit" class="flex pr-2 text-xl text-center">
+    Edit manifest label:
+  </label>
+  {#if itemValue}
+    <input id="manifestEdit" type="text" bind:value={itemValue.label} />
+  {/if}
+</div>
+{#if itemValue}
+  <div class="flex content-start">
+    <CanvasEditor
+      items={itemValue.items}
+      on:manifestUpdate={update}
+      on:reorderedList={reorderList} />
+  </div>
+{/if}

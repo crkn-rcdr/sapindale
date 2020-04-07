@@ -8,7 +8,7 @@
 }
 
 * {
-  max-width: var(--measure);
+  /*  max-width: var(--measure); */
   box-sizing: border-box;
 }
 
@@ -22,9 +22,9 @@ footer {
   max-width: none;
 }
 
-.measure {
+/* .measure {
   max-width: var(--measure);
-}
+} */
 
 h1,
 h2,
@@ -32,7 +32,7 @@ h3,
 h4,
 h5,
 h6 {
-  @apply text-canadiana;
+  @apply text-black;
 }
 
 h1 {
@@ -57,7 +57,7 @@ h5 {
 
 input,
 select {
-  @apply border border-solid border-canadiana py-2 px-3;
+  @apply border border-solid border-primary py-2 px-3;
 }
 
 label::after {
@@ -65,14 +65,14 @@ label::after {
   white-space: pre;
 }
 label {
-  @apply text-canadiana;
+  @apply text-black;
 }
 button {
-  @apply bg-canadiana text-white p-2;
+  @apply bg-primary text-white p-2;
 }
 
 table {
-  @apply border-collapse border-2 border-canadiana;
+  @apply border-collapse border-2 border-primary;
 }
 
 th {
@@ -83,5 +83,5 @@ td {
   @apply border border-gray-400 px-4 py-2 text-left;
 }
 textarea {
-  @apply border border-solid border-canadiana;
+  @apply border border-solid border-primary;
 }
