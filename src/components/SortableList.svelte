@@ -6,6 +6,7 @@
   import CanvasThumbnail from "./CanvasThumbnail.svelte";
   const hasAPI = "IntersectionObserver";
   let current = "";
+  let imageUpdate;
   // FLIP ANIMATION
   const [send, receive] = crossfade({
     duration: d => Math.sqrt(d * 200),
@@ -63,24 +64,30 @@
   // PROPS
   export let list;
   export let selectedIndex;
+  let update = _ev => {
+    // triggers a reactive update of the manifest
+    imageUpdate = imageUpdate;
+    console.log("img", imageUpdate);
+  };
 </script>
 
 <style>
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
-  .thumbList {
+  /*  .thumbList {
     margin-top: 1em;
-  }
+  } */
   .thumbListDiv {
     margin-top: 1em;
     overflow-y: auto;
     max-height: 1090px;
+    width: 20%;
+    /* max-width: 50%; */
   }
 
-  .thumbList li {
-    min-width: 150px;
-    max-width: 200px;
+  .thumbList {
+    padding-right: 50%;
   }
 
   /* .thumbList li + li {
@@ -89,7 +96,7 @@
 </style>
 
 {#if list && list.length}
-  <div class="thumbListDiv">
+  <div class="thumbListDiv w-1/2 p-2">
     <ul class="thumbList">
       {#each list as item, index (item.id)}
         <li
@@ -110,7 +117,8 @@
             {index}
             selected={index === selectedIndex}
             on:canvasSelected
-            lazy="hasAPI" />
+            lazy="hasAPI"
+            on:imageUpdate={update} />
         </li>
       {/each}
     </ul>

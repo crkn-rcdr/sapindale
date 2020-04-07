@@ -12,24 +12,20 @@
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 
-<div class="max-w-6xl mx-auto pt-8">
-  <nav class="flex content-start flex-wrap text-right">
-    <figure class="flex content-start flex-wrap">
-      <img
-        class="object-scale-down h-50 w-20"
-        src="/canadiana-logo.svg"
-        alt="img" />
-      <h1 class="text-right text-black pl-20 pt-4">
-        Canadiana access platform administration
-      </h1>
-    </figure>
-    <!-- <a
-      class=" inline-block border border-red-500 rounded py-1 px-3 bg-red-500
-      text-white"
-      href="/">
-      Home
-    </a> -->
-    <div class="pl-20 pt-8">
+<div class="mx-auto">
+  <nav class="flex">
+    <div class="flex-1">
+      <figure class="flex content-center flex-wrap">
+        <img
+          class="object-scale-down h-50 w-20"
+          src="/canadiana-logo.svg"
+          alt="img" />
+        <h1 class="text-center text-black pl-64">
+          Canadiana access platform administration
+        </h1>
+      </figure>
+    </div>
+    <div>
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
       {:else if $authState.status === 'FAILED'}
@@ -44,12 +40,11 @@
     {#if $authState.status === 'SUCCESS'}
       <slot />
     {:else}
-      <!-- <h1>Canadiana access platform administration</h1> -->
-      <p
-        class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2
-        h-24">
-        Please log in to continue.
-      </p>
+      <div class="max-w-md mx-auto pt-64">
+        <p class="text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24">
+          Please log in to continue.
+        </p>
+      </div>
     {/if}
   </main>
 </div>

@@ -28,6 +28,9 @@
       }
     };
   }
+  let updateLabel = _ev => {
+    dispatch("imageUpdate", true);
+  };
 </script>
 
 <style>
@@ -41,23 +44,34 @@
     border: 2px #1d808b solid;
   }
 
-  figcaption {
+  #thumblabel {
+    /* display: flex; */
     text-align: center;
     color: #1d808b;
   }
   img {
     max-width: 100%;
     height: auto;
-    /*  min-width: 50%; */
-    /* max-width: 100%;
-    height: auto;
-    overflow-y: scroll; */
+    min-width: 50%;
   }
 </style>
 
-<figure on:click={dispatchClick} class:selected use:lazyLoad>
-  {#if src}
-    <img src={`${src.thumbnail}`} alt={`thumbnail for image: ${src.label}`} />
-    <figcaption>{src.label}</figcaption>
-  {/if}
-</figure>
+<div class="flex content-start flex-start">
+  <figure on:click={dispatchClick} class:selected use:lazyLoad>
+    {#if src}
+      <div class="w-1/3">
+        <img
+          src={`${src.thumbnail}`}
+          alt={`thumbnail for image: ${src.label}`} />
+        <!--  <figcaption>{src.label}</figcaption> -->
+      </div>
+      <div class="w-1/3">
+        <input
+          id="thumblabel"
+          type="text"
+          bind:value={src.label}
+          on:input={updateLabel} />
+      </div>
+    {/if}
+  </figure>
+</div>

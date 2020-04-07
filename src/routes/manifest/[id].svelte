@@ -23,7 +23,7 @@
   });
 
   $: m = JSON.stringify(rList, null, 2);
-
+  let manifest;
   let update = _ev => {
     // triggers a reactive update of the manifest
     manifest = manifest;
@@ -47,8 +47,10 @@
   {/if}
 </div>
 {#if itemValue}
-  <CanvasEditor
-    items={itemValue.items}
-    on:manifestUpdate={update}
-    on:reorderedList={reorderList} />
+  <div class="flex content-start">
+    <CanvasEditor
+      items={itemValue.items}
+      on:manifestUpdate={update}
+      on:reorderedList={reorderList} />
+  </div>
 {/if}

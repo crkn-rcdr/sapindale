@@ -26,8 +26,9 @@
   .selected {
     /* display: flex; */
     /* list-style: none; */
-    width: 75%;
-    padding-top: 60px;
+    width: 50%;
+    height: 100%;
+    padding-right: 2%;
     float: right;
   }
   .labelSection {
@@ -39,7 +40,7 @@
   }
 </style>
 
-<div class="selected">
+<div class="selected w-1/2 p-2">
   <img src={items[selectedIndex].full} alt={items[selectedIndex].label} />
   <div class="labelSection">
     <div class="labelSectionInner">
