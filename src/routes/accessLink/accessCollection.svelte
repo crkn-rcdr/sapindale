@@ -14,7 +14,7 @@
     <div
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
       hover:border-black-600">
-      <a href="/createCollection">Create New Collection</a>
+      <a href="/collection/[slug].svelte">Create New Collection</a>
     </div>
     <div
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
