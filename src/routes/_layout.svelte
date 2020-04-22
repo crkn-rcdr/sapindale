@@ -8,24 +8,33 @@
   });
 </script>
 
+<style>
+  img {
+    width: 100%;
+    height: auto;
+  }
+  .user {
+    padding-top: 1.5rem;
+  }
+  .pagetitle {
+    width: calc(100% + 100px);
+  }
+</style>
+
 <svelte:head>
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 
-<div class="mx-auto">
-  <nav class="flex">
-    <div class="flex-1">
-      <figure class="flex content-center flex-wrap">
-        <img
-          class="object-scale-down h-50 w-20"
-          src="/canadiana-logo.svg"
-          alt="img" />
-        <h1 class="text-center text-black pl-64">
-          Canadiana access platform administration
-        </h1>
-      </figure>
-    </div>
-    <div>
+<div>
+  <nav>
+    <!-- <div> -->
+    <figure>
+      <img src="/canadiana-logo.svg" alt="img" />
+      <!-- <h1>Canadiana access platform administration</h1> -->
+    </figure>
+    <h1 class="pagetitle">Canadiana access platform administration</h1>
+    <!--  </div> -->
+    <div class="user">
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
       {:else if $authState.status === 'FAILED'}

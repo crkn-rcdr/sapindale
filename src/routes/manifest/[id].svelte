@@ -47,7 +47,7 @@
   {/if}
 </div>
 {#if itemValue}
-  <div class="flex content-start">
+  <div class="flex">
     <CanvasEditor
       items={itemValue.items}
       on:manifestUpdate={update}

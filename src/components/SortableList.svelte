@@ -82,12 +82,13 @@
     margin-top: 1em;
     overflow-y: auto;
     max-height: 1090px;
-    width: 20%;
-    /* max-width: 50%; */
+    /*  width: 20%; */
   }
 
   .thumbList {
-    padding-right: 50%;
+    width: calc(100% - 800px);
+
+    /* padding-right: 50%; */
   }
 
   /* .thumbList li + li {
@@ -96,7 +97,7 @@
 </style>
 
 {#if list && list.length}
-  <div class="thumbListDiv w-1/2 p-2">
+  <div class="thumbListDiv">
     <ul class="thumbList">
       {#each list as item, index (item.id)}
         <li

@@ -49,11 +49,11 @@
     text-align: center;
     color: #1d808b;
   }
-  img {
+  /* img {
     max-width: 100%;
     height: auto;
     min-width: 50%;
-  }
+  } */
 </style>
 
 <div class="flex content-start flex-start">

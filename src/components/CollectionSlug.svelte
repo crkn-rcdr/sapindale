@@ -5,38 +5,54 @@
 </script>
 
 <style>
-  .lab {
+  /* .lab {
     width: 100%;
+  } */
+  .collecDisplay {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: space-between;
+    padding-top: 4%;
+  }
+  .slug {
+    display: flex;
+    flex-direction: column;
+  }
+  .ordered {
+    display: flex;
+    flex-direction: row;
+    padding-top: 6%;
+  }
+  .lnkAction {
+    display: flex;
+    flex-direction: row;
+    padding-top: 6%;
+    background-color: #1d808b;
+    justify-content: space-between;
+    align-content: space-between;
   }
 </style>
 
-<div class="flex">
-  <div class="lab m-2">
-    <div class="flex pt-8">
-      <label for="slug" class="px-4">Slug</label>
-      <input type="text" />
-    </div>
-    <div class="flex pt-8">
-      <label for="label" class="px-3">Label</label>
-      <input type="text" />
-    </div>
-    <div class="flex pt-8">
+<div class="collecDisplay">
+  <div class="slug">
+    <label for="slug">Slug</label>
+    <input type="text" />
+
+    <label for="label">Label</label>
+    <input type="text" />
+
+    <div class="ordered">
       <input type="checkbox" />
-      <p class="pl-2">Ordered?</p>
+      <p>Ordered?</p>
     </div>
-    <div class="pt-8">
-      <a
-        class="flex-1 text-white text-center bg-primary pt-2 py-2 m-2 "
-        href="/"
-        alt="save">
-        Save
-      </a>
-      <a
-        class="flex-1 text-white text-center bg-primary pt-2 py-2 m-2 "
-        href="/"
-        alt="save">
-        Save & Publish
-      </a>
+    <div class="lnkAction">
+      <div>
+        <a href="/" alt="save">Save</a>
+      </div>
+      <div>
+        <a href="/" alt="save">Save & Publish</a>
+      </div>
     </div>
   </div>
   <CollectionMember />
