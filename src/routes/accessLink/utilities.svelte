@@ -20,7 +20,7 @@
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
       hover:border-black-600">
       <a
-        href="{process.env.PACKAGING}/cookie?token={$authState.token}"
+        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/&token={$authState.token}"
         id="Packaging"
         target="_blank">
         Packaging (legacy tools)
@@ -30,7 +30,7 @@
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
       hover:border-black-600">
       <a
-        href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
+        href="{process.env.UPHOLSTERY}/cookie?redirect=/couch/_utils/&token={$authState.token}"
         id="Futon"
         target="_blank">
         Futon (Please do not edit unless you know what you are doing)
