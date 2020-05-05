@@ -25,6 +25,14 @@
   }
 </script>
 
+<style>
+  label {
+    display: inline-block;
+    width: 140px;
+    text-align: left;
+  }
+</style>
+
 {#if hasPrefix}
   <label for={id + 'prefix'}>Prefix</label>
   <input type="text" id={id + 'prefix'} bind:value={prefix} />

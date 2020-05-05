@@ -32,6 +32,14 @@
   }
 </script>
 
+<style>
+  label {
+    display: inline-block;
+    width: 140px;
+    text-align: left;
+  }
+</style>
+
 <label for={`${id}.input`}>{label}</label>
 <input
   type="text"

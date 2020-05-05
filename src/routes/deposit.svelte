@@ -26,42 +26,69 @@
   }
 </script>
 
+<style>
+  .container {
+    display: flex;
+  }
+  p {
+    display: inline-block;
+    width: 140px;
+    text-align: left;
+  }
+  .label {
+    padding-bottom: 1%;
+  }
+  .label1 {
+    padding-bottom: 1%;
+  }
+</style>
+
 <svelte:head>
   <title>Sapindale — Deposit from preservation</title>
 </svelte:head>
 <h1>Deposit from preservation</h1>
 <h2>Select one AIP</h2>
-<TypeAhead
-  db="dipstaging"
-  id="aip"
-  label="Input an AIP ID:"
-  on:selected={select}
-  on:deselected={clear} />
+<div class="label">
+  <TypeAhead
+    db="dipstaging"
+    id="aip"
+    label="Input an AIP ID:"
+    on:selected={select}
+    on:deselected={clear} />
+</div>
 <p>
   {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
 </p>
 <h2>Select multiple AIPs</h2>
-<BulkLookup
-  db="dipstaging"
-  id="aip"
-  hasPrefix={true}
-  label="List of AIP IDs, separated by newline"
-  on:submit={search} />
-<div class="pt-2">
+<div class="label1">
+  <BulkLookup
+    db="dipstaging"
+    id="aip"
+    hasPrefix={true}
+    label="List of AIP IDs, separated by newline"
+    on:submit={search} />
+</div>
+<div>
   {#if bulkId !== undefined}
-    <table>
-      <th>List of Found ID's</th>
-      {#each idInList as id}
-        <tr>
-          <td class="py-2 px-2">{id}</td>
-        </tr>
-      {/each}
-      <th>List of Not found ID's</th>
-      {#each idNotInList as id}
-        <tr>
-          <td class="py-2 px-2">{id}</td>
-        </tr>
-      {/each}
-    </table>
+    <div class="container">
+      <table>
+
+        <th>List of Found ID's</th>
+        {#each idInList as id}
+          <tr>
+            <td>{id}</td>
+          </tr>
+        {/each}
+      </table>
+      <table>
+        <th>List of Not found ID's</th>
+        {#each idNotInList as id}
+          <tr>
+            <td>{id}</td>
+          </tr>
+        {/each}
+
+      </table>
+    </div>
   {/if}
 </div>

@@ -75,21 +75,20 @@
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
-  /*  .thumbList {
+  .thumbList {
     margin-top: 1em;
-  } */
+  }
   .thumbListDiv {
     margin-top: 1em;
     overflow-y: auto;
-    max-height: 1090px;
+    max-height: 690px;
     /*  width: 20%; */
   }
+  /* .thumbList {
+    width: calc(100% - 800px); */
 
-  .thumbList {
-    width: calc(100% - 800px);
-
-    /* padding-right: 50%; */
-  }
+  /* padding-right: 50%; */
+  /*  } */
 
   /* .thumbList li + li {
     margin-left: 1em;

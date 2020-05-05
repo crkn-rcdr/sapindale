@@ -25,25 +25,30 @@
 <style>
   .selected {
     /* display: flex; */
-    /* list-style: none; */
-    /* width: 50%; */
-    width: calc(100% - 200px);
+    list-style: none;
+
     padding-right: 10%;
     /* height: 100%; */
     /*  padding-right: 2%;
     float: right;
   } */
   }
+
   .labelSection {
-    display: flex;
     margin-left: 2rem;
   }
   .labelSectionInner {
     margin: auto;
   }
+  .globe {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: space-between;
+  }
 </style>
 
-<div class="flex">
+<div class="globe">
   <div class="selected p-2">
     <img src={items[selectedIndex].full} alt={items[selectedIndex].label} />
     <div class="labelSection">

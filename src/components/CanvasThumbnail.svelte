@@ -36,36 +36,38 @@
 <style>
   figure {
     cursor: pointer;
-    /*  display: flex; */
-    /* width: 150px; */
+
+    /*  width: calc(100% - 400px); */
+    margin-inline-start: auto;
   }
 
   figure.selected {
     border: 2px #1d808b solid;
   }
 
-  #thumblabel {
-    /* display: flex; */
+  /* #thumblabel {
+    display: flex;
+    flex-direction: unset;
     text-align: center;
     color: #1d808b;
-  }
-  /* img {
-    max-width: 100%;
-    height: auto;
-    min-width: 50%;
+  } */
+
+  /* .thumbimg {
+    width: calc(100% - 20px);
   } */
 </style>
 
-<div class="flex content-start flex-start">
+<div>
   <figure on:click={dispatchClick} class:selected use:lazyLoad>
     {#if src}
-      <div class="w-1/3">
+      <div>
         <img
+          class="thumbimg"
           src={`${src.thumbnail}`}
           alt={`thumbnail for image: ${src.label}`} />
         <!--  <figcaption>{src.label}</figcaption> -->
       </div>
-      <div class="w-1/3">
+      <div>
         <input
           id="thumblabel"
           type="text"

@@ -52,3 +52,27 @@ textarea {
   border: solid var(--color);
   /*  max-width: var(--width-card-wide); */
 }
+
+table {
+  border: 1px solid var(--color);
+  border-radius: var(--border-radius);
+  border-collapse: collapse;
+  padding: 10%;
+}
+
+table td,
+table th,
+table tr {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--color);
+  text-align: var(--justify-important);
+}
+ul li {
+  padding: 0.2rem 0;
+}
+
+button {
+  display: inline-block;
+  padding: 0.5rem 2rem;
+  background: var(--color);
+}
