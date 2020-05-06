@@ -94,6 +94,15 @@
 
     await loadView();
   }
+
+  async function viewKey(key = "") {
+    options.reduce = false;
+    delete options.group;
+    options.startkey = key;
+    options.endkey = key;
+    options.inclusive = true;
+    await update();
+  }
 </script>
 
 <style>
@@ -210,7 +219,18 @@
       {#each viewContents as row}
         <tr>
           {#if !onlyIDs}
-            <td>{JSON.stringify(row.key)}</td>
+            {#if options.reduce}
+              <td>
+                <button
+                  on:click={() => {
+                    viewKey(JSON.stringify(row.key));
+                  }}>
+                  {JSON.stringify(row.key)}
+                </button>
+              </td>
+            {:else}
+              <td>{JSON.stringify(row.key)}</td>
+            {/if}
             <td>{JSON.stringify(row.value)}</td>
           {/if}
           {#if row.id}
