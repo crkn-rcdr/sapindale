@@ -43,7 +43,6 @@
   <title>Sapindale — Canadiana access platform administration</title>
 </svelte:head>
 <div class="navigate">
-
   <div class="couchview">
     <a href="/couchview">Couch View Output</a>
   </div>
