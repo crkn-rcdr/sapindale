@@ -19,45 +19,12 @@
     <div
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
       hover:border-black-600">
+      <a
+        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/&token={$authState.token}"
+        id="Packaging"
+        target="_blank">
         Packaging (legacy tools)
-      <ul>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/wipFindMoveCreate.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        WIP Find/Move/Create
-      </a></li>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/wipProcessStatus.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        WIP Process Status
-      </a></li>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/wipStartProcess.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        WIP Start Process
-      </a></li>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/collectionManage.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        Legacy Application Platform Collection Manager
-      </a></li>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/validationStatisticsTool.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        Legacy Repository Statistics
-      </a></li>
-      <li><a
-        href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/FD.html&token={$authState.token}"
-        id="Packaging"
-        target="_blank">
-        Find Duplicates in list
-      </a></li>
-      </ul>
+      </a>
     </div>
     <div
       class="flex-1 text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24
