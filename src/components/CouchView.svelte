@@ -94,6 +94,15 @@
 
     await loadView();
   }
+
+  function viewthiskey (key='') {
+    options.reduce = false;
+    delete options.group;
+    options.startkey=key;
+    options.endkey=key;
+    options.inclusive=true;
+    // update();
+}
 </script>
 
 <style>
@@ -210,7 +219,11 @@
       {#each viewContents as row}
         <tr>
           {#if !onlyIDs}
-            <td>{JSON.stringify(row.key)}</td>
+            {#if options.reduce}
+              <td><a href="javascript:;" on:click={viewthiskey(JSON.stringify(row.key))}>{JSON.stringify(row.key)}</a></td>
+            {:else}
+              <td>{JSON.stringify(row.key)}</td>
+            {/if}
             <td>{JSON.stringify(row.value)}</td>
           {/if}
           {#if row.id}
