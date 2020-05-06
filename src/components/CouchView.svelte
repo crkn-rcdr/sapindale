@@ -95,13 +95,13 @@
     await loadView();
   }
 
-  function viewthiskey (key='') {
+  async function viewthiskey () {
     options.reduce = false;
     delete options.group;
-    options.startkey=key;
-    options.endkey=key;
+    options.startkey=this.text;
+    options.endkey=this.text;
     options.inclusive=true;
-    // update();
+    update();
 }
 </script>
 
@@ -220,7 +220,7 @@
         <tr>
           {#if !onlyIDs}
             {#if options.reduce}
-              <td><a href="javascript:;" on:click={viewthiskey(JSON.stringify(row.key))}>{JSON.stringify(row.key)}</a></td>
+              <td><a href="javascript:;" on:click={viewthiskey}>{JSON.stringify(row.key)}</a></td>
             {:else}
               <td>{JSON.stringify(row.key)}</td>
             {/if}
