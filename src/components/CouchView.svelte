@@ -96,6 +96,9 @@
   }
 
   async function viewKey(key = "") {
+    if (typeof key !== "string") {
+      key = JSON.stringify(key);
+    }
     options.reduce = false;
     delete options.group;
     options.startkey = key;
@@ -223,7 +226,7 @@
               <td>
                 <button
                   on:click={() => {
-                    viewKey(JSON.stringify(row.key));
+                    viewKey(row.key);
                   }}>
                   {JSON.stringify(row.key)}
                 </button>
