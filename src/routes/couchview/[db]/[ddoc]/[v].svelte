@@ -6,6 +6,7 @@
     const options = page.query;
 
     options.reduce = options.reduce === "true";
+    options.range = options.range === "true";
 
     return { db, view, options };
   }
