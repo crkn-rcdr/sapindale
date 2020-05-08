@@ -205,7 +205,8 @@
     <button on:click={update}>Update</button>
   </div>
   <div>
-    <select bind:value={options.keytype}>
+    <label for="typeselect">Key type</label>
+    <select id="typeselect" bind:value={options.keytype}>
       <option value="json">JSON structure</option>
       <option value="string">String</option>
       <option value="number">Number</option>
