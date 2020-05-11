@@ -9,9 +9,7 @@
     view = undefined, // if the view is found at '_design/$ddoc/_view/$v', this will be '$ddoc/$v'
     options = {};
 
-  if (!options.reduce) {
-    delete options.group;
-  }
+  normalizeOptions();
 
   let token = $authState.token;
   let views = {};
@@ -31,6 +29,39 @@
 
     window.onpopstate = loadView;
   });
+
+  function normalizeOptions() {
+    if (!options.reduce) {
+      delete options.group;
+    }
+
+    if (options.range) {
+      delete options.key;
+    } else {
+      delete options.startkey;
+      delete options.endkey;
+    }
+    if ("keytype" in options && options.keytype === "number") {
+      if ("key" in options && typeof options.key !== "number") {
+        options.key = parseInt(options.key);
+        if (isNaN(options.key)) {
+          delete options.key;
+        }
+      }
+      if ("startkey" in options && typeof options.startkey !== "number") {
+        options.startkey = parseInt(options.startkey);
+        if (isNaN(options.startkey)) {
+          delete options.startkey;
+        }
+      }
+      if ("endkey" in options && typeof options.endkey !== "number") {
+        options.endkey = parseInt(options.endkey);
+        if (isNaN(options.endkey)) {
+          delete options.endkey;
+        }
+      }
+    }
+  }
 
   function reselectView() {
     let ddoc = Object.keys(views[db])[0];
@@ -65,6 +96,7 @@
       endkey: options.endkey
         ? JSON.stringify(parsedKey(options.endkey, options.inclusive))
         : undefined,
+      key: options.key ? JSON.stringify(parsedKey(options.key)) : undefined,
       reduce: options.reduce,
       group_level: options.reduce ? options.group : undefined,
       limit: options.limit
@@ -81,9 +113,7 @@
   }
 
   async function update() {
-    if (!options.reduce) {
-      delete options.group;
-    }
+    normalizeOptions();
     onlyIDs = false;
 
     history.pushState(
@@ -96,14 +126,35 @@
   }
 
   async function viewKey(key = "") {
-    if (typeof key !== "string") {
-      key = JSON.stringify(key);
+    switch (typeof key) {
+      case "number":
+        options.keytype = "number";
+        options.range = false;
+        options.key = key;
+        delete options.startkey;
+        delete options.endkey;
+        delete options.inclusive;
+        break;
+
+      case "string":
+        options.keytype = "string";
+        options.range = false;
+        options.key = key;
+        delete options.startkey;
+        delete options.endkey;
+        delete options.inclusive;
+        break;
+
+      default:
+        options.keytype = "json";
+        key = JSON.stringify(key);
+        options.range = true;
+        options.startkey = key;
+        options.endkey = key;
+        options.inclusive = true;
+        delete options.key;
     }
     options.reduce = false;
-    delete options.group;
-    options.startkey = key;
-    options.endkey = key;
-    options.inclusive = true;
     await update();
   }
 </script>
@@ -154,26 +205,46 @@
     <button on:click={update}>Update</button>
   </div>
   <div>
-    <label for="startkeyInput">Start key</label>
-    <input
-      type="text"
-      class="data-list border"
-      id="startkeyInput"
-      bind:value={options.startkey} />
+    <label for="typeselect">Key type</label>
+    <select id="typeselect" bind:value={options.keytype}>
+      <option value="json">JSON structure</option>
+      <option value="string">String</option>
+      <option value="number">Number</option>
+    </select>
     <br />
-    <label for="endkeyInput">End key</label>
-    <input
-      type="text"
-      class="data-list border"
-      id="endkeyInput"
-      bind:value={options.endkey} />
+    <label for="rangeCheck">Range?</label>
+    <input type="checkbox" id="rangeCheck" bind:checked={options.range} />
     <br />
-    <label for="inclusiveCheck">Make end key inclusive?</label>
-    <input
-      type="checkbox"
-      class="data-list border"
-      id="inclusiveCheck"
-      bind:checked={options.inclusive} />
+    {#if options.range}
+      <label for="startkeyInput">Start key</label>
+      <input
+        type="text"
+        class="data-list border"
+        id="startkeyInput"
+        bind:value={options.startkey} />
+      <br />
+      <label for="endkeyInput">End key</label>
+      <input
+        type="text"
+        class="data-list border"
+        id="endkeyInput"
+        bind:value={options.endkey} />
+      <br />
+      <label for="inclusiveCheck">Make end key inclusive?</label>
+      <input
+        type="checkbox"
+        class="data-list border"
+        id="inclusiveCheck"
+        bind:checked={options.inclusive} />
+    {:else}
+      <label for="keyInput">Key</label>
+      <input
+        type="text"
+        class="data-list border"
+        id="keyInput"
+        bind:value={options.key} />
+      <br />
+    {/if}
   </div>
   <div>
     <label for="reduceCheck">Reduce?</label>
