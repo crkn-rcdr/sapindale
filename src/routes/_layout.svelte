@@ -28,8 +28,9 @@
 <div>
   <nav>
     <figure>
-      <img src="/canadiana-logo.svg" alt="img" />
-
+      <a href="/">
+        <img src="/canadiana-logo.svg" alt="img" />
+      </a>
     </figure>
     <h1 class="pagetitle">Canadiana access platform administration</h1>
 

@@ -76,18 +76,3 @@ button {
   padding: 0.5rem 2rem;
   background: var(--color);
 }
-
-navList {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-content: space-around;
-  padding: 0.25rem;
-  margin-top: 5%;
-}
-navLink {
-  display: flex;
-  flex-direction: column;
-  font-size: 1.25rem;
-  padding: 0.25rem;
-}
