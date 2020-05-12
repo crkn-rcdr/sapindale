@@ -23,7 +23,7 @@
 
 /*layout*/
 main {
-  margin: 0.1rem;
+  margin: 1rem;
   /*  max-width: var(--width-content); */
 }
 nav {
@@ -75,4 +75,19 @@ button {
   display: inline-block;
   padding: 0.5rem 2rem;
   background: var(--color);
+}
+
+navList {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-content: space-around;
+  padding: 0.25rem;
+  margin-top: 5%;
+}
+navLink {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.25rem;
+  padding: 0.25rem;
 }

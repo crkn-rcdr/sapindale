@@ -10,14 +10,14 @@
 
 <style>
   img {
-    width: 100%;
+    width: 60%;
     height: auto;
   }
   .user {
     padding-top: 1.5rem;
   }
   .pagetitle {
-    width: calc(100% + 100px);
+    width: 80%;
   }
 </style>
 
@@ -27,13 +27,12 @@
 
 <div>
   <nav>
-    <!-- <div> -->
     <figure>
       <img src="/canadiana-logo.svg" alt="img" />
-      <!-- <h1>Canadiana access platform administration</h1> -->
+
     </figure>
     <h1 class="pagetitle">Canadiana access platform administration</h1>
-    <!--  </div> -->
+
     <div class="user">
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
