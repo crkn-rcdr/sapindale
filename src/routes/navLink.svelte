@@ -10,13 +10,19 @@
     padding: 0.25rem;
     font-size: 1.25rem;
   }
-
 </style>
 
 <navList>
 
   <li>
     <a href="/deposit">Deposit From Preservation</a>
+  </li>
+  <li>
+    <a
+      href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/wipFindMoveCreate.html&token={$authState.token}"
+      target="_blank">
+      WIP Find/Move/Create
+    </a>
   </li>
   <li>
     <a
