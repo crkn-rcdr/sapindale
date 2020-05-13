@@ -38,7 +38,7 @@
 </svelte:head>
 
 <h1>Editing manifest: {id}</h1>
-<div class="flex pt-4">
+<div>
   <label for="manifestEdit" class="flex pr-2 text-xl text-center">
     Edit manifest label:
   </label>
@@ -47,7 +47,7 @@
   {/if}
 </div>
 {#if itemValue}
-  <div class="flex content-start">
+  <div>
     <CanvasEditor
       items={itemValue.items}
       on:manifestUpdate={update}

@@ -75,20 +75,20 @@
   .over {
     border-color: rgba(48, 12, 200, 0.2);
   }
-  /*  .thumbList {
+  .thumbList {
     margin-top: 1em;
-  } */
+  }
   .thumbListDiv {
     margin-top: 1em;
     overflow-y: auto;
-    max-height: 1090px;
-    width: 20%;
-    /* max-width: 50%; */
+    max-height: 690px;
+    /*  width: 20%; */
   }
+  /* .thumbList {
+    width: calc(100% - 800px); */
 
-  .thumbList {
-    padding-right: 50%;
-  }
+  /* padding-right: 50%; */
+  /*  } */
 
   /* .thumbList li + li {
     margin-left: 1em;
@@ -96,7 +96,7 @@
 </style>
 
 {#if list && list.length}
-  <div class="thumbListDiv w-1/2 p-2">
+  <div class="thumbListDiv">
     <ul class="thumbList">
       {#each list as item, index (item.id)}
         <li
