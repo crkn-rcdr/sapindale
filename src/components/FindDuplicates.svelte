@@ -38,7 +38,7 @@
         }
       }
       words[wordIndex] = word;
-	}
+    }
     return outputWords;
   }
 
@@ -51,7 +51,7 @@
       if (!words.includes(word) && word.match(/[0-9a-zA-Z]/))
         outputWords.push(word);
       words[wordIndex] = word;
-	}
+    }
     return outputWords;
   }
 
@@ -64,7 +64,7 @@
       if (!outputWords.includes(word) && word.match(/[0-9a-zA-Z]/)) {
         outputWords.push(word);
       }
-	}
+    }
     return outputWords;
   }
 
@@ -86,8 +86,18 @@
 </script>
 
 <style>
-  input[type="radio"] {
-    display: list-item;
+  fieldset {
+    border: 2px solid black;
+    padding: 5px;
+  }
+
+  fieldset label {
+    display: block;
+  }
+
+  textarea {
+    width: 100%;
+    height: 100px;
   }
 </style>
 
@@ -122,23 +132,16 @@
 </fieldset>
 <fieldset>
   <legend>Paste text here</legend>
-  <textarea
-    id="inputText"
-    bind:value={inputText}
-    style="margin: 0px; width: 868px; height: 98px;" />
+  <textarea id="inputText" bind:value={inputText} />
+  <button on:click={update}>Update</button>
 </fieldset>
-<button on:click={update}>Update</button>
 
 <fieldset>
   <legend>Output will be displayed here</legend>
   Tip: You can select all by clicking in the box and pressing Ctrl + A on your
   keyboard
   <br />
-  <textarea
-    id="output"
-    disabled="true"
-    bind:value={outputText}
-    style="margin: 0px; width: 868px; height: 98px;" />
+  <textarea id="output" disabled="true" bind:value={outputText} />
   {#if count > 0}
     <i id="count" style="color:red">Count : {count}</i>
   {/if}
