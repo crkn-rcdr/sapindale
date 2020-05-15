@@ -104,7 +104,11 @@
 <h1>Find duplicates tool</h1>
 
 <fieldset>
-  <legend>Select to show:</legend>
+  <legend>Paste text here</legend>
+  <textarea id="inputText" bind:value={inputText} />
+</fieldset>
+<fieldset>
+  <legend>Decide what operation to do:</legend>
   <label for="showDuplicates">
     <input
       type="radio"
@@ -129,11 +133,13 @@
       value="removeDuplicates" />
     unique items (remove duplicates)
   </label>
-</fieldset>
-<fieldset>
-  <legend>Paste text here</legend>
-  <textarea id="inputText" bind:value={inputText} />
-  <button on:click={update}>Update</button>
+  <label for="underscoresToHiphens">
+  <input
+    type="checkbox"
+    id="underscoresToHiphens"
+    bind:checked={underscoresToHiphens} />
+  Change all "_" into "-"</label>
+  <button on:click={update}>Update output</button>
 </fieldset>
 
 <fieldset>
@@ -146,9 +152,4 @@
     <i id="count" style="color:red">Count : {count}</i>
   {/if}
   <br />
-  <input
-    type="checkbox"
-    id="underscoresToHiphens"
-    bind:checked={underscoresToHiphens} />
-  Change all "_" into "-"
 </fieldset>
