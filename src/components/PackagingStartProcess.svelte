@@ -28,7 +28,7 @@
         reduce: false,
         startkey: JSON.stringify(key),
         endkey: JSON.stringify(endkey),
-             include_docs: what === "d"
+        include_docs: what === "d"
       });
     } catch (ignore) {
       confstage = undefined;
@@ -68,18 +68,15 @@
 {:else}Loading Packaging filesystem information{/if}
 
 {#if Array.isArray(confstage)}
-{#if what==='l'}
-<pre>
-    {#each confstage as dir}
-      {dir.id}
-    {/each}
-</pre>
-{:else}
-<dl>
-                   {#each confstage as dir}
-      <dt>{dir.id}
-    {/each}
-</dl>
-
-{/if}
+  {#if what === 'l'}
+    <pre>
+      {#each confstage as dir}{dir.id}{/each}
+    </pre>
+  {:else}
+    <dl>
+      {#each confstage as dir}
+        <dt>{dir.id}</dt>
+      {/each}
+    </dl>
+  {/if}
 {/if}
