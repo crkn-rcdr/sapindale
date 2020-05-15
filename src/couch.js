@@ -2,6 +2,7 @@ import qs from "query-string";
 import testManifestData from "./cantaloupe.js";
 
 const upholsteryUrl = process.env.UPHOLSTERY;
+const packagingdatabase = 'wipmetad';
 
 async function _request(token, path, options, method, payload) {
   let url = [upholsteryUrl, path].join("/");
@@ -121,4 +122,17 @@ async function testCantaloupe(id, ctoken, token) {
     items: generateList
   };
 }
-export { idLookup, documents, design_doc_views, view, testCantaloupe };
+
+
+async function packagingfilesystem(token, options) {
+
+  let result = await _couch_request(
+    token,
+    [ packagingdatabase, "_design/tdr/_view/filesystem"].join("/"),
+    options
+  );
+  return result.rows;
+}
+
+
+export { idLookup, documents, design_doc_views, view, testCantaloupe, packagingfilesystem };
