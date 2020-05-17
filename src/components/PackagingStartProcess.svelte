@@ -10,10 +10,23 @@
     hidepackagedetails = false,
     hidemanipulate = false,
     what = "d",
+    isSIP = "true",
     move = {},
     ingestchecks = {},
     aiplist = undefined,
     aiplistview = undefined;
+
+  // Ingest form
+  export let ingestType = "new",
+    changelog = "",
+    ingeststages = {
+      pre: true,
+      imageconv: false,
+      sip: true,
+      i: true,
+      cs: true,
+      post: true
+    };
 
   let token = $authState.token;
 
@@ -42,6 +55,16 @@
     packagedocs = undefined;
     aiplist = undefined;
     aiplistview = undefined;
+    ingestType = "new";
+    changelog = "";
+    ingeststages = {
+      pre: true,
+      imageconv: false,
+      sip: true,
+      i: true,
+      cs: true,
+      post: true
+    };
     try {
       // I haven't yet found a better way to copy the array...
       var endkey = JSON.parse(JSON.stringify(key));
@@ -108,8 +131,13 @@
       aiplistview = undefined;
     }
     aiplist = tempaiplist;
-    console.log("UpdateAIPList", aiplist, aiplistview, ingestchecks);
   }
+
+  async function ingestprocess() {
+    console.log("ingestprocess", ingestType, changelog, ingeststages);
+  }
+
+  async function manipmdprocess() {}
 </script>
 
 <style>
@@ -185,7 +213,7 @@
 {#if packagedocs}
   {#if aiplistview}
     <fieldset>
-      <legend>Manipulate AIPs in list</legend>
+      <legend>Create/Manipulate AIPs in list</legend>
       <label for="hidemanipulate">
         <input
           type="checkbox"
@@ -196,6 +224,76 @@
       {#if !hidemanipulate}
         <textarea id="aiplist" disabled="true" bind:value={aiplistview} />
       {/if}
+      <select bind:value={isSIP}>
+        <option value="true">Create SIP (new/update)</option>
+        <option value="false">Manipulate Metadata</option>
+      </select>
+      {#if isSIP === 'true'}
+        <p>
+          SIP ingest type:
+          <select bind:value={ingestType}>
+            <option value="new">New SIP</option>
+            <option value="update">Update SIP</option>
+          </select>
+          <br />
+          Changelog:
+          <input
+            type="text"
+            size="50"
+            id="changelog"
+            bind:value={changelog}
+            value="" />
+          {#if typeof changelog !== 'string' || changelog.length < 5}
+            <div style="color:red; display:inline;">
+              (Must be at least 5 characters)
+            </div>
+          {/if}
+          <br />
+          Stages in process:
+        </p>
+
+        <ul>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.pre} />
+            Move to Processing
+          </li>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.imageconv} />
+            Image Conversion
+          </li>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.sip} />
+            Build SIP
+          </li>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.i} />
+            Ingest
+          </li>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.cs} />
+            Copy to Swift
+          </li>
+          <li>
+            <input type="checkbox" bind:checked={ingeststages.post} />
+            Move to Trashcan
+          </li>
+        </ul>
+
+        <button
+          type="submit"
+          on:click={() => {
+            ingestprocess();
+          }}
+          disabled={typeof changelog !== 'string' || changelog.length < 5 || !(ingeststages.pre || ingeststages.imageconv || ingeststages.sip || ingeststages.i || ingeststages.cs || ingeststages.post)}>
+          Ingest
+        </button>
+        {#if !(ingeststages.pre || ingeststages.imageconv || ingeststages.sip || ingeststages.i || ingeststages.cs || ingeststages.post)}
+          <div style="color:red; display:inline;">
+            (At least one stage must be chosen)
+          </div>
+        {/if}
+      {:else}Metadata{/if}
+
     </fieldset>
   {/if}
 
@@ -249,6 +347,27 @@
                   on:change={updateaiplist} />
                 Ingest?
               </li>
+            {/if}
+            {#if 'classify' in doc && Object.keys(doc.classify).length > 0}
+              <li>
+                Classification:
+                {#each Object.keys(doc.classify) as thiskey, index}
+                  {#if index > 0},{/if}
+                  {thiskey}={doc.classify[thiskey]}
+                {/each}
+              </li>
+            {/if}
+            {#if 'repos' in doc && Array.isArray(doc.repos)}
+              <li>
+                Found in TDR date={doc.reposManifestDate} Repos=
+                {#each doc.repos as thisrepo, index}
+                  {#if index > 0},{/if}
+                  {thisrepo}
+                {/each}
+              </li>
+            {/if}
+            {#if 'processHistory' in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0 && 'message' in doc.processHistory[0] && doc.processHistory[0].message !== ''}
+              <pre>{doc.processHistory[0].message}</pre>
             {/if}
           </dd>
         {/each}
