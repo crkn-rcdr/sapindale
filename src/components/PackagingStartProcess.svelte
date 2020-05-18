@@ -128,12 +128,10 @@
 
   async function moveIdentifier(identifier) {
     document.getElementById("buttondiv-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
-    var req = [
-      {
-        nocreate: true,
-        processreq: JSON.stringify({ request: "move", stage: move[identifier] })
-      }
-    ];
+    var req = {
+      nocreate: true,
+      processreq: JSON.stringify({ request: "move", stage: move[identifier] })
+    };
     await packagingrequests(token, [identifier], req);
   }
 
@@ -194,14 +192,11 @@
       reqs: requests.length,
       aips: aiplist.length
     };
-    console.log(aiplist, req);
 
-    var req = [
-      {
-        nocreate: true,
-        processreq: JSON.stringify(requests)
-      }
-    ];
+    var req = {
+      nocreate: true,
+      processreq: JSON.stringify(requests)
+    };
     await packagingrequests(token, aiplist, req);
 
     processindication = {

@@ -137,15 +137,13 @@ async function packagingfilesystem(token, options) {
 //  Should look into promise-throttle?
 async function packagingrequests(token, aiplist, reqs) {
   for (const aip of aiplist) {
-    for (const req of reqs) {
-      await _couch_request(
-        token,
-        [packagingdatabase, "_design/tdr/_update/basic", aip].join("/"),
-        {},
-        "POST",
-        req
-      );
-    }
+    await _couch_request(
+      token,
+      [packagingdatabase, "_design/tdr/_update/basic", aip].join("/"),
+      {},
+      "POST",
+      reqs
+    );
   }
 }
 
