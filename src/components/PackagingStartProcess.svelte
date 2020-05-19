@@ -1,21 +1,26 @@
 <script>
-  import { onMount } from "svelte";
-  import { packagingfilesystem, packagingrequests } from "../couch.js";
+  import {
+    packagingfilesystem,
+    packagingstatus,
+    packagingrequests
+  } from "../couch.js";
   import { state as authState } from "../auth.js";
 
   export let filesystem = undefined,
-    hidefilesystem = false,
+    packagestatus = undefined,
+    hidegroup = false,
     idlist = undefined,
     packagedocs = undefined,
     hidepackagedetails = false,
     hidemanipulate = false,
     what = "d",
+    whichgroup = "",
     move = {},
     ingestchecks = {},
     aiplist = undefined,
     aiplistview = undefined;
 
-  // sIP / metadata forms
+  // SIP / metadata forms
   export let ingestType = "new",
     changelog = "",
     processstages = {
@@ -45,15 +50,6 @@
     "Proofed"
   ];
 
-  onMount(async () => {
-    try {
-      filesystem = await packagingfilesystem(token, { group_level: 2 });
-    } catch (ignore) {
-      filesystem = undefined;
-      return;
-    }
-  });
-
   function resetVariables() {
     idlist = undefined;
     packagedocs = undefined;
@@ -74,6 +70,33 @@
     idmd = true;
     clabel = false;
     processindication = undefined;
+  }
+
+  async function loadgroup() {
+    switch (whichgroup) {
+      case "fs":
+        try {
+          filesystem = await packagingfilesystem(token, { group_level: 2 });
+        } catch (ignore) {
+          filesystem = undefined;
+          return;
+        }
+        packagestatus = undefined;
+        break;
+      case "status":
+        try {
+          packagestatus = await packagingstatus(token, { group_level: 2 });
+        } catch (ignore) {
+          packagestatus = undefined;
+          return;
+        }
+        filesystem = undefined;
+        break;
+      default:
+        filesystem = undefined;
+        packagestatus = undefined;
+    }
+    console.log("loadgroup", whichgroup);
   }
 
   async function viewConfstage(key = []) {
@@ -199,6 +222,7 @@
     };
     await packagingrequests(token, aiplist, req);
 
+    // changing start to false alone isn't reacted to
     processindication = {
       start: false,
       reqs: requests.length,
@@ -221,20 +245,28 @@
 <!--
    Once the  filesystem view is loaded, display the table showing the different configid/stage/counts with buttons for the operator to pick one
  -->
-{#if Array.isArray(filesystem)}
-  <fieldset>
-    <legend>
-      Choose which group of AIPs (
-      <label for="hidefilesystem">
-        <input
-          type="checkbox"
-          id="hidefilesystem"
-          bind:checked={hidefilesystem} />
-        Hide?
-      </label>
-      )
-    </legend>
-    {#if !hidefilesystem}
+<fieldset>
+  <legend>
+    (
+    <label for="hidegroup">
+      <input type="checkbox" id="hidegroup" bind:checked={hidegroup} />
+      Hide?
+    </label>
+    ) Choose which group of AIPs from
+    <select bind:value={whichgroup} on:change={loadgroup}>
+      <option value="">(please pick)</option>
+      <option value="fs">filesystem</option>
+      <option value="status">processing status</option>
+      <option value="find">a list I supply</option>
+    </select>
+    and
+    <select bind:value={what}>
+      <option value="d">display details</option>
+      <option value="l">display list</option>
+    </select>
+  </legend>
+  {#if !hidegroup}
+    {#if Array.isArray(filesystem)}
       <table border="1" id="typeTable">
         <tr>
           <th>Config ID</th>
@@ -256,13 +288,17 @@
           </tr>
         {/each}
       </table>
-      <select bind:value={what}>
-        <option value="d">display directory details</option>
-        <option value="l">display list</option>
-      </select>
     {/if}
-  </fieldset>
-{:else}Loading Packaging filesystem information{/if}
+    {#if Array.isArray(packagestatus)}
+      <ul>
+        {#each packagestatus as status}
+          <li>{JSON.stringify(status)}</li>
+        {/each}
+      </ul>
+    {/if}
+    {#if whichgroup === 'find'}Put a box to let people type....{/if}
+  {/if}
+</fieldset>
 
 <!--
   After the operator clicks a button for a configID/stage, the packaging database documents for that specific list of identifiers is selected.

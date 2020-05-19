@@ -133,6 +133,15 @@ async function packagingfilesystem(token, options) {
   return result.rows;
 }
 
+async function packagingstatus(token, options) {
+  let result = await _couch_request(
+    token,
+    [packagingdatabase, "_design/tdr/_view/processs"].join("/"),
+    options
+  );
+  return result.rows;
+}
+
 //  Once at a time, waiting for each to return...
 //  Should look into promise-throttle?
 async function packagingrequests(token, aiplist, reqs) {
@@ -154,5 +163,6 @@ export {
   view,
   testCantaloupe,
   packagingfilesystem,
+  packagingstatus,
   packagingrequests,
 };
