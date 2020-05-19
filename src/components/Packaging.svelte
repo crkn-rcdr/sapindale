@@ -8,6 +8,8 @@
 
   export let filesystem = undefined,
     packagestatus = undefined,
+    statuslevel = "3",
+    statustype = "f",
     hidegroup = false,
     idlist = undefined,
     packagedocs = undefined,
@@ -73,6 +75,8 @@
   }
 
   async function loadgroup() {
+    idlist = undefined; // Reset when we switch group
+    packagedocs = undefined; // Reset when we switch group
     switch (whichgroup) {
       case "fs":
         try {
@@ -84,8 +88,19 @@
         packagestatus = undefined;
         break;
       case "status":
+        var start = undefined;
+        var end = undefined;
+        if (statustype !== "b") {
+          var truthiness = statustype === "s";
+          start = JSON.stringify([truthiness]);
+          end = JSON.stringify([truthiness, {}]);
+        }
         try {
-          packagestatus = await packagingstatus(token, { group_level: 2 });
+          packagestatus = await packagingstatus(token, {
+            group_level: parseInt(statuslevel),
+            startkey: start,
+            endkey: end
+          });
         } catch (ignore) {
           packagestatus = undefined;
           return;
@@ -96,11 +111,62 @@
         filesystem = undefined;
         packagestatus = undefined;
     }
-    console.log("loadgroup", whichgroup);
+  }
+
+  async function viewStatus(key = []) {
+    resetVariables();
+    hidemanipulate = true; // Most likely we don't want to manipulate from a status lookup
+    try {
+      // I haven't yet found a better way to copy the array...
+      var endkey = JSON.parse(JSON.stringify(key));
+      endkey.push({});
+      var statusdocs = await packagingstatus(token, {
+        reduce: false,
+        startkey: JSON.stringify(key),
+        endkey: JSON.stringify(endkey),
+        include_docs: what === "d"
+      });
+      if (!Array.isArray(statusdocs)) {
+        // TODO: Do something better for this error condition
+        return;
+      }
+      if (what === "d") {
+        var tempdocs = [];
+        ingestchecks = {};
+        statusdocs.forEach(function(statusdoc) {
+          if ("doc" in statusdoc) {
+            var doc = statusdoc.doc;
+            tempdocs.push(doc);
+            // Set the checkbox to true, but only if certain conditions met.
+            if (
+              "label" in doc &&
+              "_attachments" in doc &&
+              "filesystem" in doc &&
+              "stage" in doc.filesystem &&
+              doc.filesystem.state !== "Trashcan"
+            ) {
+              ingestchecks[doc._id] = true;
+            }
+          }
+        });
+        updateaiplist();
+        packagedocs = tempdocs;
+      } else {
+        var templist = [];
+        confstages.forEach(function(confstage) {
+          templist.push(confstage.id);
+        });
+        idlist = templist;
+      }
+    } catch (ignore) {
+      // TODO: Do something better for this error condition
+      return;
+    }
   }
 
   async function viewConfstage(key = []) {
     resetVariables();
+    hidemanipulate = false; // Most likely we want to manipulate from a status lookup
     try {
       // I haven't yet found a better way to copy the array...
       var endkey = JSON.parse(JSON.stringify(key));
@@ -266,37 +332,91 @@
     </select>
   </legend>
   {#if !hidegroup}
-    {#if Array.isArray(filesystem)}
-      <table border="1" id="typeTable">
-        <tr>
-          <th>Config ID</th>
-          <th>Stage</th>
-          <th>Identifier count</th>
-        </tr>
-        {#each filesystem as confstage}
+    {#if whichgroup === 'fs'}
+      {#if Array.isArray(filesystem)}
+        <table border="1" id="typeTable">
           <tr>
-            <td>{confstage.key[0]}</td>
-            <td>{confstage.key[1]}</td>
-            <td>
-              <button
-                on:click={() => {
-                  viewConfstage(confstage.key);
-                }}>
-                {confstage.value}
-              </button>
-            </td>
+            <th>Config ID</th>
+            <th>Stage</th>
+            <th>Identifier count</th>
           </tr>
-        {/each}
-      </table>
-    {/if}
-    {#if Array.isArray(packagestatus)}
-      <ul>
-        {#each packagestatus as status}
-          <li>{JSON.stringify(status)}</li>
-        {/each}
-      </ul>
-    {/if}
-    {#if whichgroup === 'find'}Put a box to let people type....{/if}
+          {#each filesystem as confstage}
+            <tr>
+              <td>{confstage.key[0]}</td>
+              <td>{confstage.key[1]}</td>
+              <td>
+                <button
+                  on:click={() => {
+                    viewConfstage(confstage.key);
+                  }}>
+                  {confstage.value}
+                </button>
+              </td>
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {:else if whichgroup == 'status'}
+      <div style="display:inline;">
+        Show
+        <select id="statustype" bind:value={statustype} on:change={loadgroup}>
+          <option value="s">success</option>
+          <option value="f">failure</option>
+          <option value="b">success and failure</option>
+        </select>
+        grouping by
+        <select id="statuslevel" bind:value={statuslevel} on:change={loadgroup}>
+          <option value="0">all</option>
+          <option value="1">success/failure</option>
+          <option value="2">if there a message?</option>
+          <option value="3">date</option>
+          <option value="4">date and time</option>
+        </select>
+      </div>
+      {#if Array.isArray(packagestatus)}
+        <table border="1" id="typeTable">
+          <tr>
+            <th>Status</th>
+            {#if statuslevel > 1}
+              <th>Message</th>
+            {/if}
+            {#if statuslevel > 2}
+              <th>Date</th>
+            {/if}
+            {#if statuslevel > 3}
+              <th>time</th>
+            {/if}
+            <th>Identifier Count</th>
+          </tr>
+          {#each packagestatus as status}
+            <tr>
+              <td>
+                {#if status.key[0]}success{:else}fail{/if}
+              </td>
+              {#if statuslevel > 1}
+                <td>
+                  {#if status.key[1]}yes{:else}no{/if}
+                </td>
+              {/if}
+              {#if statuslevel > 2}
+                <td>{status.key[2]}</td>
+              {/if}
+              {#if statuslevel > 3}
+                <td>{status.key[3]}</td>
+              {/if}
+              <td>
+                <button
+                  on:click={() => {
+                    viewStatus(status.key);
+                  }}>
+                  {status.value}
+                </button>
+              </td>
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {:else if whichgroup == 'find'}Put a box to let people type....{/if}
   {/if}
 </fieldset>
 
