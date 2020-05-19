@@ -467,8 +467,7 @@
               type="text"
               size="50"
               id="changelog"
-              bind:value={changelog}
-              value="" />
+              bind:value={changelog} />
             {#if typeof changelog !== 'string' || changelog.length < 5}
               <div style="color:red; display:inline;">
                 (Must be at least 5 characters)
@@ -546,12 +545,7 @@
             </li>
           </ul>
           Changelog:
-          <input
-            type="text"
-            size="50"
-            id="changelog"
-            bind:value={changelog}
-            value="" />
+          <input type="text" size="50" id="changelog" bind:value={changelog} />
           {#if typeof changelog !== 'string' || changelog.length < 5}
             <div style="color:red; display:inline;">
               (Must be at least 5 characters)
