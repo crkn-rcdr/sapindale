@@ -3,7 +3,8 @@
     packagingfilesystem,
     packagingstatus,
     packagingrequests,
-    packagingconfigs
+    packagingconfigs,
+    packagingdocs
   } from "../couch.js";
   import { state as authState } from "../auth.js";
 
@@ -25,7 +26,10 @@
     configs = undefined,
     packageconfig = "",
     showconfig = false,
-    findidentifiers = "";
+    findidentifiers = "",
+    AIPdata = {},
+    findnotvalidText = undefined,
+    findnotfoundText = undefined;
 
   // SIP / metadata forms
   export let ingestType = "new",
@@ -130,7 +134,6 @@
           configtemp.forEach(function(aconfig) {
             configs[aconfig.id] = aconfig.doc;
           });
-          console.log(configtemp, configs);
         } catch (ignore) {
           return;
         }
@@ -163,25 +166,14 @@
       }
       if (what === "d") {
         var tempdocs = [];
-        ingestchecks = {};
         statusdocs.forEach(function(statusdoc) {
           if ("doc" in statusdoc) {
-            var doc = statusdoc.doc;
-            tempdocs.push(doc);
-            // Set the checkbox to true, but only if certain conditions met.
-            if (
-              "label" in doc &&
-              "_attachments" in doc &&
-              "filesystem" in doc &&
-              "stage" in doc.filesystem &&
-              doc.filesystem.state !== "Trashcan"
-            ) {
-              ingestchecks[doc._id] = true;
-            }
+            tempdocs.push(statusdoc.doc);
           }
         });
-        updateaiplist();
         packagedocs = tempdocs;
+        setIngestChecks();
+        updateaiplist();
       } else {
         var templist = [];
         confstages.forEach(function(confstage) {
@@ -214,25 +206,14 @@
       }
       if (what === "d") {
         var tempdocs = [];
-        ingestchecks = {};
         confstages.forEach(function(confstage) {
           if ("doc" in confstage) {
-            var doc = confstage.doc;
-            tempdocs.push(doc);
-            // Set the checkbox to true, but only if certain conditions met.
-            if (
-              "label" in doc &&
-              "_attachments" in doc &&
-              "filesystem" in doc &&
-              "stage" in doc.filesystem &&
-              doc.filesystem.state !== "Trashcan"
-            ) {
-              ingestchecks[doc._id] = true;
-            }
+            tempdocs.push(confstage.doc);
           }
         });
-        updateaiplist();
         packagedocs = tempdocs;
+        setIngestChecks();
+        updateaiplist();
       } else {
         var templist = [];
         confstages.forEach(function(confstage) {
@@ -244,6 +225,105 @@
       // TODO: Do something better for this error condition
       return;
     }
+  }
+
+  function setIngestChecks() {
+    ingestchecks = {};
+    packagedocs.forEach(function(doc) {
+      // Set the checkbox to true, but only if certain conditions met.
+      if (
+        "label" in doc &&
+        "_attachments" in doc &&
+        "filesystem" in doc &&
+        "stage" in doc.filesystem &&
+        doc.filesystem.state !== "Trashcan"
+      ) {
+        ingestchecks[doc._id] = true;
+      }
+    });
+  }
+  async function viewFind() {
+    resetVariables();
+    findidentifiers.replace(/["]/g, "");
+    var IDs = findidentifiers.split(/[,|\s]/);
+    var AIPlist = [];
+    var depositor = configs[packageconfig].depositor;
+    var valid_TDR_identifier_exp = /^[A-Za-z0-9_-]{5,64}$/;
+    var tempnotvalid = [];
+
+    // Initialise globals used for display
+    packagedocs = undefined;
+    idlist = undefined;
+    AIPdata = {};
+    findnotvalidText = undefined;
+    findnotfoundText = undefined;
+
+    for (var index in IDs) {
+      var currentID = IDs[index];
+      if (/\S/.test(currentID)) {
+        if (currentID.substr(0, depositor.length + 1) === depositor + ".") {
+          currentID = currentID.substr(depositor.length + 1);
+        }
+        var objid = i2objid(currentID);
+
+        if (valid_TDR_identifier_exp.test(objid)) {
+          var aipid = depositor + "." + objid;
+          AIPlist.push(aipid);
+          if (!(aipid in AIPdata)) {
+            AIPdata[aipid] = {};
+          }
+          AIPdata[aipid]["identifier"] = currentID;
+        } else tempnotvalid.push(currentID);
+      }
+    }
+    if (tempnotvalid.length > 0) {
+      findnotvalidText = laterelize(tempnotvalid);
+    }
+
+    var mydocs = await packagingdocs(token, AIPlist, {
+      include_docs: what === "d"
+    });
+    if (!Array.isArray(mydocs)) {
+      // TODO: Do something better for this error condition
+      return;
+    }
+    var tempdocs = [];
+    var tempids = [];
+    var tempnotfound = [];
+    mydocs.forEach(function(doc) {
+      if ("doc" in doc) {
+        tempdocs.push(doc.doc);
+      } else if ("id" in doc) {
+        tempids.push(doc.id);
+      } else {
+        tempnotfound.push(doc.key);
+      }
+    });
+    if (tempnotfound.length > 0) {
+      findnotfoundText = laterelize(tempnotfound);
+    }
+    if (tempids.length > 0) {
+      idlist = tempids;
+    } else {
+      packagedocs = tempdocs;
+      setIngestChecks();
+      updateaiplist();
+    }
+  }
+
+  function i2objid(identifier = "") {
+    if (
+      "i2objid" in configs[packageconfig] &&
+      Array.isArray(configs[packageconfig].i2objid)
+    ) {
+      configs[packageconfig].i2objid.forEach(function(value = {}) {
+        identifier = identifier.replace(
+          new RegExp(value.search, "g"),
+          value.replace
+        );
+      });
+    }
+    return identifier;
   }
 
   async function moveIdentifier(identifier) {
@@ -326,6 +406,12 @@
       aips: aiplist.length
     };
   }
+
+  function laterelize(words = []) {
+    var output = "";
+    for (var word in words) output += words[word] + "\n";
+    return output;
+  }
 </script>
 
 <style>
@@ -378,7 +464,7 @@
               <td>
                 <button
                   on:click={() => {
-                    viewConfstage(confstage.key);
+                    viewFind();
                   }}>
                   {confstage.value}
                 </button>
@@ -592,6 +678,31 @@
             What is allowed as an identifier is specific to the chosen
             configuration. An LAC reel was used only as an example.
             <textarea id="identifiers" bind:value={findidentifiers} />
+
+            <div style="display:block;">
+              <button
+                type="submit"
+                on:click={() => {
+                  viewFind();
+                }}>
+                Find
+              </button>
+            </div>
+
+            {#if findnotvalidText}
+              <label for="findnotvalidtext">IDs not valid</label>
+              <textarea
+                id="findnotvalidtext"
+                disabled="true"
+                bind:value={findnotvalidText} />
+            {/if}
+            {#if findnotfoundText}
+              <label for="findnotfoundtext">IDs not found</label>
+              <textarea
+                id="findnotfoundtext"
+                disabled="true"
+                bind:value={findnotfoundText} />
+            {/if}
           {/if}
         {/if}
       {:else}Loading packaging configurations{/if}

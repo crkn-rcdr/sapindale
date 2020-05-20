@@ -151,6 +151,17 @@ async function packagingconfigs(token, options) {
   return result.rows;
 }
 
+async function packagingdocs(token, docs, options) {
+  let result = await _couch_request(
+    token,
+    [packagingdatabase, "_all_docs"].join("/"),
+    options,
+    "POST",
+    { "keys": docs }
+  );
+  return result.rows;
+}
+
 
 //  Once at a time, waiting for each to return...
 //  Should look into promise-throttle?
@@ -166,6 +177,7 @@ async function packagingrequests(token, aiplist, reqs) {
   }
 }
 
+
 export {
   idLookup,
   documents,
@@ -175,5 +187,6 @@ export {
   packagingfilesystem,
   packagingstatus,
   packagingrequests,
-  packagingconfigs
+  packagingconfigs,
+  packagingdocs
 };
