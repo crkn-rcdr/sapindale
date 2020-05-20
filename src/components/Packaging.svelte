@@ -2,7 +2,8 @@
   import {
     packagingfilesystem,
     packagingstatus,
-    packagingrequests
+    packagingrequests,
+    packagingconfigs
   } from "../couch.js";
   import { state as authState } from "../auth.js";
 
@@ -20,7 +21,11 @@
     move = {},
     ingestchecks = {},
     aiplist = undefined,
-    aiplistview = undefined;
+    aiplistview = undefined,
+    configs = undefined,
+    packageconfig = "",
+    showconfig = false,
+    findidentifiers = "";
 
   // SIP / metadata forms
   export let ingestType = "new",
@@ -86,6 +91,7 @@
           return;
         }
         packagestatus = undefined;
+        configs = undefined;
         break;
       case "status":
         var start = undefined;
@@ -106,10 +112,35 @@
           return;
         }
         filesystem = undefined;
+        configs = undefined;
+        break;
+
+      case "find":
+        var configtemp;
+        try {
+          configtemp = await packagingconfigs(token, {
+            reduce: false,
+            include_docs: true
+          });
+          if (!Array.isArray(configtemp)) {
+            // TODO: Do something better for this error condition
+            return;
+          }
+          configs = {};
+          configtemp.forEach(function(aconfig) {
+            configs[aconfig.id] = aconfig.doc;
+          });
+          console.log(configtemp, configs);
+        } catch (ignore) {
+          return;
+        }
+        filesystem = undefined;
+        packagestatus = undefined;
         break;
       default:
         filesystem = undefined;
         packagestatus = undefined;
+        configs = undefined;
     }
   }
 
@@ -416,7 +447,155 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == 'find'}Put a box to let people type....{/if}
+    {:else if whichgroup == 'find'}
+      {#if configs}
+        Select packaging configuration:
+        <select bind:value={packageconfig}>
+          <option value="" />
+          {#each Object.entries(configs) as [configid, config]}
+            <option value={configid}>{config.title}</option>
+          {/each}
+        </select>
+
+        {#if packageconfig !== ''}
+          <label for="showconfig">
+            <input type="checkbox" id="showconfig" bind:checked={showconfig} />
+            Show config?
+          </label>
+          {#if showconfig}
+            <table border="1" id="confTable">
+              <tr>
+                <th>Variable</th>
+                <th>Value</th>
+              </tr>
+              <tr>
+                <td>ConfigID</td>
+                <td>{packageconfig}</td>
+              </tr>
+              {#each Object.entries(configs[packageconfig]) as [property, value]}
+                {#if property.charAt() !== '_'}
+                  {#if property === 'metsproc'}
+                    <tr>
+                      <td>metsproc commands</td>
+                      <td>
+                        <table>
+                          <tr>
+                            <th>regexp</th>
+                            <th>command</th>
+                          </tr>
+
+                          {#each value as metsproc}
+                            <tr>
+                              <td>
+                                {#if metsproc.regex}{metsproc.regex}{/if}
+                              </td>
+                              <td>
+                                {metsproc.command}
+                                {#if metsproc.extraparam}
+                                  {metsproc.extraparam}
+                                {/if}
+                              </td>
+                            </tr>
+                          {/each}
+
+                        </table>
+                      </td>
+                    </tr>
+                  {:else if property === 'fileconfig'}
+                    <tr>
+                      <td>File Configuration</td>
+                      <td>
+                        <table>
+                          <tr>
+                            <th>regexp</th>
+                            <th>class</th>
+                            <th>ignored</th>
+                          </tr>
+
+                          {#each value as fileconfig}
+                            <tr>
+                              <td>
+                                {#if fileconfig.regex}{fileconfig.regex}{/if}
+                              </td>
+                              <td>
+                                {#if fileconfig.class}{fileconfig.class}{/if}
+                              </td>
+                              <td>
+                                {#if fileconfig.ignore}{fileconfig.ignore}{/if}
+                              </td>
+                            </tr>
+                          {/each}
+
+                        </table>
+                      </td>
+                    </tr>
+                  {:else if property === 'i2objid'}
+                    <tr>
+                      <td>Identifier to Object ID mappings</td>
+                      <td>
+                        <table>
+                          <tr>
+                            <th>search</th>
+                            <th>replace</th>
+                          </tr>
+
+                          {#each value as i2omap}
+                            <tr>
+                              <td>
+                                {#if i2omap.search}{i2omap.search}{/if}
+                              </td>
+                              <td>
+                                {#if i2omap.replace}{i2omap.replace}{/if}
+                              </td>
+                            </tr>
+                          {/each}
+
+                        </table>
+                      </td>
+                    </tr>
+                  {:else if typeof value === 'string' || typeof value === 'boolean'}
+                    <tr>
+                      <td>{property}</td>
+                      <td>{value}</td>
+                    </tr>
+                  {:else}
+                    <tr>
+                      <td>{property}</td>
+                      <td>{JSON.stringify(value)}</td>
+                    </tr>
+                  {/if}
+                {/if}
+              {/each}
+            </table>
+          {:else}
+            <br />
+            <br />
+            <p>Fill in identifiers in one of the following formats:</p>
+            <ul>
+              <li>
+                <b>depositor.OBJID</b>
+                (example: oocihm.lac_reel_c10679)
+              </li>
+              <li>
+                <b>depositor.identifier</b>
+                (example: oocihm.C-10680)
+              </li>
+              <li>
+                <b>OBJID</b>
+                (example: lac_reel_c10681)
+              </li>
+              <li>
+                <b>identifier</b>
+                (example: C-10682)
+              </li>
+            </ul>
+            What is allowed as an identifier is specific to the chosen
+            configuration. An LAC reel was used only as an example.
+            <textarea id="identifiers" bind:value={findidentifiers} />
+          {/if}
+        {/if}
+      {:else}Loading packaging configurations{/if}
+    {/if}
   {/if}
 </fieldset>
 
