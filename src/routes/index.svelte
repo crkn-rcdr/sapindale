@@ -86,5 +86,11 @@
         Futon (Please do not edit unless you know what you are doing)
       </a>
     </li>
+    <li>
+      <a href="/collection/[slug].svelte">Create New Collection</a>
+    </li>
+    <li>
+      <a href="/deposit">Deposit From Preservation</a>
+    </li>
   </ul>
 </div>

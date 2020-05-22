@@ -75,4 +75,5 @@ button {
   display: inline-block;
   padding: 0.5rem 2rem;
   background: var(--color);
+  color: white;
 }
