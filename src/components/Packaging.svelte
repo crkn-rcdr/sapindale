@@ -6,6 +6,7 @@
     packagingconfigs,
     packagingdocs
   } from "../couch.js";
+  import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
 
   export let filesystem = undefined,
@@ -20,16 +21,20 @@
     what = "d",
     whichgroup = "",
     move = {},
+    create = {},
+    exporttype = {},
     ingestchecks = {},
     aiplist = undefined,
     aiplistview = undefined,
     configs = undefined,
     packageconfig = "",
-    showconfig = false,
+    hideconfig = true,
     findidentifiers = "",
-    AIPdata = {},
+    AIPidentifier = {},
     findnotvalidText = undefined,
-    findnotfoundText = undefined;
+    findnotfound = undefined,
+    hidenotfound = false,
+    showmessage = true;
 
   // SIP / metadata forms
   export let ingestType = "new",
@@ -60,6 +65,21 @@
     "Ready",
     "Proofed"
   ];
+
+  onMount(async () => {
+    try {
+      var configtemp = await packagingconfigs(token, {
+        reduce: false,
+        include_docs: true
+      });
+      if (Array.isArray(configtemp)) {
+        configs = {};
+        configtemp.forEach(function(aconfig) {
+          configs[aconfig.id] = aconfig.doc;
+        });
+      }
+    } catch (ignore) {}
+  });
 
   function resetVariables() {
     idlist = undefined;
@@ -95,7 +115,6 @@
           return;
         }
         packagestatus = undefined;
-        configs = undefined;
         break;
       case "status":
         var start = undefined;
@@ -116,34 +135,15 @@
           return;
         }
         filesystem = undefined;
-        configs = undefined;
         break;
 
       case "find":
-        var configtemp;
-        try {
-          configtemp = await packagingconfigs(token, {
-            reduce: false,
-            include_docs: true
-          });
-          if (!Array.isArray(configtemp)) {
-            // TODO: Do something better for this error condition
-            return;
-          }
-          configs = {};
-          configtemp.forEach(function(aconfig) {
-            configs[aconfig.id] = aconfig.doc;
-          });
-        } catch (ignore) {
-          return;
-        }
         filesystem = undefined;
         packagestatus = undefined;
         break;
       default:
         filesystem = undefined;
         packagestatus = undefined;
-        configs = undefined;
     }
   }
 
@@ -176,8 +176,8 @@
         updateaiplist();
       } else {
         var templist = [];
-        confstages.forEach(function(confstage) {
-          templist.push(confstage.id);
+        statusdocs.forEach(function(statusdoc) {
+          templist.push(statusdoc.id);
         });
         idlist = templist;
       }
@@ -242,6 +242,12 @@
       }
     });
   }
+
+  async function createEmpty(aip = "") {
+    await packagingrequests(token, [aip], {});
+    viewFind();
+  }
+
   async function viewFind() {
     resetVariables();
     findidentifiers.replace(/["]/g, "");
@@ -254,9 +260,9 @@
     // Initialise globals used for display
     packagedocs = undefined;
     idlist = undefined;
-    AIPdata = {};
+    AIPidentifier = {};
     findnotvalidText = undefined;
-    findnotfoundText = undefined;
+    findnotfound = undefined;
 
     for (var index in IDs) {
       var currentID = IDs[index];
@@ -269,10 +275,9 @@
         if (valid_TDR_identifier_exp.test(objid)) {
           var aipid = depositor + "." + objid;
           AIPlist.push(aipid);
-          if (!(aipid in AIPdata)) {
-            AIPdata[aipid] = {};
+          if (!(aipid in AIPidentifier) && currentID !== objid) {
+            AIPidentifier[aipid] = currentID;
           }
-          AIPdata[aipid]["identifier"] = currentID;
         } else tempnotvalid.push(currentID);
       }
     }
@@ -300,7 +305,7 @@
       }
     });
     if (tempnotfound.length > 0) {
-      findnotfoundText = laterelize(tempnotfound);
+      findnotfound = tempnotfound;
     }
     if (tempids.length > 0) {
       idlist = tempids;
@@ -327,10 +332,67 @@
   }
 
   async function moveIdentifier(identifier) {
-    document.getElementById("buttondiv-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
+    document.getElementById("buttonmove-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
     var req = {
       nocreate: true,
       processreq: JSON.stringify({ request: "move", stage: move[identifier] })
+    };
+    await packagingrequests(token, [identifier], req);
+  }
+
+  async function createIdentifier(identifier) {
+    document.getElementById("buttoncreate-" + identifier).style.display =
+      "none"; // Should I create new hash and use {if} ?
+    var req = {
+      nocreate: true,
+      processreq: JSON.stringify({
+        request: "move",
+        stage: create[identifier],
+        empty: true,
+        configid: packageconfig,
+        identifier: AIPidentifier[identifier]
+      })
+    };
+    await packagingrequests(token, [identifier], req);
+  }
+
+  async function exportIdentifier(identifier) {
+    document.getElementById("buttonexport-" + identifier).style.display =
+      "none"; // Should I create new hash and use {if} ?
+    var req = {
+      nocreate: true,
+      processreq: JSON.stringify({
+        request: "export",
+        type: exporttype[identifier],
+        wipDir: "Temp/export/" + packageconfig,
+        createdest: true
+      })
+    };
+    await packagingrequests(token, [identifier], req);
+  }
+
+  async function silenceIdentifier(identifier) {
+    document.getElementById("silence-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
+    var req = {
+      nocreate: true,
+      silence: true
+    };
+    await packagingrequests(token, [identifier], req);
+  }
+
+  async function retryIdentifier(identifier, oldreq) {
+    document.getElementById("retry-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
+    if (Array.isArray(oldreq)) {
+      var processreq = [{ request: "move", stage: "Processing" }];
+      oldreq.forEach(function(thisReq) {
+        delete thisReq["processhost"];
+        delete thisReq["processdate"];
+        processreq.push(thisReq);
+      });
+    }
+    var req = {
+      nocreate: true,
+      processreq: JSON.stringify(processreq)
     };
     await packagingrequests(token, [identifier], req);
   }
@@ -425,8 +487,131 @@
   }
 </style>
 
+{#if configs}
+  <fieldset>
+    <legend>
+      (
+      <label for="hideconfig">
+        <input type="checkbox" id="hideconfig" bind:checked={hideconfig} />
+        Hide?
+      </label>
+      ) Select packaging configuration:
+      <select bind:value={packageconfig}>
+        <option value="" />
+        {#each Object.entries(configs) as [configid, config]}
+          <option value={configid}>{config.title}</option>
+        {/each}
+      </select>
+    </legend>
+    {#if packageconfig !== '' && !hideconfig}
+      <table border="1" id="confTable">
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>ConfigID</td>
+          <td>{packageconfig}</td>
+        </tr>
+        {#each Object.entries(configs[packageconfig]) as [property, value]}
+          {#if property.charAt() !== '_'}
+            {#if property === 'metsproc'}
+              <tr>
+                <td>metsproc commands</td>
+                <td>
+                  <table>
+                    <tr>
+                      <th>regexp</th>
+                      <th>command</th>
+                    </tr>
+
+                    {#each value as metsproc}
+                      <tr>
+                        <td>
+                          {#if metsproc.regex}{metsproc.regex}{/if}
+                        </td>
+                        <td>
+                          {metsproc.command}
+                          {#if metsproc.extraparam}{metsproc.extraparam}{/if}
+                        </td>
+                      </tr>
+                    {/each}
+
+                  </table>
+                </td>
+              </tr>
+            {:else if property === 'fileconfig'}
+              <tr>
+                <td>File Configuration</td>
+                <td>
+                  <table>
+                    <tr>
+                      <th>regexp</th>
+                      <th>class</th>
+                      <th>ignored</th>
+                    </tr>
+
+                    {#each value as fileconfig}
+                      <tr>
+                        <td>
+                          {#if fileconfig.regex}{fileconfig.regex}{/if}
+                        </td>
+                        <td>
+                          {#if fileconfig.class}{fileconfig.class}{/if}
+                        </td>
+                        <td>
+                          {#if fileconfig.ignore}{fileconfig.ignore}{/if}
+                        </td>
+                      </tr>
+                    {/each}
+
+                  </table>
+                </td>
+              </tr>
+            {:else if property === 'i2objid'}
+              <tr>
+                <td>Identifier to Object ID mappings</td>
+                <td>
+                  <table>
+                    <tr>
+                      <th>search</th>
+                      <th>replace</th>
+                    </tr>
+
+                    {#each value as i2omap}
+                      <tr>
+                        <td>
+                          {#if i2omap.search}{i2omap.search}{/if}
+                        </td>
+                        <td>
+                          {#if i2omap.replace}{i2omap.replace}{/if}
+                        </td>
+                      </tr>
+                    {/each}
+
+                  </table>
+                </td>
+              </tr>
+            {:else if typeof value === 'string' || typeof value === 'boolean'}
+              <tr>
+                <td>{property}</td>
+                <td>{value}</td>
+              </tr>
+            {:else}
+              <tr>
+                <td>{property}</td>
+                <td>{JSON.stringify(value)}</td>
+              </tr>
+            {/if}
+          {/if}
+        {/each}
+      </table>
+    {/if}
+  </fieldset>
+{/if}
+
 <!--
-   Once the  filesystem view is loaded, display the table showing the different configid/stage/counts with buttons for the operator to pick one
+   There are 3 different possible sets of fields for this fieldset
  -->
 <fieldset>
   <legend>
@@ -464,7 +649,7 @@
               <td>
                 <button
                   on:click={() => {
-                    viewFind();
+                    viewConfstage(confstage.key);
                   }}>
                   {confstage.value}
                 </button>
@@ -535,180 +720,83 @@
       {/if}
     {:else if whichgroup == 'find'}
       {#if configs}
-        Select packaging configuration:
-        <select bind:value={packageconfig}>
-          <option value="" />
-          {#each Object.entries(configs) as [configid, config]}
-            <option value={configid}>{config.title}</option>
-          {/each}
-        </select>
-
         {#if packageconfig !== ''}
-          <label for="showconfig">
-            <input type="checkbox" id="showconfig" bind:checked={showconfig} />
-            Show config?
-          </label>
-          {#if showconfig}
-            <table border="1" id="confTable">
-              <tr>
-                <th>Variable</th>
-                <th>Value</th>
-              </tr>
-              <tr>
-                <td>ConfigID</td>
-                <td>{packageconfig}</td>
-              </tr>
-              {#each Object.entries(configs[packageconfig]) as [property, value]}
-                {#if property.charAt() !== '_'}
-                  {#if property === 'metsproc'}
-                    <tr>
-                      <td>metsproc commands</td>
-                      <td>
-                        <table>
-                          <tr>
-                            <th>regexp</th>
-                            <th>command</th>
-                          </tr>
+          <br />
+          <p>Fill in identifiers in one of the following formats:</p>
+          <ul>
+            <li>
+              <b>depositor.OBJID</b>
+              (example: oocihm.lac_reel_c10679)
+            </li>
+            <li>
+              <b>depositor.identifier</b>
+              (example: oocihm.C-10680)
+            </li>
+            <li>
+              <b>OBJID</b>
+              (example: lac_reel_c10681)
+            </li>
+            <li>
+              <b>identifier</b>
+              (example: C-10682)
+            </li>
+          </ul>
+          What is allowed as an identifier is specific to the chosen
+          configuration. An LAC reel was used only as an example. With {configs[packageconfig].title}
+          the depositor is "{configs[packageconfig].depositor}"
+          <textarea id="identifiers" bind:value={findidentifiers} />
 
-                          {#each value as metsproc}
-                            <tr>
-                              <td>
-                                {#if metsproc.regex}{metsproc.regex}{/if}
-                              </td>
-                              <td>
-                                {metsproc.command}
-                                {#if metsproc.extraparam}
-                                  {metsproc.extraparam}
-                                {/if}
-                              </td>
-                            </tr>
-                          {/each}
+          <div style="display:block;">
+            <button
+              type="submit"
+              on:click={() => {
+                viewFind();
+              }}>
+              Find
+            </button>
+          </div>
 
-                        </table>
-                      </td>
-                    </tr>
-                  {:else if property === 'fileconfig'}
-                    <tr>
-                      <td>File Configuration</td>
-                      <td>
-                        <table>
-                          <tr>
-                            <th>regexp</th>
-                            <th>class</th>
-                            <th>ignored</th>
-                          </tr>
-
-                          {#each value as fileconfig}
-                            <tr>
-                              <td>
-                                {#if fileconfig.regex}{fileconfig.regex}{/if}
-                              </td>
-                              <td>
-                                {#if fileconfig.class}{fileconfig.class}{/if}
-                              </td>
-                              <td>
-                                {#if fileconfig.ignore}{fileconfig.ignore}{/if}
-                              </td>
-                            </tr>
-                          {/each}
-
-                        </table>
-                      </td>
-                    </tr>
-                  {:else if property === 'i2objid'}
-                    <tr>
-                      <td>Identifier to Object ID mappings</td>
-                      <td>
-                        <table>
-                          <tr>
-                            <th>search</th>
-                            <th>replace</th>
-                          </tr>
-
-                          {#each value as i2omap}
-                            <tr>
-                              <td>
-                                {#if i2omap.search}{i2omap.search}{/if}
-                              </td>
-                              <td>
-                                {#if i2omap.replace}{i2omap.replace}{/if}
-                              </td>
-                            </tr>
-                          {/each}
-
-                        </table>
-                      </td>
-                    </tr>
-                  {:else if typeof value === 'string' || typeof value === 'boolean'}
-                    <tr>
-                      <td>{property}</td>
-                      <td>{value}</td>
-                    </tr>
-                  {:else}
-                    <tr>
-                      <td>{property}</td>
-                      <td>{JSON.stringify(value)}</td>
-                    </tr>
-                  {/if}
-                {/if}
-              {/each}
-            </table>
-          {:else}
-            <br />
-            <br />
-            <p>Fill in identifiers in one of the following formats:</p>
-            <ul>
-              <li>
-                <b>depositor.OBJID</b>
-                (example: oocihm.lac_reel_c10679)
-              </li>
-              <li>
-                <b>depositor.identifier</b>
-                (example: oocihm.C-10680)
-              </li>
-              <li>
-                <b>OBJID</b>
-                (example: lac_reel_c10681)
-              </li>
-              <li>
-                <b>identifier</b>
-                (example: C-10682)
-              </li>
-            </ul>
-            What is allowed as an identifier is specific to the chosen
-            configuration. An LAC reel was used only as an example.
-            <textarea id="identifiers" bind:value={findidentifiers} />
-
-            <div style="display:block;">
-              <button
-                type="submit"
-                on:click={() => {
-                  viewFind();
-                }}>
-                Find
-              </button>
-            </div>
-
-            {#if findnotvalidText}
-              <label for="findnotvalidtext">IDs not valid</label>
-              <textarea
-                id="findnotvalidtext"
-                disabled="true"
-                bind:value={findnotvalidText} />
-            {/if}
-            {#if findnotfoundText}
-              <label for="findnotfoundtext">IDs not found</label>
-              <textarea
-                id="findnotfoundtext"
-                disabled="true"
-                bind:value={findnotfoundText} />
-            {/if}
+          {#if findnotvalidText}
+            <label for="findnotvalidtext">IDs not valid</label>
+            <textarea
+              id="findnotvalidtext"
+              disabled="true"
+              bind:value={findnotvalidText} />
           {/if}
-        {/if}
-      {:else}Loading packaging configurations{/if}
+        {:else}Please choose a packaging configuration.{/if}
+      {/if}
     {/if}
   {/if}
 </fieldset>
+
+{#if Array.isArray(findnotfound)}
+  <fieldset>
+    <legend>
+      (
+      <label for="hidenotfound">
+        <input type="checkbox" id="hidenotfound" bind:checked={hidenotfound} />
+        Hide?
+      </label>
+      ) IDs not found
+    </legend>
+    {#if !hidenotfound}
+      <ul>
+        {#each findnotfound as notfoundid}
+          <li>
+            {notfoundid}
+            <button
+              type="submit"
+              on:click={() => {
+                createEmpty(notfoundid);
+              }}>
+              Create empty record
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </fieldset>
+{/if}
 
 <!--
   After the operator clicks a button for a configID/stage, the packaging database documents for that specific list of identifiers is selected.
@@ -897,11 +985,11 @@
   {/if}
 
   <!-- 
-  A document list with checkboxes to have item added to ingest list.
+  List showing details from a CouchDB packaging document, including checkboxes when ingest is possible.
 -->
   <fieldset>
     <legend>
-      Details about group of AIPs (
+      (
       <label for="hidepackagedetails">
         <input
           type="checkbox"
@@ -909,9 +997,22 @@
           bind:checked={hidepackagedetails} />
         Hide?
       </label>
-      )
+      ) Details about group of AIPs
     </legend>
     {#if !hidepackagedetails}
+      <!--
+Some buttons to show/hide specific parts
+
+ -->
+      <table>
+        <tr>
+          <th>
+            <input type="checkbox" bind:checked={showmessage} />
+            Process Messages
+          </th>
+        </tr>
+      </table>
+
       <dl>
         {#each packagedocs as doc}
           <dt>
@@ -924,12 +1025,14 @@
               {/if}
               {doc._id}
             </label>
+            {#if AIPidentifier[doc._id]}({AIPidentifier[doc._id]}){/if}
           </dt>
           <dd>
+
             {#if 'filesystem' in doc && 'stage' in doc.filesystem}
               <li>
                 wip/{doc.filesystem.stage}/{doc.filesystem.configid}/{doc.filesystem.identifier}
-                <div style="display:inline;" id="buttondiv-{doc._id}">
+                <div style="display:inline;" id="buttonmove-{doc._id}">
                   (
                   <button
                     on:click={() => {
@@ -945,12 +1048,28 @@
                   )
                 </div>
               </li>
+            {:else if packageconfig !== ''}
+              <div style="display:inline;" id="buttoncreate-{doc._id}">
+                <button
+                  on:click={() => {
+                    createIdentifier(doc._id);
+                  }}>
+                  Create in
+                </button>
+                <select bind:value={create[doc._id]}>
+                  {#each stages as stage}
+                    <option value={stage}>{stage}</option>
+                  {/each}
+                </select>
+              </div>
             {/if}
+
             {#if !('label' in doc)}
               <li>No item label found</li>
             {:else if !('_attachments' in doc) || !('dmd.xml' in doc._attachments)}
               <li>No dmd.xml found</li>
             {/if}
+
             {#if 'classify' in doc && Object.keys(doc.classify).length > 0}
               <li>
                 Classification:
@@ -960,6 +1079,7 @@
                 {/each}
               </li>
             {/if}
+
             {#if 'repos' in doc && Array.isArray(doc.repos)}
               <li>
                 Found in TDR date={doc.reposManifestDate} Repos=
@@ -968,9 +1088,65 @@
                   {thisrepo}
                 {/each}
               </li>
+
+              {#if packageconfig !== ''}
+                <div style="display: inline;" id="export-{doc._id}">
+                  <li>
+                    <select bind:value={exporttype[doc._id]}>
+                      <option value="aip">aip</option>
+                      <option value="sip">sip</option>
+                      <option value="METS">METS</option>
+                      <option value="dmdSec">dmdSec</option>
+                    </select>
+                    <button
+                      type="submit"
+                      on:click={() => {
+                        exportIdentifier(doc._id);
+                      }}>
+                      export to Temp/export/{packageconfig}
+                    </button>
+                  </li>
+                </div>
+              {/if}
             {/if}
-            {#if 'processHistory' in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0 && 'message' in doc.processHistory[0] && doc.processHistory[0].message !== ''}
-              <pre>{doc.processHistory[0].message}</pre>
+
+            {#if 'processReq' in doc && Array.isArray(doc.processReq) && doc.processReq.length > 0}
+              <li>
+                Next processing request is {doc.processReq[0].request} of {doc.processReq.length}
+                request(s)
+              </li>
+            {/if}
+
+            {#if 'processHistory' in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0}
+              {#if !doc.processHistory[0].status}
+                <li>
+                  Last request failed: {doc.processHistory[0].request}
+                  <div style="display: inline;" id="silence-{doc._id}">
+                    <button
+                      type="submit"
+                      on:click={() => {
+                        silenceIdentifier(doc._id);
+                      }}>
+                      Silence error
+                    </button>
+                  </div>
+                  <div style="display: inline;" id="retry-{doc._id}">
+                    <button
+                      type="submit"
+                      on:click={() => {
+                        retryIdentifier(doc._id, doc.processHistory[0].req);
+                      }}>
+                      Retry {doc.processHistory[0].req.length} requests
+                    </button>
+                  </div>
+                </li>
+              {/if}
+
+              {#if showmessage && 'message' in doc.processHistory[0] && doc.processHistory[0].message !== ''}
+                <textarea disabled="true">
+                  {doc.processHistory[0].message}
+                </textarea>
+              {/if}
             {/if}
           </dd>
         {/each}
