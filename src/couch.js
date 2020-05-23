@@ -133,5 +133,4 @@ export {
   view,
   testCantaloupe,
   slugView,
-  collectionLabel,
 };
