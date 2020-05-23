@@ -485,7 +485,22 @@
     width: 100%;
     height: 100px;
   }
+  ul {
+    list-style-type: disc;
+    list-style-position: inside;
+  }
+  dd,
+  dl,
+  dt {
+    display: block;
+    unicode-bidi: embed;
+  }
+  dd {
+    margin-left: 5%;
+  }
 </style>
+
+<h1>CRKN/Canadiana/CIHM packaging</h1>
 
 {#if configs}
   <fieldset>
