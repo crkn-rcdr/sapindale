@@ -1,9 +1,9 @@
 <script>
-  import PackagingStartProcess from "../components/Packaging.svelte";
+  import Packaging from "../components/Packaging.svelte";
 </script>
 
 <svelte:head>
   <title>Packaging</title>
 </svelte:head>
 
-<PackagingStartProcess />
+<Packaging />
