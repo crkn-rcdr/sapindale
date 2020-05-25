@@ -2,6 +2,8 @@ import qs from "query-string";
 import testManifestData from "./cantaloupe.js";
 
 const upholsteryUrl = process.env.UPHOLSTERY;
+const internalmetadatabase = "internalmeta";
+const capcollectiondatabase = "cap_collections";
 
 async function _request(token, path, options, method, payload) {
   let url = [upholsteryUrl, path].join("/");
@@ -121,4 +123,27 @@ async function testCantaloupe(id, ctoken, token) {
     items: generateList
   };
 }
-export { idLookup, documents, design_doc_views, view, testCantaloupe };
+
+
+async function internalmetadocs(token, docs, options) {
+  let result = await _couch_request(
+    token,
+    [internalmetadatabase, "_all_docs"].join("/"),
+    options,
+    "POST",
+    { "keys": docs }
+  );
+  return result.rows;
+}
+
+async function capcollectiondocs(token, options) {
+  let result = await _couch_request(
+    token,
+    [capcollectiondatabase, "_all_docs"].join("/"),
+    options,
+  );
+  return result.rows;
+}
+
+
+export { idLookup, documents, design_doc_views, view, testCantaloupe, internalmetadocs, capcollectiondocs };
