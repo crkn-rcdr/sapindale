@@ -31,7 +31,7 @@
     <li>
       <a href="/couchview">CouchView</a>
     </li>
-    <li on:click={legacyTools}>Legacy Tools (run on Upholstery)</li>
+    <li on:click={legacyTools}>Legacy Tools</li>
     {#if tool.clicked}
       <ul class="innerList">
         <li>
@@ -85,12 +85,6 @@
         target="_blank">
         Futon (Please do not edit unless you know what you are doing)
       </a>
-    </li>
-    <li>
-      <a href="/packaging">Packaging (to replace all 3 older packaging tools)</a>
-    </li>
-    <li>
-      <a href="/findduplicates">Find Duplicates (to replace old FD tool)</a>
     </li>
   </ul>
 </div>
