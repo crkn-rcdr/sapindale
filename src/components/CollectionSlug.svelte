@@ -4,6 +4,7 @@
   import { createEventDispatcher } from "svelte";
   import { slugView, collectionLabel } from "../couch.js";
   import spinner from "../spinner.svelte";
+  import TextValueEditor from "../components/TextValueEditor.svelte";
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
@@ -101,3 +102,4 @@
   </div>
   <CollectionMember />
 </div>
+<TextValueEditor />

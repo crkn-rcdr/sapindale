@@ -104,7 +104,11 @@ async function slugView(token, db, id) {
 
   return result;
 }
-
+async function testCollectionCall(token, db, id) {
+  let prefix = encodeURIComponent("69429/" + `${id}`);
+  let result = await _couch_request(token, ["collection", prefix].join("/"));
+  return result;
+}
 async function testCantaloupe(id, ctoken, token) {
   let cvs = await _api_request(token, `${id}`);
   let listItems = cvs.canvases;
@@ -133,4 +137,5 @@ export {
   view,
   testCantaloupe,
   slugView,
+  testCollectionCall,
 };
