@@ -136,6 +136,20 @@ async function internalmetadocs(token, docs, options) {
   return result.rows;
 }
 
+//  One at a time, waiting for each to return...
+//  Should look into promise-throttle?
+async function internalmetarequests(token, aiplist, req) {
+  for (const aip of aiplist) {
+    await _couch_request(
+      token,
+      [internalmetadatabase, "_design/tdr/_update/basic", aip].join("/"),
+      {},
+      "POST",
+      req
+    );
+  }
+}
+
 async function capcollectiondocs(token, options) {
   let result = await _couch_request(
     token,
@@ -146,4 +160,4 @@ async function capcollectiondocs(token, options) {
 }
 
 
-export { idLookup, documents, design_doc_views, view, testCantaloupe, internalmetadocs, capcollectiondocs };
+export { idLookup, documents, design_doc_views, view, testCantaloupe, internalmetadocs, internalmetarequests, capcollectiondocs };
