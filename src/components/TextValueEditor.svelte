@@ -18,9 +18,10 @@
 
     labelinColl = rowcount.label;
   }
-  function clearText(index) {
-    console.log("Index: ", index);
-    console.log("Clear value: ", labelinColl[index]);
+  async function clearText(index) {
+    valueDe = "";
+    /* This will be taken when Update function is written */
+    let testUpdate = await Object.values(labelinColl)[index];
   }
 </script>
 
@@ -53,7 +54,7 @@
         <td>
           <input type="text" bind:value={labelinColl[label]} />
         </td>
-        <td class="icon" on:click={clearText(index)}>
+        <td>
           <FaBackspace />
         </td>
       </tr>
@@ -70,6 +71,9 @@
           type="text"
           placeholder="Add New Text Value"
           bind:value={valueDe} />
+      </td>
+      <td class="icon" on:click|preventDefault={clearText}>
+        <FaBackspace />
       </td>
     </tr>
   {/if}
