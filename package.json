@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 sapper dev",
+    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 API=https://api.canadiana.ca sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",

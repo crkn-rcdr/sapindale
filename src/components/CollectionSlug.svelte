@@ -2,7 +2,7 @@
   import CollectionMember from "../components/CollectionMember.svelte";
   import { state as authState } from "../auth.js";
   import { createEventDispatcher } from "svelte";
-  import { slugView, collectionLabel } from "../couch.js";
+  import { resolve as resolveSlug } from "../api/slug.js";
   import spinner from "../spinner.svelte";
   import TextValueEditor from "../components/TextValueEditor.svelte";
 
@@ -18,8 +18,8 @@
     dispatch("deselected");
     try {
       slugCheckPending = true;
-      slugList = await slugView(token, db, value);
-      slugId = slugList._id;
+      slugList = await resolveSlug(token, value);
+      slugId = slugList.id;
       await check(slugId);
     } catch (ignore) {}
     return slugId;
