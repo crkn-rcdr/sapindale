@@ -1,8 +1,7 @@
 <script>
   import FaBackspace from "svelte-icons/fa/FaBackspace.svelte";
-  import { testCollectionCall } from "../couch.js";
   import { state as authState } from "../auth.js";
-
+  import { collectionrequest } from "../api/collection.js";
   let value = "";
   let valueDe,
     valueLang = "";
@@ -14,7 +13,8 @@
   let token = $authState.token;
 
   async function collection() {
-    rowcount = await testCollectionCall(token, db, id);
+    let prefix = encodeURIComponent("69429/");
+    rowcount = await collectionrequest(token, prefix + id);
 
     labelinColl = rowcount.label;
   }
