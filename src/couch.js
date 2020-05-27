@@ -11,6 +11,7 @@ async function _request(token, path, options, method, payload) {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
+      "Content-Type": "application/json",
     },
   };
   if (method) fetchOptions.method = method;
@@ -120,4 +121,11 @@ async function testCantaloupe(id, ctoken, token) {
     items: generateList,
   };
 }
-export { idLookup, documents, design_doc_views, view, testCantaloupe };
+export {
+  _couch_request,
+  idLookup,
+  documents,
+  design_doc_views,
+  view,
+  testCantaloupe,
+};
