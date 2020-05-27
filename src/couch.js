@@ -121,4 +121,4 @@ async function testCantaloupe(id, ctoken, token) {
     items: generateList
   };
 }
-export { _couch_request, idLookup, documents, design_doc_views, view, testCantaloupe };
+export { idLookup, documents, design_doc_views, view, testCantaloupe };
