@@ -2,8 +2,6 @@ import qs from "query-string";
 import testManifestData from "./cantaloupe.js";
 
 const upholsteryUrl = process.env.UPHOLSTERY;
-const internalmetadatabase = "internalmeta";
-const capcollectiondatabase = "cap_collections";
 
 async function _request(token, path, options, method, payload) {
   let url = [upholsteryUrl, path].join("/");
@@ -12,7 +10,8 @@ async function _request(token, path, options, method, payload) {
   let fetchOptions = {
     headers: {
       Authorization: `Bearer ${token}`,
-      Accept: "application/json"
+      Accept: "application/json",
+      "Content-Type": "appliction/json"
     }
   };
   if (method) fetchOptions.method = method;
@@ -123,41 +122,4 @@ async function testCantaloupe(id, ctoken, token) {
     items: generateList
   };
 }
-
-
-async function internalmetadocs(token, docs, options) {
-  let result = await _couch_request(
-    token,
-    [internalmetadatabase, "_all_docs"].join("/"),
-    options,
-    "POST",
-    { "keys": docs }
-  );
-  return result.rows;
-}
-
-//  One at a time, waiting for each to return...
-//  Should look into promise-throttle?
-async function internalmetarequests(token, aiplist, req) {
-  for (const aip of aiplist) {
-    await _couch_request(
-      token,
-      [internalmetadatabase, "_design/tdr/_update/basic", aip].join("/"),
-      {},
-      "POST",
-      req
-    );
-  }
-}
-
-async function capcollectiondocs(token, options) {
-  let result = await _couch_request(
-    token,
-    [capcollectiondatabase, "_all_docs"].join("/"),
-    options,
-  );
-  return result.rows;
-}
-
-
-export { idLookup, documents, design_doc_views, view, testCantaloupe, internalmetadocs, internalmetarequests, capcollectiondocs };
+export { _couch_request, idLookup, documents, design_doc_views, view, testCantaloupe };
