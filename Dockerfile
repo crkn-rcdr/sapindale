@@ -11,7 +11,7 @@ ENV NODE_ENV=production \
   UPHOLSTERY=https://upholstery.canadiana.ca \
   CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
   PACKAGING=https://packaging.canadiana.ca \
-  API=https://api.canadiana.ca
+  API=https://api.canadiana.ca/v1
 
 RUN yarn run build
 
@@ -32,7 +32,7 @@ ENV NODE_ENV=production \
   PORT=8080 \
   UPHOLSTERY=https://upholstery.canadiana.ca \
   CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
-  API=https://api.canadiana.ca
+  API=https://api.canadiana.ca/v1
 
 
 EXPOSE 8080
