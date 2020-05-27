@@ -3,7 +3,7 @@
     internalmetadocs,
     internalmetarequests,
     capcollectiondocs
-  } from "../couch.js";
+  } from "../couch/internalmeta.js";
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
 
