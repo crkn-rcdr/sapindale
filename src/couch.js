@@ -10,8 +10,9 @@ async function _request(token, path, options, method, payload) {
   let fetchOptions = {
     headers: {
       Authorization: `Bearer ${token}`,
-      Accept: "application/json"
-    }
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
   };
   if (method) fetchOptions.method = method;
   if (payload) fetchOptions.body = JSON.stringify(payload);
@@ -50,7 +51,7 @@ async function documents(token, db, options) {
     [db, "_all_docs"].join("/"),
     options
   );
-  return result.rows.filter(row => !row.key.startsWith("_design"));
+  return result.rows.filter((row) => !row.key.startsWith("_design"));
 }
 
 async function idLookup(token, db, idList) {
@@ -60,7 +61,7 @@ async function idLookup(token, db, idList) {
     {},
     "POST",
     {
-      keys: idList
+      keys: idList,
     }
   );
   return result;
@@ -70,16 +71,16 @@ async function design_doc_views(token) {
   let views = {};
   await Promise.all(
     dbs
-      .filter(db => db[0] !== "_" && db !== "bin")
-      .map(async db => {
+      .filter((db) => db[0] !== "_" && db !== "bin")
+      .map(async (db) => {
         let ddocs = (
           await _couch_request(token, [db, "_all_docs"].join("/"), {
             startkey: JSON.stringify("_design"),
             endkey: JSON.stringify("_design\uFFEF"),
-            include_docs: true
+            include_docs: true,
           })
         ).rows;
-        ddocs.map(ddoc => {
+        ddocs.map((ddoc) => {
           if (ddoc.doc.views) {
             views[db] = views[db] || {};
             views[db][ddoc.id.substring(8)] = Object.keys(ddoc.doc.views);
@@ -103,7 +104,7 @@ async function view(token, db, ddoc, view, options) {
 async function testCantaloupe(id, ctoken, token) {
   let cvs = await _api_request(token, `${id}`);
   let listItems = cvs.canvases;
-  var generateList = listItems.map(n => {
+  var generateList = listItems.map((n) => {
     let constructPath = {};
     constructPath.id = n.id;
     constructPath.label = n.label;
@@ -118,7 +119,14 @@ async function testCantaloupe(id, ctoken, token) {
   });
   return {
     label: cvs.label,
-    items: generateList
+    items: generateList,
   };
 }
-export { idLookup, documents, design_doc_views, view, testCantaloupe };
+export {
+  _couch_request,
+  idLookup,
+  documents,
+  design_doc_views,
+  view,
+  testCantaloupe,
+};
