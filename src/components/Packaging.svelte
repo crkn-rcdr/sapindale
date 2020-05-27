@@ -5,7 +5,7 @@
     packagingrequests,
     packagingconfigs,
     packagingdocs
-  } from "../couch.js";
+  } from "../couch/packaging.js";
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
 
