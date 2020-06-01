@@ -87,7 +87,7 @@
       </a>
     </li>
     <li>
-      <a href="/collection/[slug].svelte">Slug Resolver</a>
+      <a href="/slug">Slug Resolver</a>
     </li>
   </ul>
 </div>
