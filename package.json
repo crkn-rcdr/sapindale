@@ -18,7 +18,8 @@
     "sirv": "^0.4.2",
     "svelte-icons": "^2.1.0",
     "svelte-sortable-list": "^1.1.0",
-    "svelte-spinner": "^2.0.2"
+    "svelte-spinner": "^2.0.2",
+    "filesize": "^6.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.7.0",
