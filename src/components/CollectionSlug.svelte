@@ -1,7 +1,39 @@
 <script>
-  import CollectionMember from "../components/CollectionMember.svelte";
+  import { state as authState } from "../auth.js";
   import { createEventDispatcher } from "svelte";
+  import { resolve as resolveSlug } from "../api/slug.js";
+  import spinner from "../spinner.svelte";
+
+  let token = $authState.token;
   const dispatch = createEventDispatcher();
+  let value = "";
+  let id, db;
+  let slugFound = false;
+  let slugCheckPending, slugList;
+  let slugId = "";
+
+  async function lookUpSlug() {
+    dispatch("deselected");
+    try {
+      slugCheckPending = true;
+      slugList = await resolveSlug(token, value);
+      slugId = slugList.id;
+      await check(slugId);
+    } catch (ignore) {}
+    return slugId;
+  }
+  async function check(slugId) {
+    if (!slugId) {
+      slugCheckPending = false;
+      slugFound = false;
+    } else {
+      slugCheckPending = false;
+      slugFound = true;
+    }
+  }
+  async function slugSelect(event) {
+    dispatch("searched", { value });
+  }
 </script>
 
 <style>
@@ -13,47 +45,48 @@
     flex-direction: row;
     justify-content: space-between;
     align-content: space-between;
-    padding-top: 4%;
+    padding-top: 2%;
   }
   .slug {
     display: flex;
     flex-direction: column;
   }
-  .ordered {
-    display: flex;
-    flex-direction: row;
-    padding-top: 6%;
+
+  .spinnerbind {
+    display: inline;
   }
-  .lnkAction {
-    display: flex;
-    flex-direction: row;
-    padding-top: 6%;
-    background-color: #1d808b;
-    justify-content: space-between;
-    align-content: space-between;
+  .display {
+    padding-top: 5%;
   }
 </style>
 
 <div class="collecDisplay">
   <div class="slug">
     <label for="slug">Slug</label>
-    <input type="text" />
+    <div class="spinnerbind">
+      <input
+        type="text"
+        bind:value
+        on:input={lookUpSlug}
+        on:change={slugSelect} />
 
-    <label for="label">Label</label>
-    <input type="text" />
-
-    <div class="ordered">
-      <input type="checkbox" />
-      <p>Ordered?</p>
+      {#if slugCheckPending}
+        <spinner />
+      {:else if slugFound && slugCheckPending != undefined && value != ''}
+        <span>❌ : Found in Database</span>
+      {:else if !slugFound && slugCheckPending != undefined && value != ''}
+        <span>✅ : Not found in Database</span>
+      {/if}
     </div>
-    <div class="lnkAction">
-      <div>
-        <a href="/" alt="save">Save</a>
+    {#if slugFound}
+      <div class="display">
+        <h3>Slug Details</h3>
+        <ul>
+          {#each Object.keys(slugList) as item}
+            <li>{item}:{slugList[item]}</li>
+          {/each}
+        </ul>
       </div>
-      <div>
-        <a href="/" alt="save">Save & Publish</a>
-      </div>
-    </div>
+    {/if}
   </div>
-  <CollectionMember />
 </div>

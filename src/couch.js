@@ -41,7 +41,6 @@ async function _api_request(token, path, options, method, payload) {
     method,
     payload
   );
-
   return result;
 }
 

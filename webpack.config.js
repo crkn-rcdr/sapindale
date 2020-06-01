@@ -11,6 +11,7 @@ const mode = process.env.NODE_ENV;
 const upholstery = process.env.UPHOLSTERY;
 const cantaloupe = process.env.CANTALOUPE;
 const packaging = process.env.PACKAGING;
+const api = process.env.API;
 const dev = mode === "development";
 
 const alias = { svelte: path.resolve("node_modules", "svelte") };
@@ -29,22 +30,22 @@ let cssRules = {
           require("postcss-import"),
           require("tailwindcss")("./tailwind.config.js"),
           require("postcss-custom-properties"),
-          require("autoprefixer")
-        ].filter(Boolean)
-      }
-    }
-  ]
+          require("autoprefixer"),
+        ].filter(Boolean),
+      },
+    },
+  ],
 };
 
 let plugins = [
   new MiniCssExtractPlugin({
     filename: "[name].[hash].css",
-    chunkFilename: "[id].[hash].css"
+    chunkFilename: "[id].[hash].css",
   }),
   new PurgecssPlugin({
     whitelist: ["html", "body"],
-    paths: glob.sync("./src/**/*.svelte", { nodir: true })
-  })
+    paths: glob.sync("./src/**/*.svelte", { nodir: true }),
+  }),
 ];
 
 module.exports = {
@@ -61,12 +62,12 @@ module.exports = {
             options: {
               dev,
               hydratable: true,
-              hotReload: false
-            }
-          }
+              hotReload: false,
+            },
+          },
         },
-        cssRules
-      ]
+        cssRules,
+      ],
     },
     mode,
     plugins: [
@@ -75,11 +76,12 @@ module.exports = {
         "process.env.NODE_ENV": JSON.stringify(mode),
         "process.env.UPHOLSTERY": JSON.stringify(upholstery),
         "process.env.CANTALOUPE": JSON.stringify(cantaloupe),
-        "process.env.PACKAGING": JSON.stringify(packaging)
+        "process.env.PACKAGING": JSON.stringify(packaging),
+        "process.env.API": JSON.stringify(api),
       }),
-      ...plugins
+      ...plugins,
     ],
-    devtool: dev && "inline-source-map"
+    devtool: dev && "inline-source-map",
   },
 
   server: {
@@ -97,23 +99,23 @@ module.exports = {
             options: {
               css: false,
               generate: "ssr",
-              dev
-            }
-          }
+              dev,
+            },
+          },
         },
-        cssRules
-      ]
+        cssRules,
+      ],
     },
     plugins,
     mode,
     performance: {
-      hints: false // it doesn't matter if server.js is large
-    }
+      hints: false, // it doesn't matter if server.js is large
+    },
   },
 
   serviceworker: {
     entry: config.serviceworker.entry(),
     output: config.serviceworker.output(),
-    mode
-  }
+    mode,
+  },
 };

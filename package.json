@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 sapper dev",
+    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 API=https://api.canadiana.ca/v1 sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
@@ -16,8 +16,10 @@
     "polka": "^0.5.2",
     "query-string": "^6.8.3",
     "sirv": "^0.4.2",
+    "svelte-icons": "^2.1.0",
     "svelte-sortable-list": "^1.1.0",
-    "filesize":"^6.1.0"
+    "svelte-spinner": "^2.0.2",
+    "filesize": "^6.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.7.0",
