@@ -1,10 +1,8 @@
 <script>
-  import CollectionMember from "../components/CollectionMember.svelte";
   import { state as authState } from "../auth.js";
   import { createEventDispatcher } from "svelte";
   import { resolve as resolveSlug } from "../api/slug.js";
   import spinner from "../spinner.svelte";
-  import TextValueEditor from "../components/TextValueEditor.svelte";
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
@@ -53,17 +51,12 @@
     display: flex;
     flex-direction: column;
   }
-  .ordered {
-    display: flex;
-    flex-direction: row;
-    padding-top: 6%;
-  }
 
   .spinnerbind {
     display: inline;
   }
-  .buttons {
-    display: inline;
+  .display {
+    padding-top: 5%;
   }
 </style>
 
@@ -73,8 +66,6 @@
     <div class="spinnerbind">
       <input
         type="text"
-        id={`${id}.input`}
-        list={`${id}.slugList`}
         bind:value
         on:input={lookUpSlug}
         on:change={slugSelect} />
@@ -87,19 +78,15 @@
         <span>✅ : Not found in Database</span>
       {/if}
     </div>
-    <!-- <label for="label">Label</label>
-    <input type="text" />
-    <button id="lab" on:click={labelLookUp}>check</button> -->
-
-    <div class="ordered">
-      <input type="checkbox" />
-      <p>Ordered?</p>
-    </div>
-    <div class="buttons">
-      <button id="save">Save</button>
-      <button id="publish">Save & Publish</button>
-    </div>
+    {#if slugFound}
+      <div class="display">
+        <h3>Slug Details</h3>
+        <ul>
+          {#each Object.keys(slugList) as item}
+            <li>{item}:{slugList[item]}</li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
   </div>
-  <CollectionMember />
 </div>
-<TextValueEditor />

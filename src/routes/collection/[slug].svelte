@@ -10,7 +10,7 @@
   }
 </script>
 
-<h1>Create New Collection Record</h1>
+<h1>Slug Resolver</h1>
 <div>
   <p>
     {#if id}Searched slug id: {id}{:else}Search a slug id by typing it{/if}
