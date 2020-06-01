@@ -1,5 +1,5 @@
 <script>
-  import CollectionSlug from "../../components/CollectionSlug.svelte";
+  import SlugResolver from "../components/SlugResolver.svelte";
 
   let id;
   function search(event) {
@@ -15,5 +15,5 @@
   <p>
     {#if id}Searched slug id: {id}{:else}Search a slug id by typing it{/if}
   </p>
-  <CollectionSlug on:searched={search} on:deselected={clear} />
+  <SlugResolver on:searched={search} on:deselected={clear} />
 </div>

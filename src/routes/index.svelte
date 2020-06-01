@@ -87,10 +87,7 @@
       </a>
     </li>
     <li>
-      <a href="/collection/[slug].svelte">Create New Collection</a>
-    </li>
-    <li>
-      <a href="/deposit">Deposit From Preservation</a>
+      <a href="/slug">Slug Resolver</a>
     </li>
   </ul>
 </div>
