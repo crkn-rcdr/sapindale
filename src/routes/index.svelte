@@ -86,5 +86,8 @@
         Futon (Please do not edit unless you know what you are doing)
       </a>
     </li>
+    <li>
+      <a href="/slug">Slug Resolver</a>
+    </li>
   </ul>
 </div>
