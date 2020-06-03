@@ -3,6 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { resolve as resolveSlug } from "../api/slug.js";
   import spinner from "../spinner.svelte";
+  import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
@@ -40,18 +41,11 @@
   /* .lab {
     width: 100%;
   } */
-  .collecDisplay {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content: space-between;
-    padding-top: 2%;
-  }
+
   .slug {
     display: flex;
     flex-direction: column;
   }
-
   .spinnerbind {
     display: inline;
   }
@@ -60,7 +54,7 @@
   }
 </style>
 
-<div class="collecDisplay">
+<div>
   <div class="slug">
     <label for="slug">Slug</label>
     <div class="spinnerbind">
@@ -89,4 +83,5 @@
       </div>
     {/if}
   </div>
+
 </div>
