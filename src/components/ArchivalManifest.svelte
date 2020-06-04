@@ -3,6 +3,7 @@
     dipstagingdocs,
     smeltstatusview,
     manifestdateview,
+    smeltqview,
     updatebasic
   } from "../couch/dipstaging.js";
   import { state as authState } from "../auth.js";
@@ -27,6 +28,8 @@
     statuslevel = "3",
     mdate = undefined,
     mdatekey = [],
+    sdate = undefined,
+    sdatekey = [],
     showmessage = true,
     showdetails = true,
     processindication = undefined;
@@ -34,6 +37,7 @@
   async function loadgroup() {
     docs = [];
     mdate = undefined;
+    sdate = undefined;
     smeltstatus = undefined;
     processindication = undefined;
     switch (whichgroup) {
@@ -68,6 +72,26 @@
         try {
           mdate = await manifestdateview(token, {
             group_level: mdatekey.length + 1,
+            descending: true,
+            startkey: start,
+            endkey: end
+          });
+        } catch (ignore) {
+          return;
+        }
+        break;
+      case "smelt":
+        var start = undefined;
+        var end = undefined;
+        if (sdatekey.length > 0) {
+          end = JSON.stringify(sdatekey);
+          var startdate = JSON.parse(JSON.stringify(sdatekey));
+          startdate.push({});
+          start = JSON.stringify(startdate);
+        }
+        try {
+          sdate = await smeltqview(token, {
+            group_level: sdatekey.length + 1,
             descending: true,
             startkey: start,
             endkey: end
@@ -112,6 +136,23 @@
       })
     );
   }
+
+  async function viewSmelt(key = []) {
+    // I haven't yet found a better way to copy the array...
+    var endkey = JSON.parse(JSON.stringify(key));
+    endkey.push({});
+
+    acceptDocs(
+      await smeltqview(token, {
+        reduce: false,
+        include_docs: true,
+        startkey: JSON.stringify(key),
+        endkey: JSON.stringify(endkey)
+      })
+    );
+  }
+
+
 
   async function viewFind() {
     findidentifiers.replace(/["]/g, "");
@@ -241,7 +282,8 @@
     ) Choose which group of AIPs from
     <select bind:value={whichgroup} on:change={loadgroup}>
       <option value="">(please pick)</option>
-      <option value="date">Package manifest date</option>
+      <option value="date">packaging date</option>
+      <option value="smelt">processing queue</option>
       <option value="status">processing status</option>
       <option value="find">a list I supply</option>
     </select>
@@ -398,6 +440,80 @@
                   <button
                     on:click={() => {
                       viewDate(date.key);
+                    }}>
+                    {date.value}
+                  </button>
+                {:else}{date.value}{/if}
+              </td>
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {:else if whichgroup == 'smelt'}
+      {#if Array.isArray(sdate)}
+        <table border="1" id="typeTable">
+          <tr>
+            <th>
+              <button
+                on:click={() => {
+                  sdatekey = [];
+                  loadgroup();
+                }}>
+                Year
+              </button>
+            </th>
+            {#if sdatekey.length > 0}
+              <th>Month</th>
+            {/if}
+            {#if sdatekey.length > 1}
+              <th>Day</th>
+            {/if}
+            {#if sdatekey.length > 2}
+              <th>Hour</th>
+            {/if}
+            <th>Identifier Count</th>
+          </tr>
+          {#each sdate as date}
+            <tr>
+              <td>
+                <button
+                  on:click={() => {
+                    sdatekey = date.key.slice(0, 1);
+                    loadgroup();
+                  }}>
+                  {date.key[0]}
+                </button>
+              </td>
+              {#if sdatekey.length > 0}
+                <td>
+                  <button
+                    on:click={() => {
+                      sdatekey = date.key.slice(0, 2);
+                      loadgroup();
+                    }}>
+                    {date.key[1]}
+                  </button>
+                </td>
+              {/if}
+              {#if sdatekey.length > 1}
+                <td>
+                  <button
+                    on:click={() => {
+                      sdatekey = date.key.slice(0, 3);
+                      loadgroup();
+                    }}>
+                    {date.key[2]}
+                  </button>
+                </td>
+              {/if}
+              {#if sdatekey.length > 2}
+                <td>{date.key[3]}</td>
+              {/if}
+              <td>
+                {#if sdatekey.length > 1}
+                  <button
+                    on:click={() => {
+                      viewSmelt(date.key);
                     }}>
                     {date.value}
                   </button>

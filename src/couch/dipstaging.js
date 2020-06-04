@@ -22,10 +22,20 @@ async function smeltstatusview(token, options) {
   return result.rows;
 }
 
+
 async function manifestdateview(token, options) {
   let result = await _couch_request(
     token,
     [dipstagingdatabase, "_design/sync/_view/manifestdate"].join("/"),
+    options
+  );
+  return result.rows;
+}
+
+async function smeltqview(token, options) {
+  let result = await _couch_request(
+    token,
+    [dipstagingdatabase, "_design/sync/_view/smeltq"].join("/"),
     options
   );
   return result.rows;
@@ -46,4 +56,4 @@ async function manifestdateview(token, options) {
     }
   }
 
-export { dipstagingdocs, smeltstatusview, manifestdateview, updatebasic };
+export { dipstagingdocs, smeltstatusview, manifestdateview, smeltqview, updatebasic };
