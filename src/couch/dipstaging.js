@@ -31,5 +31,19 @@ async function manifestdateview(token, options) {
   return result.rows;
 }
 
+  //  Once at a time, waiting for each to return...
+  //  Should look into promise-throttle?
+  // 'aiplist' is an array of IDs, and 'reqs' is a hash (key is ID) of what to post
+  async function updatebasic(token, aiplist, reqs) {
+    for (const aip of aiplist) {
+      await _couch_request(
+        token,
+        [dipstagingdatabase, "_design/sync/_update/basic", aip].join("/"),
+        {},
+        "POST",
+        reqs[aip]
+      );
+    }
+  }
 
-export { dipstagingdocs, smeltstatusview, manifestdateview };
+export { dipstagingdocs, smeltstatusview, manifestdateview, updatebasic };

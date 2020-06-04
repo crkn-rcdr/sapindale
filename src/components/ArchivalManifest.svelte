@@ -2,7 +2,8 @@
   import {
     dipstagingdocs,
     smeltstatusview,
-    manifestdateview
+    manifestdateview,
+    updatebasic
   } from "../couch/dipstaging.js";
   import { state as authState } from "../auth.js";
   import { depositors } from "../commonvars.js";
@@ -20,31 +21,36 @@
     docs = [],
     hidedocs = false,
     selected = {},
+    slugs = {},
     smeltstatus = undefined,
     statustype = "f",
     statuslevel = "3",
     mdate = undefined,
     mdatekey = [],
-    showmessage = true;
+    showmessage = true,
+    showdetails = true,
+    processindication = undefined;
 
   async function loadgroup() {
-    docs=[];
+    docs = [];
     mdate = undefined;
     smeltstatus = undefined;
+    processindication = undefined;
     switch (whichgroup) {
       case "status":
         var start = undefined;
         var end = undefined;
         if (statustype !== "b") {
           var truthiness = statustype === "s";
-          start = JSON.stringify([truthiness]);
-          end = JSON.stringify([truthiness, {}]);
+          start = JSON.stringify([truthiness, {}]);
+          end = JSON.stringify([truthiness]);
         }
         try {
           smeltstatus = await smeltstatusview(token, {
             group_level: parseInt(statuslevel),
             startkey: start,
-            endkey: end
+            endkey: end,
+            descending: true
           });
         } catch (ignore) {
           return;
@@ -126,7 +132,7 @@
   }
 
   function acceptDocs(mydocs = []) {
-    if (!Array.isArray(mydocs) || mydocs.length === 0) {
+    if (!Array.isArray(mydocs)) {
       // TODO: Do something better for this error condition
       return;
     }
@@ -135,10 +141,16 @@
 
     // reset to defaults
     selected = {};
+    slugs = {};
 
     mydocs.forEach(function(doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = true;
+        if ("slug" in doc.doc) {
+          slugs[doc.doc._id] = doc.doc.slug;
+        } else {
+          slugs[doc.doc._id] = doc.doc._id;
+        }
         tempdocs.push(doc.doc);
       } else {
         tempnotfound.push(doc.key);
@@ -173,9 +185,33 @@
       }
     });
     selectedIDs = tempids;
+    processindication = undefined;
   }
 
-  async function doAction() {}
+  async function doAction() {
+    console.log("doAction");
+
+    var updates = {};
+
+    for (const id of selectedIDs) {
+      updates[id] = {
+        dosmelt: true,
+        slug: slugs[id]
+      };
+    }
+
+    processindication = {
+      start: true,
+      aips: selectedIDs.length
+    };
+
+    await updatebasic(token, selectedIDs, updates);
+
+    processindication = {
+      start: false,
+      aips: selectedIDs.length
+    };
+  }
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -398,7 +434,10 @@
 {#if docs.length > 0}
   {#if what === 'l'}
     <pre>
-      {#each docs as doc}{doc._id}<br>{/each}
+      {#each docs as doc}
+        {doc._id}
+        <br />
+      {/each}
     </pre>
   {:else}
     <fieldset>
@@ -431,21 +470,40 @@
               </button>
               all
             </td>
+
             {#if selectedIDs.length > 0}
               <td>
-                <button
-                  type="submit"
-                  on:click={() => {
-                    doAction();
-                  }}>
-                  Initiate
-                </button>
+                {#if processindication}
+                  {#if processindication.start}
+                    Initiating creation of archival manifests for {processindication.aips}
+                    AIPs...
+                    <div style="color:red; display:inline;">Please Wait</div>
+                  {:else}
+                    Initiated creation of archival manifests for {processindication.aips}
+                    AIPs...
+                  {/if}
+                {:else}
+                  <button
+                    type="submit"
+                    on:click={() => {
+                      doAction();
+                    }}>
+                    Initiate
+                  </button>
+                {/if}
               </td>
             {/if}
+
             <td>
-              <input type="checkbox" bind:checked={showmessage} />
-              show messages
+              <input type="checkbox" bind:checked={showdetails} />
+              Details?
             </td>
+            {#if showdetails}
+              <td>
+                <input type="checkbox" bind:checked={showmessage} />
+                messages?
+              </td>
+            {/if}
           </tr>
         </table>
         <dl>
@@ -461,29 +519,37 @@
               {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
             </dt>
             <dd>
-              {#if 'repos' in doc && Array.isArray(doc.repos)}
+              {#if selected[doc._id]}
                 <li>
-                  date={doc.reposManifestDate} Repos=
-                  {#each doc.repos as thisrepo, index}
-                    {#if index > 0},{/if}
-                    {thisrepo}
-                  {/each}
+                  New Slug:
+                  <input type="text" bind:value={slugs[doc._id]} />
                 </li>
               {/if}
-              {#if 'smelt' in doc}
-                <li>Process Request date={doc.smelt.requestDate}</li>
-                {#if 'processDate' in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
+              {#if showdetails}
+                {#if 'repos' in doc && Array.isArray(doc.repos)}
                   <li>
-                    Process
-                    {#if doc.smelt.succeeded}sucessful{:else}failed{/if}
-                    on {doc.smelt.processDate}
+                    date={doc.reposManifestDate} Repos=
+                    {#each doc.repos as thisrepo, index}
+                      {#if index > 0},{/if}
+                      {thisrepo}
+                    {/each}
                   </li>
+                {/if}
+                {#if 'smelt' in doc}
+                  <li>Process Request date={doc.smelt.requestDate}</li>
+                  {#if 'processDate' in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
+                    <li>
+                      Process
+                      {#if doc.smelt.succeeded}sucessful{:else}failed{/if}
+                      on {doc.smelt.processDate}
+                    </li>
 
-                  {#if showmessage && 'message' in doc.smelt && doc.smelt.message !== ''}
-                    <textarea disabled="true">{doc.smelt.message}</textarea>
+                    {#if showmessage && 'message' in doc.smelt && doc.smelt.message !== ''}
+                      <textarea disabled="true">{doc.smelt.message}</textarea>
+                    {/if}
+                  {:else}
+                    <li>In process queue</li>
                   {/if}
-                {:else}
-                  <li>In process queue</li>
                 {/if}
               {/if}
             </dd>
