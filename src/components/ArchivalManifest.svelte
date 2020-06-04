@@ -1,91 +1,116 @@
 <script>
   import {
     dipstagingdocs,
+    smeltstatusview,
+    manifestdateview
   } from "../couch/dipstaging.js";
-  import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
+  import { depositors } from "../commonvars.js";
 
   let token = $authState.token;
 
-  // This should eventually be in a common place
-  export let depositors = [
-      {
-        id: "ams",
-        name: "Shortgrass Public Library System"
-      },
-      {
-        id: "omcn",
-        name: "Mississauga Library System"
-      },
-      {
-        id: "oocihm",
-        name: "Canadiana.org"
-      },
-      {
-        id: "ooe",
-        name: "Department of Foreign Affairs Trade and Development"
-      },
-      {
-        id: "oop",
-        name: "Library of Parliament"
-      },
-      {
-        id: "carl",
-        name: "Canadian Association of Research Libraries"
-      },
-      {
-        id: "numeris",
-        name: "Numeris - broadcast measurement and consumer behaviour data"
-      },
-      {
-        id: "osmsdga",
-        name: "South Mountain"
-      },
-      {
-        id: "ooga",
-        name: "Canadian Hazards Information Service"
-      },
-      {
-        id: "qmma",
-        name: "McGill University Archives"
-      }
-    ],
-    depositor = "",
-    hidefinder = false,
+  let depositor = "",
+    whichgroup = "",
+    hidegroup = false,
+    what = "d",
     findidentifiers = "",
-    IDlist = [],
     selectedIDs = [],
     findnotfound = [],
     hidenotfound = false,
     docs = [],
     hidedocs = false,
     selected = {},
-    hideactions = false,
-    capcollections = [],
-    approveaction = "",
-    collectionsadd = [],
-    collectionssub = [],
-    actiontext = undefined;
+    smeltstatus = undefined,
+    statustype = "f",
+    statuslevel = "3",
+    mdate = undefined,
+    mdatekey = [],
+    showmessage = true;
 
-  onMount(async () => {
-    try {
-      var capcols = await capcollectiondocs(token, {
-        include_docs: false
-      });
-      if (Array.isArray(capcols)) {
-        var tempcollections = [];
-        capcols.forEach(function(acol) {
-          tempcollections.push(acol.id);
-        });
-        capcollections = tempcollections;
-      }
-    } catch (ignore) {}
-  });
+  async function loadgroup() {
+    docs=[];
+    mdate = undefined;
+    smeltstatus = undefined;
+    switch (whichgroup) {
+      case "status":
+        var start = undefined;
+        var end = undefined;
+        if (statustype !== "b") {
+          var truthiness = statustype === "s";
+          start = JSON.stringify([truthiness]);
+          end = JSON.stringify([truthiness, {}]);
+        }
+        try {
+          smeltstatus = await smeltstatusview(token, {
+            group_level: parseInt(statuslevel),
+            startkey: start,
+            endkey: end
+          });
+        } catch (ignore) {
+          return;
+        }
+        break;
+      case "date":
+        var start = undefined;
+        var end = undefined;
+        if (mdatekey.length > 0) {
+          end = JSON.stringify(mdatekey);
+          var startdate = JSON.parse(JSON.stringify(mdatekey));
+          startdate.push({});
+          start = JSON.stringify(startdate);
+        }
+        try {
+          mdate = await manifestdateview(token, {
+            group_level: mdatekey.length + 1,
+            descending: true,
+            startkey: start,
+            endkey: end
+          });
+        } catch (ignore) {
+          return;
+        }
+        break;
+      case "find":
+        break;
+      default:
+        break;
+    }
+  }
+
+  async function viewStatus(key = []) {
+    // I haven't yet found a better way to copy the array...
+    var endkey = JSON.parse(JSON.stringify(key));
+    endkey.push({});
+
+    acceptDocs(
+      await smeltstatusview(token, {
+        reduce: false,
+        include_docs: true,
+        startkey: JSON.stringify(key),
+        endkey: JSON.stringify(endkey)
+      })
+    );
+  }
+
+  async function viewDate(key = []) {
+    // I haven't yet found a better way to copy the array...
+    var endkey = JSON.parse(JSON.stringify(key));
+    endkey.push({});
+
+    acceptDocs(
+      await manifestdateview(token, {
+        reduce: false,
+        include_docs: true,
+        startkey: JSON.stringify(key),
+        endkey: JSON.stringify(endkey)
+      })
+    );
+  }
 
   async function viewFind() {
     findidentifiers.replace(/["]/g, "");
     var IDs = findidentifiers.split(/[,|\s]/);
-    var tempidlist = [];
+    var IDlist = [];
 
     for (var index in IDs) {
       var currentID = IDs[index];
@@ -93,32 +118,24 @@
         if (depositor !== "" && currentID.indexOf(".") === -1) {
           currentID = depositor + "." + currentID;
         }
-        tempidlist.push(currentID);
+        IDlist.push(currentID);
       }
     }
-    IDlist = tempidlist;
-    await viewIDlist();
+
+    acceptDocs(await dipstagingdocs(token, IDlist, { include_docs: true }));
   }
 
-  async function viewIDlist() {
-    var tempids = [],
-      tempnotfound = [];
-
-    // reset to defaults
-    (selected = {}),
-      (approveaction = ""),
-      (collectionsadd = []),
-      (collectionssub = []),
-      (actiontext = undefined);
-
-    var mydocs = await dipstagingdocs(token, IDlist, { include_docs: true });
-    if (!Array.isArray(mydocs)) {
+  function acceptDocs(mydocs = []) {
+    if (!Array.isArray(mydocs) || mydocs.length === 0) {
       // TODO: Do something better for this error condition
       return;
     }
     var tempdocs = [];
-    var tempids = [];
     var tempnotfound = [];
+
+    // reset to defaults
+    selected = {};
+
     mydocs.forEach(function(doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = true;
@@ -158,8 +175,7 @@
     selectedIDs = tempids;
   }
 
-  async function doAction() {
-  }
+  async function doAction() {}
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -182,32 +198,180 @@
 <fieldset>
   <legend>
     (
-    <label for="hidefinder">
-      <input type="checkbox" id="hidefinder" bind:checked={hidefinder} />
+    <label for="hidegroup">
+      <input type="checkbox" id="hidegroup" bind:checked={hidegroup} />
       Hide?
     </label>
-    ) Select depositor:
-    <select bind:value={depositor}>
-      <option value="" />
-      {#each depositors as thisdepositor}
-        <option value={thisdepositor.id}>{thisdepositor.name}</option>
-      {/each}
+    ) Choose which group of AIPs from
+    <select bind:value={whichgroup} on:change={loadgroup}>
+      <option value="">(please pick)</option>
+      <option value="date">Package manifest date</option>
+      <option value="status">processing status</option>
+      <option value="find">a list I supply</option>
     </select>
-    {#if depositor !== ''}({depositor}){/if}
-
+    and
+    <select bind:value={what}>
+      <option value="d">display details</option>
+      <option value="l">display list</option>
+    </select>
   </legend>
-  {#if !hidefinder}
-    <textarea id="identifiers" bind:value={findidentifiers} />
+  {#if !hidegroup}
+    {#if whichgroup === 'find'}
+      Select depositor:
+      <select bind:value={depositor}>
+        <option value="" />
+        {#each depositors as thisdepositor}
+          <option value={thisdepositor.id}>{thisdepositor.name}</option>
+        {/each}
+      </select>
+      {#if depositor !== ''}({depositor}){/if}
 
-    <div style="display:block;">
-      <button
-        type="submit"
-        on:click={() => {
-          viewFind();
-        }}>
-        Find
-      </button>
-    </div>
+      <textarea id="identifiers" bind:value={findidentifiers} />
+
+      <div style="display:block;">
+        <button
+          type="submit"
+          on:click={() => {
+            viewFind();
+          }}>
+          Find
+        </button>
+      </div>
+    {:else if whichgroup == 'status'}
+      <div style="display:inline;">
+        Show
+        <select id="statustype" bind:value={statustype} on:change={loadgroup}>
+          <option value="s">success</option>
+          <option value="f">failure</option>
+          <option value="b">success and failure</option>
+        </select>
+        grouping by
+        <select id="statuslevel" bind:value={statuslevel} on:change={loadgroup}>
+          <option value="0">all</option>
+          <option value="1">success/failure</option>
+          <option value="2">if there a message?</option>
+          <option value="3">date</option>
+          <option value="4">date and time</option>
+        </select>
+      </div>
+      {#if Array.isArray(smeltstatus)}
+        <table border="1" id="typeTable">
+          <tr>
+            <th>Status</th>
+            {#if statuslevel > 1}
+              <th>Message</th>
+            {/if}
+            {#if statuslevel > 2}
+              <th>Date</th>
+            {/if}
+            {#if statuslevel > 3}
+              <th>time</th>
+            {/if}
+            <th>Identifier Count</th>
+          </tr>
+          {#each smeltstatus as status}
+            <tr>
+              <td>
+                {#if status.key[0]}success{:else}fail{/if}
+              </td>
+              {#if statuslevel > 1}
+                <td>
+                  {#if status.key[1]}yes{:else}no{/if}
+                </td>
+              {/if}
+              {#if statuslevel > 2}
+                <td>{status.key[2]}</td>
+              {/if}
+              {#if statuslevel > 3}
+                <td>{status.key[3]}</td>
+              {/if}
+              <td>
+                <button
+                  on:click={() => {
+                    viewStatus(status.key);
+                  }}>
+                  {status.value}
+                </button>
+              </td>
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {:else if whichgroup == 'date'}
+      {#if Array.isArray(mdate)}
+        <table border="1" id="typeTable">
+          <tr>
+            <th>
+              <button
+                on:click={() => {
+                  mdatekey = [];
+                  loadgroup();
+                }}>
+                Year
+              </button>
+            </th>
+            {#if mdatekey.length > 0}
+              <th>Month</th>
+            {/if}
+            {#if mdatekey.length > 1}
+              <th>Day</th>
+            {/if}
+            {#if mdatekey.length > 2}
+              <th>Hour</th>
+            {/if}
+            <th>Identifier Count</th>
+          </tr>
+          {#each mdate as date}
+            <tr>
+              <td>
+                <button
+                  on:click={() => {
+                    mdatekey = date.key.slice(0, 1);
+                    loadgroup();
+                  }}>
+                  {date.key[0]}
+                </button>
+              </td>
+              {#if mdatekey.length > 0}
+                <td>
+                  <button
+                    on:click={() => {
+                      mdatekey = date.key.slice(0, 2);
+                      loadgroup();
+                    }}>
+                    {date.key[1]}
+                  </button>
+                </td>
+              {/if}
+              {#if mdatekey.length > 1}
+                <td>
+                  <button
+                    on:click={() => {
+                      mdatekey = date.key.slice(0, 3);
+                      loadgroup();
+                    }}>
+                    {date.key[2]}
+                  </button>
+                </td>
+              {/if}
+              {#if mdatekey.length > 2}
+                <td>{date.key[3]}</td>
+              {/if}
+              <td>
+                {#if mdatekey.length > 1}
+                  <button
+                    on:click={() => {
+                      viewDate(date.key);
+                    }}>
+                    {date.value}
+                  </button>
+                {:else}{date.value}{/if}
+              </td>
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {/if}
   {/if}
 </fieldset>
 
@@ -232,108 +396,100 @@
 {/if}
 
 {#if docs.length > 0}
-  {#if selectedIDs.length > 0}
+  {#if what === 'l'}
+    <pre>
+      {#each docs as doc}{doc._id}<br>{/each}
+    </pre>
+  {:else}
     <fieldset>
       <legend>
         (
-        <label for="hideactions">
-          <input type="checkbox" id="hideactions" bind:checked={hideactions} />
+        <label for="hidedocs">
+          <input type="checkbox" id="hidedocs" bind:checked={hidedocs} />
           Hide?
         </label>
-        ) With the selected IDs, do...
+        ) DIP staging documents
       </legend>
-
-      {#if actiontext}
-        {actiontext}
-      {:else if !hideactions}
-        <select bind:value={approveaction}>
-          <option value="">nothing</option>
-          <option value="approve">approve</option>
-          <option value="unapprove">unapprove</option>
-        </select>
-        and add
-        <select multiple bind:value={collectionsadd} size="10">
-          {#each capcollections as tag}
-            <option value={tag}>{tag}</option>
-          {/each}
-        </select>
-        and subtract
-        <select multiple bind:value={collectionssub} size="10">
-          {#each capcollections as tag}
-            <option value={tag}>{tag}</option>
-          {/each}
-        </select>
-        collection tags:
-        <button
-          type="submit"
-          on:click={() => {
-            doAction();
-          }}>
-          Do it
-        </button>
-      {/if}
-
-    </fieldset>
-  {/if}
-
-  <fieldset>
-    <legend>
-      (
-      <label for="hidedocs">
-        <input type="checkbox" id="hidedocs" bind:checked={hidedocs} />
-        Hide?
-      </label>
-      ) DIP staging documents
-    </legend>
-    {#if !hidedocs}
-      <table>
-        <tr>
-          <th>
-            <button
-              type="submit"
-              on:click={() => {
-                selectAll();
-              }}>
-              Select
-            </button>
-            /
-            <button
-              type="submit"
-              on:click={() => {
-                unselectAll();
-              }}>
-              unselect
-            </button>
-            all
-          </th>
-          <th>ID</th>
-          <th>Approved</th>
-          <th>Unapproved</th>
-          <th>Collection tags</th>
-        </tr>
-        {#each docs as doc}
+      {#if !hidedocs}
+        <table>
           <tr>
             <td>
-              <input
-                type="checkbox"
-                bind:checked={selected[doc._id]}
-                on:change={updateSelectedIDs} />
+              <button
+                type="submit"
+                on:click={() => {
+                  selectAll();
+                }}>
+                Select
+              </button>
+              /
+              <button
+                type="submit"
+                on:click={() => {
+                  unselectAll();
+                }}>
+                unselect
+              </button>
+              all
             </td>
-            <td>{doc._id}</td>
+            {#if selectedIDs.length > 0}
+              <td>
+                <button
+                  type="submit"
+                  on:click={() => {
+                    doAction();
+                  }}>
+                  Initiate
+                </button>
+              </td>
+            {/if}
             <td>
-              {#if doc.approved}{doc.approved}{/if}
-            </td>
-            <td>
-              {#if doc.unapproved}{doc.unapproved}{/if}
-            </td>
-            <td>
-              {#if Array.isArray(doc.collections)}
-                {doc.collections.join(',')}
-              {/if}
+              <input type="checkbox" bind:checked={showmessage} />
+              show messages
             </td>
           </tr>
-        {/each}
-      </table>
-    {/if}
-  </fieldset>
+        </table>
+        <dl>
+          {#each docs as doc}
+            <dt>
+              <label>
+                <input
+                  type="checkbox"
+                  bind:checked={selected[doc._id]}
+                  on:change={updateSelectedIDs} />
+                {doc._id}
+              </label>
+              {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
+            </dt>
+            <dd>
+              {#if 'repos' in doc && Array.isArray(doc.repos)}
+                <li>
+                  date={doc.reposManifestDate} Repos=
+                  {#each doc.repos as thisrepo, index}
+                    {#if index > 0},{/if}
+                    {thisrepo}
+                  {/each}
+                </li>
+              {/if}
+              {#if 'smelt' in doc}
+                <li>Process Request date={doc.smelt.requestDate}</li>
+                {#if 'processDate' in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
+                  <li>
+                    Process
+                    {#if doc.smelt.succeeded}sucessful{:else}failed{/if}
+                    on {doc.smelt.processDate}
+                  </li>
+
+                  {#if showmessage && 'message' in doc.smelt && doc.smelt.message !== ''}
+                    <textarea disabled="true">{doc.smelt.message}</textarea>
+                  {/if}
+                {:else}
+                  <li>In process queue</li>
+                {/if}
+              {/if}
+            </dd>
+          {/each}
+        </dl>
+      {/if}
+    </fieldset>
+  {/if}
 {/if}
