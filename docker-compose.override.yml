@@ -1,6 +1,0 @@
-version: "3"
-
-services:
-  sapindale:
-    environment:
-      - "NODE_ENV:production"

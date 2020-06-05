@@ -1,11 +1,9 @@
 const webpack = require("webpack");
 const path = require("path");
-const glob = require("glob");
 const config = require("sapper/config/webpack.js");
 const pkg = require("./package.json");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const PurgecssPlugin = require("purgecss-webpack-plugin");
 
 const mode = process.env.NODE_ENV;
 const upholstery = process.env.UPHOLSTERY;
@@ -23,17 +21,6 @@ let cssRules = {
   use: [
     MiniCssExtractPlugin.loader,
     { loader: "css-loader", options: { importLoaders: 1 } },
-    {
-      loader: "postcss-loader",
-      options: {
-        plugins: [
-          require("postcss-import"),
-          require("tailwindcss")("./tailwind.config.js"),
-          require("postcss-custom-properties"),
-          require("autoprefixer"),
-        ].filter(Boolean),
-      },
-    },
   ],
 };
 
@@ -41,10 +28,6 @@ let plugins = [
   new MiniCssExtractPlugin({
     filename: "[name].[hash].css",
     chunkFilename: "[id].[hash].css",
-  }),
-  new PurgecssPlugin({
-    whitelist: ["html", "body"],
-    paths: glob.sync("./src/**/*.svelte", { nodir: true }),
   }),
 ];
 
