@@ -6,6 +6,7 @@
     smeltqview,
     updatebasic
   } from "../couch/dipstaging.js";
+  import TypeAhead from "../components/TypeAhead.svelte";
   import { state as authState } from "../auth.js";
   import { depositors } from "../commonvars.js";
 
@@ -152,8 +153,6 @@
     );
   }
 
-
-
   async function viewFind() {
     findidentifiers.replace(/["]/g, "");
     var IDs = findidentifiers.split(/[,|\s]/);
@@ -257,6 +256,14 @@
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  function findaddselect(event) {
+    var findaddid = event.detail.value;
+    findidentifiers = findidentifiers.concat("\n", findaddid);
+  }
+  function findaddclear() {
+    // Don't know if I need to do anything... To determine...
+  }
 </script>
 
 <style>
@@ -304,6 +311,15 @@
       </select>
       {#if depositor !== ''}({depositor}){/if}
 
+      <div class="label">
+        <TypeAhead
+          db="dipstaging"
+          id="findadd"
+          label="Input an AIP ID to add to find box:"
+          on:selected={findaddselect}
+          on:deselected={findaddclear} />
+      </div>
+      Or past ID's directly into box:
       <textarea id="identifiers" bind:value={findidentifiers} />
 
       <div style="display:block;">
