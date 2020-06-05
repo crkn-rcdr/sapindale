@@ -1,6 +1,6 @@
 import { _couch_request } from "../couch.js";
 
-const dipstagingdatabase = "dipstaging";
+export const dipstagingdatabase = "dipstaging";
 
 async function dipstagingdocs(token, docs, options) {
   let result = await _couch_request(

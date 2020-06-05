@@ -1,5 +1,6 @@
 <script>
   import {
+    dipstagingdatabase,
     dipstagingdocs,
     smeltstatusview,
     manifestdateview,
@@ -261,9 +262,6 @@
     var findaddid = event.detail.value;
     findidentifiers = findidentifiers.concat("\n", findaddid);
   }
-  function findaddclear() {
-    // Don't know if I need to do anything... To determine...
-  }
 </script>
 
 <style>
@@ -313,11 +311,10 @@
 
       <div class="label">
         <TypeAhead
-          db="dipstaging"
+          db={dipstagingdatabase}
           id="findadd"
           label="Input an AIP ID to add to find box:"
-          on:selected={findaddselect}
-          on:deselected={findaddclear} />
+          on:selected={findaddselect} />
       </div>
       Or past ID's directly into box:
       <textarea id="identifiers" bind:value={findidentifiers} />
