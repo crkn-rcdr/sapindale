@@ -19,7 +19,11 @@
   <p>
     {#if id}Searched slug id: {id}{:else}Search a slug id by typing it.{/if}
   </p>
-  <SlugResolver on:searched={search} on:deselected={clear} />
+  <SlugResolver
+    label="Search slug"
+    value={id}
+    on:searched={search}
+    on:deselected={clear} />
 </div>
 <div>
   <SlugTypeAhead
