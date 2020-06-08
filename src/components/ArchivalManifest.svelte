@@ -8,6 +8,7 @@
     updatebasic
   } from "../couch/dipstaging.js";
   import TypeAhead from "../components/TypeAhead.svelte";
+  import SlugResolver from "../components/SlugResolver.svelte";
   import { state as authState } from "../auth.js";
   import { depositors } from "../commonvars.js";
 
@@ -652,6 +653,7 @@
                 <li>
                   New Slug:
                   <input type="text" bind:value={slugs[doc._id]} />
+                  <SlugResolver />
                 </li>
               {/if}
               {#if showdetails}

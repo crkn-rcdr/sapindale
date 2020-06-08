@@ -89,5 +89,8 @@
     <li>
       <a href="/slug">Slug Resolver</a>
     </li>
+    <li>
+      <a href="/archivalmanifest">Archival Manifest</a>
+    </li>
   </ul>
 </div>
