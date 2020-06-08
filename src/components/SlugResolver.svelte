@@ -30,13 +30,8 @@
       slugCheckPending = true;
       slugList = await resolveSlug(token, value);
       slugId = slugList.id;
-      if (!slugId) {
-        slugCheckPending = false;
-        slugFound = false;
-      } else {
-        slugCheckPending = false;
-        slugFound = true;
-      }
+      slugCheckPending = false;
+      slugFound = !!slugId;
     } catch (ignore) {}
   }
 
