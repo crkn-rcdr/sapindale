@@ -1,16 +1,24 @@
 <script>
   import { state as authState } from "../auth.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { resolve as resolveSlug } from "../api/slug.js";
   import spinner from "../spinner.svelte";
+  import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
-  let value = "";
+  export let value = "",
+    label = "Slug";
   let id, db;
   let slugFound = false;
   let slugCheckPending, slugList;
   let slugId = "";
+
+  onMount(async () => {
+    if (value != "") {
+      lookUpSlug();
+    }
+  });
 
   async function lookUpSlug() {
     dispatch("deselected");
@@ -18,19 +26,11 @@
       slugCheckPending = true;
       slugList = await resolveSlug(token, value);
       slugId = slugList.id;
-      await check(slugId);
+      slugCheckPending = false;
+      slugFound = !!slugId;
     } catch (ignore) {}
-    return slugId;
   }
-  async function check(slugId) {
-    if (!slugId) {
-      slugCheckPending = false;
-      slugFound = false;
-    } else {
-      slugCheckPending = false;
-      slugFound = true;
-    }
-  }
+
   async function slugSelect(event) {
     dispatch("searched", { value });
   }
@@ -40,18 +40,10 @@
   /* .lab {
     width: 100%;
   } */
-  .collecDisplay {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content: space-between;
-    padding-top: 2%;
-  }
-  .slug {
-    display: flex;
-    flex-direction: column;
-  }
 
+  .slug {
+    display: inline;
+  }
   .spinnerbind {
     display: inline;
   }
@@ -60,33 +52,31 @@
   }
 </style>
 
-<div class="collecDisplay">
-  <div class="slug">
-    <label for="slug">Slug</label>
-    <div class="spinnerbind">
-      <input
-        type="text"
-        bind:value
-        on:input={lookUpSlug}
-        on:change={slugSelect} />
+<div class="slug">
+  <label for="slug">{label}</label>
+  <div class="spinnerbind">
+    <input
+      type="text"
+      bind:value
+      on:input={lookUpSlug}
+      on:change={slugSelect} />
 
-      {#if slugCheckPending}
-        <spinner />
-      {:else if slugFound && slugCheckPending != undefined && value != ''}
-        <span>❌ : Found in Database</span>
-      {:else if !slugFound && slugCheckPending != undefined && value != ''}
-        <span>✅ : Not found in Database</span>
-      {/if}
-    </div>
-    {#if slugFound}
-      <div class="display">
-        <h3>Slug Details</h3>
-        <ul>
-          {#each Object.keys(slugList) as item}
-            <li>{item}:{slugList[item]}</li>
-          {/each}
-        </ul>
-      </div>
+    {#if slugCheckPending}
+      <spinner />
+    {:else if slugFound && slugCheckPending != undefined && value != ''}
+      <span>❌ : Found in Database</span>
+    {:else if !slugFound && slugCheckPending != undefined && value != ''}
+      <span>✅ : Not found in Database</span>
     {/if}
   </div>
+  {#if slugFound}
+    <div class="display">
+      <h3>Slug Details</h3>
+      <ul>
+        {#each Object.keys(slugList) as item}
+          <li>{item}:{slugList[item]}</li>
+        {/each}
+      </ul>
+    </div>
+  {/if}
 </div>

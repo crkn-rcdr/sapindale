@@ -14,6 +14,9 @@
 
   onMount(async () => {
     await lookupIds();
+    if (value === "") {
+      value = datalist[0];
+    }
   });
 
   async function lookupIds(event) {
@@ -41,12 +44,12 @@
 </style>
 
 <label for={`${id}.input`}>{label}</label>
+
 <input
   type="text"
   id={`${id}.input`}
   class="data-list border"
   list={`${id}.datalist`}
-  disabled={datalist.length < 1}
   bind:value
   on:input={lookupIds}
   on:change={selectItem} />

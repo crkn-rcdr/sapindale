@@ -8,6 +8,7 @@
     updatebasic
   } from "../couch/dipstaging.js";
   import TypeAhead from "../components/TypeAhead.svelte";
+  import SlugResolver from "../components/SlugResolver.svelte";
   import { state as authState } from "../auth.js";
   import { depositors } from "../commonvars.js";
 
@@ -272,6 +273,9 @@
   textarea {
     width: 100%;
     height: 100px;
+  }
+  li.slug {
+    display: inline-list-item;
   }
 </style>
 
@@ -649,9 +653,8 @@
             </dt>
             <dd>
               {#if selected[doc._id]}
-                <li>
-                  New Slug:
-                  <input type="text" bind:value={slugs[doc._id]} />
+                <li class="slug">
+                  <SlugResolver label="New slug:" bind:value={slugs[doc._id]} />
                 </li>
               {/if}
               {#if showdetails}
