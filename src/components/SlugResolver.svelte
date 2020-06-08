@@ -7,11 +7,15 @@
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
-  let value = "";
+  export let value;
   let id, db;
   let slugFound = false;
   let slugCheckPending, slugList;
   let slugId = "";
+
+  if (typeof value !== "string") {
+    value = "";
+  }
 
   async function lookUpSlug() {
     dispatch("deselected");

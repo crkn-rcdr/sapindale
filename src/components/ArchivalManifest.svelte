@@ -653,7 +653,7 @@
                 <li>
                   New Slug:
                   <input type="text" bind:value={slugs[doc._id]} />
-                  <SlugResolver />
+                  <SlugResolver bind:value={slugs[doc._id]} />
                 </li>
               {/if}
               {#if showdetails}
