@@ -1,21 +1,28 @@
 <script>
   import { state as authState } from "../auth.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { resolve as resolveSlug } from "../api/slug.js";
   import spinner from "../spinner.svelte";
   import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
-  export let value;
+  export let value, label;
   let id, db;
   let slugFound = false;
   let slugCheckPending, slugList;
   let slugId = "";
 
-  if (typeof value !== "string") {
-    value = "";
-  }
+  onMount(async () => {
+    if (typeof value !== "string") {
+      value = "";
+    } else {
+      lookUpSlug();
+    }
+    if (typeof label !== "string") {
+      label = "Slug";
+    }
+  });
 
   async function lookUpSlug() {
     dispatch("deselected");
@@ -47,8 +54,7 @@
   } */
 
   .slug {
-    display: flex;
-    flex-direction: column;
+    display: inline;
   }
   .spinnerbind {
     display: inline;
@@ -58,34 +64,31 @@
   }
 </style>
 
-<div>
-  <div class="slug">
-    <label for="slug">Slug</label>
-    <div class="spinnerbind">
-      <input
-        type="text"
-        bind:value
-        on:input={lookUpSlug}
-        on:change={slugSelect} />
+<div class="slug">
+  <label for="slug">{label}</label>
+  <div class="spinnerbind">
+    <input
+      type="text"
+      bind:value
+      on:input={lookUpSlug}
+      on:change={slugSelect} />
 
-      {#if slugCheckPending}
-        <spinner />
-      {:else if slugFound && slugCheckPending != undefined && value != ''}
-        <span>❌ : Found in Database</span>
-      {:else if !slugFound && slugCheckPending != undefined && value != ''}
-        <span>✅ : Not found in Database</span>
-      {/if}
-    </div>
-    {#if slugFound}
-      <div class="display">
-        <h3>Slug Details</h3>
-        <ul>
-          {#each Object.keys(slugList) as item}
-            <li>{item}:{slugList[item]}</li>
-          {/each}
-        </ul>
-      </div>
+    {#if slugCheckPending}
+      <spinner />
+    {:else if slugFound && slugCheckPending != undefined && value != ''}
+      <span>❌ : Found in Database</span>
+    {:else if !slugFound && slugCheckPending != undefined && value != ''}
+      <span>✅ : Not found in Database</span>
     {/if}
   </div>
-
+  {#if slugFound}
+    <div class="display">
+      <h3>Slug Details</h3>
+      <ul>
+        {#each Object.keys(slugList) as item}
+          <li>{item}:{slugList[item]}</li>
+        {/each}
+      </ul>
+    </div>
+  {/if}
 </div>

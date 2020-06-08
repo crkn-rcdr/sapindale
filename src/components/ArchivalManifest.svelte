@@ -274,6 +274,9 @@
     width: 100%;
     height: 100px;
   }
+  li.slug {
+    display: inline-list-item;
+  }
 </style>
 
 <h1>Archival Manifest</h1>
@@ -650,10 +653,8 @@
             </dt>
             <dd>
               {#if selected[doc._id]}
-                <li>
-                  New Slug:
-                  <input type="text" bind:value={slugs[doc._id]} />
-                  <SlugResolver bind:value={slugs[doc._id]} />
+                <li class="slug">
+                  <SlugResolver label="New slug:" bind:value={slugs[doc._id]} />
                 </li>
               {/if}
               {#if showdetails}
