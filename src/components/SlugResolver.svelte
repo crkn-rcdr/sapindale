@@ -30,19 +30,16 @@
       slugCheckPending = true;
       slugList = await resolveSlug(token, value);
       slugId = slugList.id;
-      await check(slugId);
+      if (!slugId) {
+        slugCheckPending = false;
+        slugFound = false;
+      } else {
+        slugCheckPending = false;
+        slugFound = true;
+      }
     } catch (ignore) {}
-    return slugId;
   }
-  async function check(slugId) {
-    if (!slugId) {
-      slugCheckPending = false;
-      slugFound = false;
-    } else {
-      slugCheckPending = false;
-      slugFound = true;
-    }
-  }
+
   async function slugSelect(event) {
     dispatch("searched", { value });
   }
