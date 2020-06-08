@@ -7,20 +7,16 @@
 
   let token = $authState.token;
   const dispatch = createEventDispatcher();
-  export let value, label;
+  export let value = "",
+    label = "Slug";
   let id, db;
   let slugFound = false;
   let slugCheckPending, slugList;
   let slugId = "";
 
   onMount(async () => {
-    if (typeof value !== "string") {
-      value = "";
-    } else {
+    if (value != "") {
       lookUpSlug();
-    }
-    if (typeof label !== "string") {
-      label = "Slug";
     }
   });
 
