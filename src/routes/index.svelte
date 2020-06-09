@@ -86,22 +86,11 @@
         Futon (Please do not edit unless you know what you are doing)
       </a>
     </li>
-  </ul>
-  <h2>In development/demos</h2>
-  <ul>
     <li>
-      <a href="/packaging">
-        Packaging (to replace all 3 older packaging tools)
-      </a>
+      <a href="/packaging">Packaging (to replace all 3 older packaging tools)</a>
     </li>
     <li>
       <a href="/findduplicates">Find Duplicates (to replace old FD tool)</a>
-    </li>
-    <li>
-      <a href="/internalmeta">
-        Internalmeta (to replace legacy approve,collection tagging, internalmeta
-        csv)
-      </a>
     </li>
   </ul>
 </div>
