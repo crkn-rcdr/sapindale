@@ -187,7 +187,7 @@
 
     mydocs.forEach(function(doc) {
       if ("doc" in doc) {
-        selected[doc.doc._id] = true;
+        selected[doc.doc._id] = false;
         if ("slug" in doc.doc) {
           slugs[doc.doc._id] = doc.doc.slug;
         } else {
