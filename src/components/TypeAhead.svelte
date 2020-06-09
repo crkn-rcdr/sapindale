@@ -20,7 +20,6 @@
   });
 
   async function lookupIds(event) {
-    dispatch("deselected");
     try {
       datalist = (await documents(token, db, {
         startkey: JSON.stringify(value),
@@ -32,6 +31,11 @@
 
   function selectItem(event) {
     dispatch("selected", { value });
+  }
+  function resetItem() {
+    if (value == null || value === "") {
+      value = datalist[0];
+    }
   }
 </script>
 
@@ -52,7 +56,8 @@
   list={`${id}.datalist`}
   bind:value
   on:input={lookupIds}
-  on:change={selectItem} />
+  on:change={selectItem}
+  on:blur={resetItem} />
 <datalist id={`${id}.datalist`}>
   {#each datalist as item}
     <option>{item}</option>

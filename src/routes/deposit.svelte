@@ -9,9 +9,7 @@
   function select(event) {
     id = event.detail.value;
   }
-  function clear() {
-    id = undefined;
-  }
+  
   function search(event) {
     console.log(event);
     bulkId = event.detail.results;
@@ -54,7 +52,7 @@
     id="aip"
     label="Input an AIP ID:"
     on:selected={select}
-    on:deselected={clear} />
+    />
 </div>
 <p>
   {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}
