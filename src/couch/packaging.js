@@ -1,6 +1,6 @@
 import { _couch_request } from "../couch.js";
 
-const packagingdatabase = "wipmetad";
+const packagingdatabase = "wipmeta";
 
 async function packagingfilesystem(token, options) {
     let result = await _couch_request(
