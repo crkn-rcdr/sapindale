@@ -31,7 +31,7 @@
     <li>
       <a href="/couchview">CouchView</a>
     </li>
-    <li on:click={legacyTools}>Legacy Tools</li>
+    <li on:click={legacyTools}>Legacy Tools (run on Upholstery)</li>
     {#if tool.clicked}
       <ul class="innerList">
         <li>
@@ -87,10 +87,29 @@
       </a>
     </li>
     <li>
-      <a href="/slug">Slug Resolver</a>
+      <a href="/packaging">
+        Packaging (to replace all 3 older packaging tools)
+      </a>
+    </li>
+    <li>
+      <a href="/internalmeta">
+        Internalmeta (Replaces approval and collection taging for historical
+        workflows)
+      </a>
+    </li>
+    <li>
+      <a href="/repository">Repository statistics</a>
+    </li>
+    <li>
+      <a href="/findduplicates">Find Duplicates (to replace old FD tool)</a>
     </li>
     <li>
       <a href="/archivalmanifest">Archival Manifest</a>
     </li>
+
+    <li>
+      <a href="/slug">Slug Resolver</a>
+    </li>
+
   </ul>
 </div>
