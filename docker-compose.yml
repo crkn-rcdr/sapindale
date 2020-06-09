@@ -1,8 +1,10 @@
-version: "3"
+version: "3.4"
 
 services:
   sapindale:
-    build: .
+    build:
+      context: .
+      target: prod
     image: sapindale:latest
     networks:
       access-platform:

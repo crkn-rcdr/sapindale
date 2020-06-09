@@ -87,10 +87,29 @@
       </a>
     </li>
     <li>
-      <a href="/packaging">Packaging (to replace all 3 older packaging tools)</a>
+      <a href="/packaging">
+        Packaging (to replace all 3 older packaging tools)
+      </a>
+    </li>
+    <li>
+      <a href="/internalmeta">
+        Internalmeta (Replaces approval and collection taging for historical
+        workflows)
+      </a>
+    </li>
+    <li>
+      <a href="/repository">Repository statistics</a>
     </li>
     <li>
       <a href="/findduplicates">Find Duplicates (to replace old FD tool)</a>
     </li>
+    <li>
+      <a href="/archivalmanifest">Archival Manifest</a>
+    </li>
+
+    <li>
+      <a href="/slug">Slug Resolver</a>
+    </li>
+
   </ul>
 </div>
