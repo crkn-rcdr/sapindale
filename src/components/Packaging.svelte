@@ -9,6 +9,8 @@
   import { onMount } from "svelte";
   import { state as authState } from "../auth.js";
 
+  var filesize = require("filesize");
+
   export let filesystem = undefined,
     packagestatus = undefined,
     statuslevel = "3",
@@ -34,7 +36,9 @@
     findnotvalidText = undefined,
     findnotfound = undefined,
     hidenotfound = false,
-    showmessage = true;
+    showmessage = true,
+    wipwalk = undefined,
+    hidewipwalk = false;
 
   // SIP / metadata forms
   export let ingestType = "new",
@@ -66,7 +70,19 @@
     "Proofed"
   ];
 
-  onMount(async () => {
+  onMount(() => {
+    loadpackageconfigs();
+    loadwipwalk();
+
+    // Load again every 2 minutes
+    const interval = setInterval(loadwipwalk, 120000);
+
+    // If a function is returned from onMount, it will be called when the component is unmounted.
+    // https://svelte.dev/repl/2e976c8411ad4bbbace89dee9b51c987
+    return () => clearInterval(interval);
+  });
+
+  async function loadpackageconfigs() {
     try {
       var configtemp = await packagingconfigs(token, {
         reduce: false,
@@ -79,7 +95,7 @@
         });
       }
     } catch (ignore) {}
-  });
+  }
 
   function resetVariables() {
     idlist = undefined;
@@ -101,6 +117,22 @@
     idmd = true;
     clabel = false;
     processindication = undefined;
+  }
+
+  async function loadwipwalk() {
+    var mywipwalk;
+    try {
+      var mywipwalk = await packagingdocs(token, ["wipwalk.wipwalk"], {
+        include_docs: true
+      });
+    } catch (ignore) {}
+    if (!Array.isArray(mywipwalk) || mywipwalk.length !== 1) {
+      // TODO: Do something better for this error condition
+      return;
+    }
+    // Use parsed date so local timezone of browser displayed
+    mywipwalk[0].doc.Date = new Date(mywipwalk[0].doc.updated);
+    wipwalk = mywipwalk[0].doc;
   }
 
   async function loadgroup() {
@@ -502,6 +534,48 @@
 
 <h1>CRKN/Canadiana/CIHM packaging</h1>
 
+{#if wipwalk}
+  <fieldset>
+    <legend>
+      (
+      <label for="hidewipwalk">
+        <input type="checkbox" id="hidewipwalk" bind:checked={hidewipwalk} />
+        Hide?
+      </label>
+      ) Packaging Walk report
+    </legend>
+    {#if !hidewipwalk}
+      Last update: {wipwalk.Date}
+      <br />
+      <table>
+      <tr><th colspan=2 align="center">Disk Usage</th></tr>
+        <tr>
+          <th>Total</th>
+          <td>{filesize(wipwalk.df.blocks)}</td>
+        </tr>
+        <tr>
+          <th>Free</th>
+          <td>{filesize(wipwalk.df.bfree)}</td>
+        </tr>
+        <tr>
+          <th>Used</th>
+          <td>{filesize(wipwalk.df.bused)} = {wipwalk.df.per}%</td>
+        </tr>
+      </table>
+
+      {#if Array.isArray(wipwalk.warnings) && wipwalk.warnings.length > 0}
+        <p>
+          <b>Warnings!</b>
+        </p>
+        <ul>
+          {#each wipwalk.warnings as warning}
+            <li>{warning}</li>
+          {/each}
+        </ul>
+      {/if}
+    {/if}
+  </fieldset>
+{/if}
 {#if configs}
   <fieldset>
     <legend>
