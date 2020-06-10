@@ -7,9 +7,8 @@
     "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 API=https://api.canadiana.ca/v1 sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
-    "test": "run-p --race dev cy:run"
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker-compose build"
   },
   "dependencies": {
     "compression": "^1.7.4",
