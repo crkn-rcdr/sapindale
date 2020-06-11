@@ -3,8 +3,11 @@
   import { onMount } from "svelte";
   let redirectUrl = undefined;
 
+  export let segment;
+
   onMount(async () => {
     redirectUrl = window.location.origin;
+    segment = segment;
   });
 </script>
 
