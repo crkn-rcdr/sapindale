@@ -1,0 +1,14 @@
+version: "3.4"
+
+services:
+  sapindale:
+    build:
+      context: .
+      target: dev
+    image: sapindale:dev
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.8
+networks:
+  access-platform:
+    external: true

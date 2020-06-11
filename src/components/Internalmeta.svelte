@@ -67,17 +67,18 @@
     approveaction = "",
     collectionsadd = [],
     collectionssub = [],
-    actiontext = undefined;
+    actiontext = undefined,
+    hidelegend = true;
 
   onMount(async () => {
     try {
       var capcols = await capcollectiondocs(token, {
-        include_docs: false
+        include_docs: true
       });
       if (Array.isArray(capcols)) {
         var tempcollections = [];
         capcols.forEach(function(acol) {
-          tempcollections.push(acol.id);
+          tempcollections.push(acol.doc);
         });
         capcollections = tempcollections;
       }
@@ -206,6 +207,37 @@
 
 <h1>Internalmeta (legacy access)</h1>
 
+{#if capcollections.length > 0}
+  <fieldset>
+    <legend>
+      (
+      <label for="hidelegend">
+        <input type="checkbox" id="hidelegend" bind:checked={hidelegend} />
+        Hide?
+      </label>
+      ) Collection Tag legend
+    </legend>
+    {#if !hidelegend}
+      <table>
+        <tr>
+          <th>tag</th>
+          <th>label</th>
+          <th>Summary</th>
+        </tr>
+        {#each capcollections as collection}
+          <!-- This is a where a "display IIIF text value" function would come in handy. -->
+          <tr>
+            <td>{collection._id}</td>
+            <td>{collection.label.en[0]}</td>
+            <td>{collection.summary.en[0]}</td>
+          </tr>
+        {/each}
+
+      </table>
+    {/if}
+  </fieldset>
+{/if}
+
 <fieldset>
   <legend>
     (
@@ -281,13 +313,13 @@
         and add
         <select multiple bind:value={collectionsadd} size="10">
           {#each capcollections as tag}
-            <option value={tag}>{tag}</option>
+            <option value={tag._id}>{tag._id}</option>
           {/each}
         </select>
         and subtract
         <select multiple bind:value={collectionssub} size="10">
           {#each capcollections as tag}
-            <option value={tag}>{tag}</option>
+            <option value={tag._id}>{tag._id}</option>
           {/each}
         </select>
         collection tags:
