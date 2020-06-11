@@ -20,12 +20,14 @@
     }
   });
 
-  async function lookUpSlug() {
+  export async function lookUpSlug() {
     dispatch("deselected");
     try {
       slugCheckPending = true;
       slugList = await resolveSlug(token, value);
       slugId = slugList.id;
+      /* let noidValue = slugList.noid;
+      let noidType = slugList.type; */
       slugCheckPending = false;
       slugFound = !!slugId;
     } catch (ignore) {}
@@ -33,6 +35,11 @@
 
   async function slugSelect(event) {
     dispatch("searched", { value });
+  }
+  function noidClick(event) {
+    let noidValue = encodeURIComponent(slugList.noid);
+    let noidType = slugList.type;
+    dispatch("selected", { noidValue, noidType });
   }
 </script>
 
@@ -74,7 +81,13 @@
       <h3>Slug Details</h3>
       <ul>
         {#each Object.keys(slugList) as item}
-          <li>{item}:{slugList[item]}</li>
+          <li>
+            {item}:
+            <input
+              type="text"
+              bind:value={slugList[item]}
+              on:click={noidClick} />
+          </li>
         {/each}
       </ul>
     </div>
