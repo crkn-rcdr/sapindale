@@ -389,8 +389,7 @@
   }
 
   async function exportIdentifier(identifier) {
-    document.getElementById("buttonexport-" + identifier).style.display =
-      "none"; // Should I create new hash and use {if} ?
+    document.getElementById("export-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
     var req = {
       nocreate: true,
       processreq: JSON.stringify({
@@ -548,7 +547,9 @@
       Last update: {wipwalk.Date}
       <br />
       <table>
-      <tr><th colspan=2 align="center">Disk Usage</th></tr>
+        <tr>
+          <th colspan="2" align="center">Disk Usage</th>
+        </tr>
         <tr>
           <th>Total</th>
           <td>{filesize(wipwalk.df.blocks)}</td>
