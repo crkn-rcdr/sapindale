@@ -41,6 +41,6 @@
   {#if displayType === 'manifest'}
     <a href="/">Manifest</a>
   {:else if displayType === 'collection'}
-    <a href="/collection/[id]">Collection</a>
+    <a href="/collection/{displayValue}">Collection</a>
   {/if}
 </div>

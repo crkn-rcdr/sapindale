@@ -20,7 +20,7 @@
     }
   });
 
-  export async function lookUpSlug() {
+  async function lookUpSlug() {
     dispatch("deselected");
     try {
       slugCheckPending = true;
