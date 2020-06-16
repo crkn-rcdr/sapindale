@@ -266,14 +266,6 @@
 </script>
 
 <style>
-  fieldset {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
   li.slug {
     display: inline-list-item;
   }
@@ -323,17 +315,15 @@
       Or past ID's directly into box:
       <textarea id="identifiers" bind:value={findidentifiers} />
 
-      <div style="display:block;">
-        <button
-          type="submit"
-          on:click={() => {
-            viewFind();
-          }}>
-          Find
-        </button>
-      </div>
+      <button
+        type="submit"
+        on:click={() => {
+          viewFind();
+        }}>
+        Find
+      </button>
     {:else if whichgroup == 'status'}
-      <div style="display:inline;">
+      <p class="children-inline">
         Show
         <select id="statustype" bind:value={statustype} on:change={loadgroup}>
           <option value="s">success</option>
@@ -348,7 +338,7 @@
           <option value="3">date</option>
           <option value="4">date and time</option>
         </select>
-      </div>
+      </p>
       {#if Array.isArray(smeltstatus)}
         <table border="1" id="typeTable">
           <tr>
@@ -610,7 +600,7 @@
                   {#if processindication.start}
                     Initiating creation of archival manifests for {processindication.aips}
                     AIPs...
-                    <div style="color:red; display:inline;">Please Wait</div>
+                    <span class="danger">Please Wait</span>
                   {:else}
                     Initiated creation of archival manifests for {processindication.aips}
                     AIPs...

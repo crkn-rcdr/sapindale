@@ -1,39 +1,41 @@
 <script>
   import { state as authState } from "../auth.js";
 
-  let tool = { clicked: false };
-  function legacyTools() {
-    tool.clicked = !tool.clicked;
-  }
+  let legacy = false;
 </script>
 
 <style>
-  .contain {
-    padding-top: 5%;
+  section header label {
+    max-width: unset;
   }
-  li {
-    display: flex;
+
+  section aside ul {
     list-style: none;
-    padding: 0.25rem;
-    font-size: 1.25rem;
-    cursor: pointer;
+    padding-inline-start: 0;
   }
-  .innerList {
-    padding-left: 2.5%;
+
+  section aside ul li {
+    padding-left: 0;
   }
 </style>
 
 <svelte:head>
-  <title>Sapindale — Canadiana access platform administration</title>
+  <title>Sapindale — Canadiana platform administration</title>
 </svelte:head>
-<div class="contain">
-  <ul>
-    <li>
-      <a href="/couchview">CouchView</a>
-    </li>
-    <li on:click={legacyTools}>Legacy Tools (run on Upholstery)</li>
-    {#if tool.clicked}
-      <ul class="innerList">
+
+<section>
+  <header>
+    <h1>Canadiana platform administration</h1>
+    <label for="legacy">
+      <input type="checkbox" bind:checked={legacy} id="legacy" />
+      Show legacy tools
+    </label>
+  </header>
+
+  <aside>
+    <h2>Packaging</h2>
+    <ul>
+      {#if legacy}
         <li>
           <a
             href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/wipFindMoveCreate.html&token={$authState.token}"
@@ -57,59 +59,78 @@
         </li>
         <li>
           <a
-            href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/collectionManage.html&token={$authState.token}"
-            target="_blank">
-            Legacy Application Platform Collection Manager
-          </a>
-        </li>
-        <li>
-          <a
             href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/validationStatisticsTool.html&token={$authState.token}"
             target="_blank">
             Legacy Repository Statistics
           </a>
         </li>
+      {:else}
+        <li>
+          <a href="/packaging">Packaging (combined tool)</a>
+        </li>
+        <li>
+          <a href="/repository">Repository statistics</a>
+        </li>
+      {/if}
+    </ul>
+  </aside>
+
+  <aside>
+    <h2>Access (pre-split)</h2>
+    <ul>
+      {#if legacy}
+        <li>
+          <a
+            href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/collectionManage.html&token={$authState.token}"
+            target="_blank">
+            Legacy Application Platform Collection Manager
+          </a>
+        </li>
+      {:else}
+        <li>
+          <a href="/internalmeta">Approval and collection tagging</a>
+        </li>
+      {/if}
+    </ul>
+  </aside>
+
+  <aside>
+    <h2>Access (post-split)</h2>
+    <ul>
+      <li>
+        <a href="/archivalmanifest">Archival Manifest</a>
+      </li>
+    </ul>
+  </aside>
+
+  <aside>
+    <h2>Utilities</h2>
+    <ul>
+      <li>
+        <a href="/couchview">CouchView</a>
+      </li>
+      {#if legacy}
         <li>
           <a
             href="{process.env.UPHOLSTERY}/cookie?redirect=/demo/FD.html&token={$authState.token}"
             target="_blank">
-            Find Duplicates in list
+            Find Duplicates (Legacy)
           </a>
         </li>
-      </ul>
-    {/if}
-    <li>
-      <a
-        href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
-        id="Futon"
-        target="_blank">
-        Futon (Please do not edit unless you know what you are doing)
-      </a>
-    </li>
-    <li>
-      <a href="/packaging">
-        Packaging (to replace all 3 older packaging tools)
-      </a>
-    </li>
-    <li>
-      <a href="/internalmeta">
-        Internalmeta (Replaces approval and collection taging for historical
-        workflows)
-      </a>
-    </li>
-    <li>
-      <a href="/repository">Repository statistics</a>
-    </li>
-    <li>
-      <a href="/findduplicates">Find Duplicates (to replace old FD tool)</a>
-    </li>
-    <li>
-      <a href="/archivalmanifest">Archival Manifest</a>
-    </li>
-
-    <li>
-      <a href="/slug">Slug Resolver</a>
-    </li>
-
-  </ul>
-</div>
+      {:else}
+        <li>
+          <a href="/findduplicates">Find Duplicates</a>
+        </li>
+      {/if}
+      <li>
+        <a
+          href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
+          id="Futon"
+          target="_blank"
+          class="danger">
+          Futon (Please do not edit unless you know what you are doing)
+        </a>
+      </li>
+    </ul>
+  </aside>
+</section>
