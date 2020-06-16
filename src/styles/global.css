@@ -448,3 +448,32 @@ blockquote footer {
   line-height: var(--line-height);
   padding: 1.5rem 0;
 }
+
+/* end mvp.css */
+
+fieldset {
+  border: 2px solid black;
+  padding: 5px;
+}
+
+fieldset + fieldset {
+  margin-top: 1rem;
+}
+
+fieldset legend {
+  color: var(--color-bg);
+  background-color: var(--color-secondary);
+  padding: 0 0.5rem;
+}
+
+fieldset legend label,
+fieldset legend select,
+fieldset legend input {
+  display: inline;
+  margin: 0.5rem 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 10rem;
+}

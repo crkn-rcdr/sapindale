@@ -266,14 +266,6 @@
 </script>
 
 <style>
-  fieldset {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
   li.slug {
     display: inline-list-item;
   }

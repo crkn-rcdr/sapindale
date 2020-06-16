@@ -508,14 +508,6 @@
 </script>
 
 <style>
-  fieldset {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
   ul {
     list-style-type: disc;
     list-style-position: inside;

@@ -194,17 +194,6 @@
   }
 </script>
 
-<style>
-  fieldset {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
-</style>
-
 <h1>Internalmeta (legacy access)</h1>
 
 {#if capcollections.length > 0}
