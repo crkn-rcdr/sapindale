@@ -9,32 +9,27 @@
 </script>
 
 <style>
-  img {
-    width: 60%;
-    height: auto;
+  .brand {
+    display: block;
   }
-  .user {
-    padding-top: 1.5rem;
-  }
-  .pagetitle {
-    width: 80%;
+  .brand img {
+    height: 48px;
+    width: 48px;
+    vertical-align: middle;
   }
 </style>
 
 <svelte:head>
-  <title>Sapindale — Canadiana access platform administration</title>
+  <title>Sapindale — Canadiana platform administration</title>
 </svelte:head>
 
-<div>
-  <nav>
-    <figure>
-      <a href="/">
-        <img src="/canadiana-logo.svg" alt="img" />
-      </a>
-    </figure>
-    <h1 class="pagetitle">Canadiana access platform administration</h1>
-
-    <div class="user">
+<nav>
+  <a href="/" class="brand">
+    <img src="/canadiana-logo.svg" alt="Canadiana Logo" />
+    Canadiana Platform Administration
+  </a>
+  <ul>
+    <li>
       {#if $authState.status === 'SUCCESS'}
         Logged in as: {$authState.name}
       {:else if $authState.status === 'FAILED'}
@@ -43,17 +38,18 @@
           Login
         </a>
       {/if}
-    </div>
-  </nav>
-  <main>
-    {#if $authState.status === 'SUCCESS'}
-      <slot />
-    {:else}
-      <div class="max-w-md mx-auto pt-64">
-        <p class="text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24">
-          Please log in to continue.
-        </p>
-      </div>
-    {/if}
-  </main>
-</div>
+    </li>
+  </ul>
+</nav>
+<main>
+  {#if $authState.status === 'SUCCESS'}
+    <slot />
+  {:else}
+    <p class="text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24">
+      <a
+        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
+        Please log in to continue.
+      </a>
+    </p>
+  {/if}
+</main>

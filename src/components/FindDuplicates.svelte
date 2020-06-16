@@ -85,22 +85,6 @@
   }
 </script>
 
-<style>
-  fieldset {
-    border: 2px solid black;
-    padding: 5px;
-  }
-
-  fieldset label {
-    display: block;
-  }
-
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
-</style>
-
 <h1>Find duplicates tool</h1>
 
 <fieldset>
@@ -134,11 +118,12 @@
     unique items (remove duplicates)
   </label>
   <label for="underscoresToHiphens">
-  <input
-    type="checkbox"
-    id="underscoresToHiphens"
-    bind:checked={underscoresToHiphens} />
-  Change all "_" into "-"</label>
+    <input
+      type="checkbox"
+      id="underscoresToHiphens"
+      bind:checked={underscoresToHiphens} />
+    Change all "_" into "-"
+  </label>
   <button on:click={update}>Update output</button>
 </fieldset>
 
@@ -149,7 +134,7 @@
   <br />
   <textarea id="output" disabled="true" bind:value={outputText} />
   {#if count > 0}
-    <i id="count" style="color:red">Count : {count}</i>
+    <i id="count" class="danger">Count : {count}</i>
   {/if}
   <br />
 </fieldset>

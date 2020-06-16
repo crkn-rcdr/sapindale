@@ -9,6 +9,9 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.8
+    volumes:
+      - ./src:/sapindale/src
+      - ./static:/sapindale/static
 networks:
   access-platform:
     external: true
