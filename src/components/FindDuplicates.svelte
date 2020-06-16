@@ -134,7 +134,7 @@
   <br />
   <textarea id="output" disabled="true" bind:value={outputText} />
   {#if count > 0}
-    <i id="count" style="color:red">Count : {count}</i>
+    <i id="count" class="danger">Count : {count}</i>
   {/if}
   <br />
 </fieldset>

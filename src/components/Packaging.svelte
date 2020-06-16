@@ -741,7 +741,7 @@
         </table>
       {/if}
     {:else if whichgroup == 'status'}
-      <div style="display:inline;">
+      <p class="children-inline">
         Show
         <select id="statustype" bind:value={statustype} on:change={loadgroup}>
           <option value="s">success</option>
@@ -756,7 +756,7 @@
           <option value="3">date</option>
           <option value="4">date and time</option>
         </select>
-      </div>
+      </p>
       {#if Array.isArray(packagestatus)}
         <table border="1" id="typeTable">
           <tr>
@@ -828,15 +828,13 @@
           the depositor is "{configs[packageconfig].depositor}"
           <textarea id="identifiers" bind:value={findidentifiers} />
 
-          <div style="display:block;">
-            <button
-              type="submit"
-              on:click={() => {
-                viewFind();
-              }}>
-              Find
-            </button>
-          </div>
+          <button
+            type="submit"
+            on:click={() => {
+              viewFind();
+            }}>
+            Find
+          </button>
 
           {#if findnotvalidText}
             <label for="findnotvalidtext">IDs not valid</label>
@@ -929,9 +927,7 @@
               id="changelog"
               bind:value={changelog} />
             {#if typeof changelog !== 'string' || changelog.length < 5}
-              <div style="color:red; display:inline;">
-                (Must be at least 5 characters)
-              </div>
+              <span class="danger">(Must be at least 5 characters)</span>
             {/if}
             <br />
             Stages in process:
@@ -968,7 +964,7 @@
             {#if processindication.start}
               Submitting {processindication.reqs} requests for {processindication.aips}
               AIPs...
-              <div style="color:red; display:inline;">Please Wait</div>
+              <span class="danger">Please Wait</span>
             {:else}
               Submitted {processindication.reqs} requests for {processindication.aips}
               AIPs!
@@ -983,9 +979,7 @@
               Ingest SIP
             </button>
             {#if !(processstages.pre || processstages.imageconv || processstages.sip || processstages.i || processstages.cs || processstages.post)}
-              <div style="color:red; display:inline;">
-                (At least one stage must be chosen)
-              </div>
+              <span class="danger">(At least one stage must be chosen)</span>
             {/if}
           {/if}
         {:else}
@@ -1007,9 +1001,7 @@
           Changelog:
           <input type="text" size="50" id="changelog" bind:value={changelog} />
           {#if typeof changelog !== 'string' || changelog.length < 5}
-            <div style="color:red; display:inline;">
-              (Must be at least 5 characters)
-            </div>
+            <span class="danger">(Must be at least 5 characters)</span>
           {/if}
           <br />
           Stages in process:
@@ -1041,7 +1033,7 @@
             {#if processindication.start}
               Submitting {processindication.reqs} requests for {processindication.aips}
               AIPs...
-              <div style="color:red; display:inline;">Please Wait</div>
+              <span class="danger">Please Wait</span>
             {:else}
               Submitted {processindication.reqs} requests for {processindication.aips}
               AIPs!
@@ -1056,9 +1048,7 @@
               Manipulate Metadata
             </button>
             {#if !(processstages.pre || processstages.manipmd || processstages.i || processstages.cs || processstages.post)}
-              <div style="color:red; display:inline;">
-                (At least one stage must be chosen)
-              </div>
+              <span class="danger">(At least one stage must be chosen)</span>
             {/if}
           {/if}
         {/if}
@@ -1114,7 +1104,7 @@ Some buttons to show/hide specific parts
             {#if 'filesystem' in doc && 'stage' in doc.filesystem}
               <li>
                 wip/{doc.filesystem.stage}/{doc.filesystem.configid}/{doc.filesystem.identifier}
-                <div style="display:inline;" id="buttonmove-{doc._id}">
+                <span class="children-inline" id="buttonmove-{doc._id}">
                   (
                   <button
                     on:click={() => {
@@ -1128,10 +1118,10 @@ Some buttons to show/hide specific parts
                     {/each}
                   </select>
                   )
-                </div>
+                </span>
               </li>
             {:else if packageconfig !== ''}
-              <div style="display:inline;" id="buttoncreate-{doc._id}">
+              <p class="children-inline" id="buttoncreate-{doc._id}">
                 <button
                   on:click={() => {
                     createIdentifier(doc._id);
@@ -1143,7 +1133,7 @@ Some buttons to show/hide specific parts
                     <option value={stage}>{stage}</option>
                   {/each}
                 </select>
-              </div>
+              </p>
             {/if}
 
             {#if !('label' in doc)}
@@ -1172,23 +1162,21 @@ Some buttons to show/hide specific parts
               </li>
 
               {#if packageconfig !== ''}
-                <div style="display: inline;" id="export-{doc._id}">
-                  <li>
-                    <select bind:value={exporttype[doc._id]}>
-                      <option value="aip">aip</option>
-                      <option value="sip">sip</option>
-                      <option value="METS">METS</option>
-                      <option value="dmdSec">dmdSec</option>
-                    </select>
-                    <button
-                      type="submit"
-                      on:click={() => {
-                        exportIdentifier(doc._id);
-                      }}>
-                      export to Temp/export/{packageconfig}
-                    </button>
-                  </li>
-                </div>
+                <li class="children-inline" id="export-{doc._id}">
+                  <select bind:value={exporttype[doc._id]}>
+                    <option value="aip">aip</option>
+                    <option value="sip">sip</option>
+                    <option value="METS">METS</option>
+                    <option value="dmdSec">dmdSec</option>
+                  </select>
+                  <button
+                    type="submit"
+                    on:click={() => {
+                      exportIdentifier(doc._id);
+                    }}>
+                    export to Temp/export/{packageconfig}
+                  </button>
+                </li>
               {/if}
             {/if}
 
@@ -1201,26 +1189,24 @@ Some buttons to show/hide specific parts
 
             {#if 'processHistory' in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0}
               {#if !doc.processHistory[0].status}
-                <li>
+                <li class="children-inline">
                   Last request failed: {doc.processHistory[0].request}
-                  <div style="display: inline;" id="silence-{doc._id}">
-                    <button
-                      type="submit"
-                      on:click={() => {
-                        silenceIdentifier(doc._id);
-                      }}>
-                      Silence error
-                    </button>
-                  </div>
-                  <div style="display: inline;" id="retry-{doc._id}">
-                    <button
-                      type="submit"
-                      on:click={() => {
-                        retryIdentifier(doc._id, doc.processHistory[0].req);
-                      }}>
-                      Retry {doc.processHistory[0].req.length} requests
-                    </button>
-                  </div>
+                  <button
+                    id="silence-{doc._id}"
+                    type="submit"
+                    on:click={() => {
+                      silenceIdentifier(doc._id);
+                    }}>
+                    Silence error
+                  </button>
+                  <button
+                    id="retry-{doc._id}"
+                    type="submit"
+                    on:click={() => {
+                      retryIdentifier(doc._id, doc.processHistory[0].req);
+                    }}>
+                    Retry {doc.processHistory[0].req.length} requests
+                  </button>
                 </li>
               {/if}
 

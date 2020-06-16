@@ -247,15 +247,13 @@
   {#if !hidefinder}
     <textarea id="identifiers" bind:value={findidentifiers} />
 
-    <div style="display:block;">
-      <button
-        type="submit"
-        on:click={() => {
-          viewFind();
-        }}>
-        Find
-      </button>
-    </div>
+    <button
+      type="submit"
+      on:click={() => {
+        viewFind();
+      }}>
+      Find
+    </button>
   {/if}
 </fieldset>
 

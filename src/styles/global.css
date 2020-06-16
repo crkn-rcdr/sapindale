@@ -7,6 +7,7 @@
   --color-accent: #1d808b15;
   --color-bg: #fff;
   --color-bg-secondary: #e9e9e9;
+  --color-danger: red;
   --color-secondary: #1d808b;
   --color-secondary-accent: #1d808b15;
   --color-shadow: #f4f4f4;
@@ -476,4 +477,12 @@ fieldset legend input {
 textarea {
   width: 100%;
   min-height: 10rem;
+}
+
+.children-inline > * {
+  display: inline;
+}
+
+.danger {
+  color: var(--color-danger);
 }

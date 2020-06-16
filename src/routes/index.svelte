@@ -127,7 +127,7 @@
           href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
           id="Futon"
           target="_blank"
-          style="color: red">
+          class="danger">
           Futon (Please do not edit unless you know what you are doing)
         </a>
       </li>
