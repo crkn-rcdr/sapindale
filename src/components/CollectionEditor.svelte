@@ -5,7 +5,7 @@
   import { collectionrequest as request } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
-  import CollectionItems from "../components/CollectionItems.svelte";
+  /* import CollectionItems from "../components/CollectionItems.svelte"; */
 
   export let id = undefined;
   const dispatch = createEventDispatcher();
@@ -22,14 +22,11 @@
   async function getCollectionRecords({ id }) {
     try {
       rowcount = await request(token, id);
-      itemCount = rowcount.items.map(row => row.id);
-      console.log("item", itemCount);
-      console.log("test", rowcount);
     } catch (ignore) {}
   }
   function displayItems(event) {
-    dispatch("select", { itemCount });
-    console.log("show", itemCount);
+    dispatch("select", { rowcount });
+    console.log("show", rowcount);
   }
 </script>
 
@@ -46,6 +43,13 @@
     width: 50%;
     background-color: #1d808b15;
     color: #141010;
+  }
+  .add {
+    line-height: 1%;
+    font-size: small;
+  }
+  .align {
+    display: inline-grid;
   }
 </style>
 
@@ -64,7 +68,10 @@
                 </span>
               {/each}
               {#if item === 'label'}
-                <TextValueEditor />
+                <span class="align">
+                  <TextValueEditor />
+                  <button class="add">Add</button>
+                </span>
               {/if}
             {/if}
             {#if item === 'items'}
@@ -74,7 +81,7 @@
                     <pre>
                       {#each Object.keys(rowcount[item][element]) as items}
                         {#if showItems.includes(items)}
-                          <li class="spacewidth">
+                          <li class="spacewidth" on:click={displayItems}>
 
                             {#if items !== 'label'}
                               {items}:{rowcount[item][element][items]}
@@ -94,7 +101,10 @@
             {/if}
           </li>
         {:else}
-          <li>{item}:{rowcount[item]}</li>
+          <li>
+            <label for="item">{item}:</label>
+            <input type="text" bind:value={rowcount[item]} />
+          </li>
         {/if}
       {/each}
 

@@ -21,10 +21,10 @@
     height: 50px;
     font-size: small;
   }
-  .add {
+  /* .add {
     line-height: 1%;
     font-size: small;
-  }
+  } */
 </style>
 
 <table>
@@ -46,8 +46,8 @@
         bind:value={valueDe} />
     </td>
     <td class="icon" on:click|preventDefault={clearText}>Clear Text</td>
-    <td>
+    <!--  <td>
       <button class="add">Add</button>
-    </td>
+    </td> -->
   </tr>
 </table>
