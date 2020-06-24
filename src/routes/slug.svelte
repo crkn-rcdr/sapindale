@@ -1,6 +1,6 @@
 <script>
-  import SlugResolver from "../components/SlugResolver.svelte";
   import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
+<<<<<<< HEAD
   let id;
   let prefix, displayValue, displayType;
   function search(event) {
@@ -8,9 +8,17 @@
   }
   function clear() {
     id = undefined;
+=======
+  let slug;
+  let mode = "manifest";
+
+  function selected(event) {
+    slug = event.detail;
+>>>>>>> master
   }
-  function searchedPrefix(event) {
-    prefix = event.detail.prefix;
+
+  function clear(event) {
+    slug = undefined;
   }
   function displayUrl(event) {
     displayValue = event.detail.noidValue;
@@ -19,6 +27,7 @@
   }
 </script>
 
+<<<<<<< HEAD
 <h1>Slug Resolver</h1>
 <div>
   <p>
@@ -29,12 +38,26 @@
     on:deselected={clear}
     on:selected={displayUrl} />
 </div>
+=======
+<h1>Slug Lookup</h1>
+
+>>>>>>> master
 <div>
   <SlugTypeAhead
-    label="Type in the slug for Lookup"
-    on:selected={searchedPrefix} />
+    bind:mode
+    label="Enter a slug"
+    on:selected={selected}
+    on:deselected={clear} />
   <p>
-    {#if prefix}Typed slug: {prefix}{:else}Enter a slug by typing it.{/if}
+    {#if slug}
+      {#if slug.noid}
+        You've found:
+        <br />
+        {Object.values(slug.label).join(' = ')} (Slug: {slug.id}) (NOID: {slug.noid})
+        <br />
+        <a href="/{mode}/{slug.noid.replace('/', '%2F')}">Click here to edit</a>
+      {:else}Something went wrong. {slug.message}{/if}
+    {:else}Enter a slug by typing it.{/if}
   </p>
 </div>
 <div>

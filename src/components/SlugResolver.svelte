@@ -1,7 +1,7 @@
 <script>
   import { state as authState } from "../auth.js";
   import { createEventDispatcher, onMount } from "svelte";
-  import { resolve as resolveSlug } from "../api/slug.js";
+  import { resolveSlug } from "../api/collection.js";
   import spinner from "../spinner.svelte";
   import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
