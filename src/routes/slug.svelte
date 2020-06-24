@@ -37,10 +37,3 @@
     {:else}Enter a slug by typing it.{/if}
   </p>
 </div>
-<div>
-  {#if displayType === 'manifest'}
-    <a href="/">Manifest</a>
-  {:else if displayType === 'collection'}
-    <a href="/collection/{displayValue}">Collection</a>
-  {/if}
-</div>
