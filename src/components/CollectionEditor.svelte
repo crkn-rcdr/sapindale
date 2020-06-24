@@ -63,8 +63,22 @@
             {#if item !== 'items'}
               {#each Object.keys(rowcount[item]) as element}
                 <span class="line">
-                  <input type="text" bind:value={element} />
-                  <input type="text" bind:value={rowcount[item][element]} />
+                  <table>
+                    <tr>
+                      <th>Language</th>
+                      <th>Value</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="text" bind:value={element} />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          bind:value={rowcount[item][element]} />
+                      </td>
+                    </tr>
+                  </table>
                 </span>
               {/each}
               {#if item === 'label'}
@@ -102,8 +116,9 @@
           </li>
         {:else}
           <li>
-            <label for="item">{item}:</label>
-            <input type="text" bind:value={rowcount[item]} />
+            {item}:{rowcount[item]}
+            <!--  <label for="item">{item}:</label>
+            <input type="text" bind:value={rowcount[item]} /> -->
           </li>
         {/if}
       {/each}
