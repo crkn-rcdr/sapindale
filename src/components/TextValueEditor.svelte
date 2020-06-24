@@ -1,13 +1,14 @@
 <script>
   import FaBackspace from "svelte-icons/fa/FaBackspace.svelte";
   import { state as authState } from "../auth.js";
-
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   let value = "";
   let valueDe,
     valueLang = "";
   let rowcount;
 
-  async function clearText(index) {
+  async function clearText(event, index) {
     valueDe = "";
     /* This will be taken when Update function is written */
     /* let testUpdate = await Object.values(labelinColl)[index]; */
@@ -28,10 +29,7 @@
 </style>
 
 <table>
-  <tr>
-    <th>Language</th>
-    <th>Value</th>
-  </tr>
+
   <tr>
     <td>
       <input
@@ -46,8 +44,6 @@
         bind:value={valueDe} />
     </td>
     <td class="icon" on:click|preventDefault={clearText}>Clear Text</td>
-    <!--  <td>
-      <button class="add">Add</button>
-    </td> -->
+
   </tr>
 </table>

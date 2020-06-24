@@ -60,14 +60,14 @@
         {#if typeof rowcount[item] == 'object'}
           <li>
             {item}:
-            {#if item !== 'items'}
-              {#each Object.keys(rowcount[item]) as element}
-                <span class="line">
-                  <table>
-                    <tr>
-                      <th>Language</th>
-                      <th>Value</th>
-                    </tr>
+            {#if item !== 'items' && item !== 'parents'}
+              <span class="line">
+                <table>
+                  <tr>
+                    <th>Language</th>
+                    <th>Value</th>
+                  </tr>
+                  {#each Object.keys(rowcount[item]) as element}
                     <tr>
                       <td>
                         <input type="text" bind:value={element} />
@@ -78,9 +78,9 @@
                           bind:value={rowcount[item][element]} />
                       </td>
                     </tr>
-                  </table>
-                </span>
-              {/each}
+                  {/each}
+                </table>
+              </span>
               {#if item === 'label'}
                 <span class="align">
                   <TextValueEditor />
@@ -88,7 +88,7 @@
                 </span>
               {/if}
             {/if}
-            {#if item === 'items'}
+            {#if item === 'items' || item === 'parents'}
               <div class="scroll">
                 {#each Object.keys(rowcount[item]) as element}
                   <ul>
