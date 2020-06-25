@@ -1,40 +1,40 @@
 <script>
   import { state as authState } from "../auth.js";
   import { createEventDispatcher, onMount } from "svelte";
-  import { resolveSlug } from "../api/collection.js";
+  import { resolveSlug as resolveCollectionSlug } from "../api/collection.js";
+  import { resolveSlug as resolveManifestSlug } from "../api/manifest.js";
   import spinner from "../spinner.svelte";
-  import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
   let token = $authState.token;
-  const dispatch = createEventDispatcher();
   export let value = "",
-    label = "Slug";
-  let id, db;
-  let slugFound = false;
-  let slugCheckPending, slugList;
-  let slugId = "";
+    label = "Slug",
+    mode = "manifest",
+    state = "PENDING";
+
+  let slug;
+  let resolveMethod =
+    mode === "manifest" ? resolveManifestSlug : resolveCollectionSlug;
 
   onMount(async () => {
-    if (value != "") {
+    if (value !== "") {
       lookUpSlug();
     }
   });
 
   async function lookUpSlug() {
-    dispatch("deselected");
     try {
-      slugCheckPending = true;
-      slugList = await resolveSlug(token, value);
-      slugId = slugList.id;
-      /* let noidValue = slugList.noid;
-      let noidType = slugList.type; */
-      slugCheckPending = false;
-      slugFound = !!slugId;
-    } catch (ignore) {}
-  }
-
-  async function slugSelect(event) {
-    dispatch("searched", { value });
+      state = "PENDING";
+      slug = await resolveMethod(token, value);
+      // errors will come with a "message" field.
+      // In the future, API requests should provide more explicit distinction
+      if (slug.message) {
+        state = "NOTFOUND";
+      } else {
+        state = "FOUND";
+      }
+    } catch (ignore) {
+      state = "FAILED";
+    }
   }
   function noidClick(event) {
     let noidValue = encodeURIComponent(slugList.noid);
@@ -43,53 +43,18 @@
   }
 </script>
 
-<style>
-  /* .lab {
-    width: 100%;
-  } */
-
-  .slug {
-    display: inline;
-  }
-  .spinnerbind {
-    display: inline;
-  }
-  .display {
-    padding-top: 5%;
-  }
-</style>
-
-<div class="slug">
+<span class="children-inline">
   <label for="slug">{label}</label>
-  <div class="spinnerbind">
-    <input
-      type="text"
-      bind:value
-      on:input={lookUpSlug}
-      on:change={slugSelect} />
+  <input type="text" bind:value on:input={lookUpSlug} />
 
-    {#if slugCheckPending}
-      <spinner />
-    {:else if slugFound && slugCheckPending != undefined && value != ''}
-      <span>❌ : Found in Database</span>
-    {:else if !slugFound && slugCheckPending != undefined && value != ''}
-      <span>✅ : Not found in Database</span>
-    {/if}
-  </div>
-  {#if slugFound}
-    <div class="display">
-      <h3>Slug Details</h3>
-      <ul>
-        {#each Object.keys(slugList) as item}
-          <li>
-            {item}:
-            <input
-              type="text"
-              bind:value={slugList[item]}
-              on:click={noidClick} />
-          </li>
-        {/each}
-      </ul>
-    </div>
+  {#if state === 'FOUND'}
+    ❌ :
+    <a href="/{slug.type}/{encodeURIComponent(slug.noid)}">Slug in use</a>
+  {:else if state === 'NOTFOUND'}
+    ✅ : Slug available
+  {:else if state === 'FAILED'}
+    Error searching for slugs.
+  {:else if value.length > 0}
+    <spinner />
   {/if}
-</div>
+</span>

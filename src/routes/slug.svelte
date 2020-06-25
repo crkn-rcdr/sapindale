@@ -32,7 +32,7 @@
         <br />
         {Object.values(slug.label).join(' = ')} (Slug: {slug.id}) (NOID: {slug.noid})
         <br />
-        <a href="/{mode}/{slug.noid.replace('/', '%2F')}">Click here to edit</a>
+        <a href="/{mode}/{encodeURIComponent(slug.noid)}">Click here to edit</a>
       {:else}Something went wrong. {slug.message}{/if}
     {:else}Enter a slug by typing it.{/if}
   </p>
