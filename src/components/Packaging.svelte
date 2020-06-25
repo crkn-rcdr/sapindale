@@ -382,7 +382,8 @@
         stage: create[identifier],
         empty: true,
         configid: packageconfig,
-        identifier: AIPidentifier[identifier]
+        identifier:
+          identifier in AIPidentifier ? AIPidentifier[identifier] : identifier
       })
     };
     await packagingrequests(token, [identifier], req);
@@ -898,7 +899,7 @@
   {#if aiplistview}
     <fieldset>
       <legend>
-        Create/Manipulate AIPs in list (
+        (
         <label for="hidemanipulate">
           <input
             type="checkbox"
@@ -906,7 +907,7 @@
             bind:checked={hidemanipulate} />
           Hide?
         </label>
-        )
+        ) Create/Manipulate AIPs in list
       </legend>
       {#if !hidemanipulate}
         <textarea id="aiplist" disabled="true" bind:value={aiplistview} />
