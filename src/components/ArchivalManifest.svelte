@@ -644,7 +644,10 @@
             <dd>
               {#if selected[doc._id]}
                 <li class="slug">
-                  <SlugResolver label="New slug:" bind:value={slugs[doc._id]} />
+                  <SlugResolver
+                    label="New slug:"
+                    mode="manifest"
+                    bind:value={slugs[doc._id]} />
                 </li>
               {/if}
               {#if showdetails}
