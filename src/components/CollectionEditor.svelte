@@ -8,11 +8,12 @@
   /* import CollectionItems from "../components/CollectionItems.svelte"; */
 
   export let id = undefined;
+  export let index, selected, item;
   const dispatch = createEventDispatcher();
   let token = $authState.token;
   let rowcount = [];
   let itemCount = [];
-  let items;
+
   let showItems = ["id", "label", "slug", "type"];
 
   onMount(async () => {
@@ -25,8 +26,9 @@
     } catch (ignore) {}
   }
   function displayItems(event) {
-    dispatch("select", { rowcount });
-    console.log("show", rowcount);
+    item = rowcount.items;
+    dispatch("select", { index });
+    console.log("show", item);
   }
 </script>
 
@@ -39,7 +41,7 @@
   }
   .scroll {
     overflow-y: scroll;
-    height: 100vh;
+    height: calc(100vh - 300px);
     width: 50%;
     background-color: #1d808b15;
     color: #141010;
@@ -117,6 +119,11 @@
         {:else}
           <li>
             {item}:{rowcount[item]}
+            {#if item === 'ordered' && rowcount.ordered === true}
+              <input type="checkbox" checked />
+            {:else if item === 'ordered' && rowcount.ordered !== true}
+              <input type="checkbox" unchecked />
+            {/if}
             <!--  <label for="item">{item}:</label>
             <input type="text" bind:value={rowcount[item]} /> -->
           </li>

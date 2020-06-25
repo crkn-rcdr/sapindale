@@ -4,6 +4,7 @@
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
   import CanvasThumbnail from "./CanvasThumbnail.svelte";
+  import CollectionEditor from "./CollectionEditor.svelte";
   const hasAPI = "IntersectionObserver";
   let current = "";
   let imageUpdate;
@@ -119,6 +120,7 @@
             on:canvasSelected
             lazy="hasAPI"
             on:imageUpdate={update} />
+          <CollectionEditor {index} {item} selected={index === selectedIndex} />
         </li>
       {/each}
     </ul>
