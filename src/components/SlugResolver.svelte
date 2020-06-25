@@ -44,7 +44,7 @@
 
   {#if state === 'FOUND'}
     ❌ :
-    <a href="/{slug.type}/{slug.noid}">Slug in use</a>
+    <a href="/{slug.type}/{encodeURIComponent(slug.noid)}">Slug in use</a>
   {:else if state === 'NOTFOUND'}
     ✅ : Slug available
   {:else if state === 'FAILED'}
