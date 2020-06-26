@@ -1089,16 +1089,18 @@ Some buttons to show/hide specific parts
       <dl>
         {#each packagedocs as doc}
           <dt>
-            <label>
-              {#if doc._id in ingestchecks}
-                <input
-                  type="checkbox"
-                  bind:checked={ingestchecks[doc._id]}
-                  on:change={updateaiplist} />
-              {/if}
-              {doc._id}
-            </label>
-            {#if AIPidentifier[doc._id]}({AIPidentifier[doc._id]}){/if}
+            <span class="children-inline">
+              <label>
+                {#if doc._id in ingestchecks}
+                  <input
+                    type="checkbox"
+                    bind:checked={ingestchecks[doc._id]}
+                    on:change={updateaiplist} />
+                {/if}
+                {doc._id}
+              </label>
+              {#if AIPidentifier[doc._id]}({AIPidentifier[doc._id]}){/if}
+            </span>
           </dt>
           <dd>
 
@@ -1122,19 +1124,21 @@ Some buttons to show/hide specific parts
                 </span>
               </li>
             {:else if packageconfig !== ''}
-              <p class="children-inline" id="buttoncreate-{doc._id}">
-                <button
-                  on:click={() => {
-                    createIdentifier(doc._id);
-                  }}>
-                  Create in
-                </button>
-                <select bind:value={create[doc._id]}>
-                  {#each stages as stage}
-                    <option value={stage}>{stage}</option>
-                  {/each}
-                </select>
-              </p>
+              <li>
+                <span class="children-inline" id="buttoncreate-{doc._id}">
+                  <button
+                    on:click={() => {
+                      createIdentifier(doc._id);
+                    }}>
+                    Create in
+                  </button>
+                  <select bind:value={create[doc._id]}>
+                    {#each stages as stage}
+                      <option value={stage}>{stage}</option>
+                    {/each}
+                  </select>
+                </span>
+              </li>
             {/if}
 
             {#if !('label' in doc)}

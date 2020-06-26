@@ -632,14 +632,16 @@
         <dl>
           {#each docs as doc}
             <dt>
-              <label>
-                <input
-                  type="checkbox"
-                  bind:checked={selected[doc._id]}
-                  on:change={updateSelectedIDs} />
-                {doc._id}
-              </label>
-              {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
+              <span class="children-inline">
+                <label>
+                  <input
+                    type="checkbox"
+                    bind:checked={selected[doc._id]}
+                    on:change={updateSelectedIDs} />
+                  {doc._id}
+                </label>
+                {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
+              </span>
             </dt>
             <dd>
               {#if selected[doc._id]}
