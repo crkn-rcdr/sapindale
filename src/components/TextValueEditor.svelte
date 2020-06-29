@@ -1,49 +1,52 @@
 <script>
-  import FaBackspace from "svelte-icons/fa/FaBackspace.svelte";
-  import { state as authState } from "../auth.js";
+  /* import { state as authState } from "../auth.js"; */
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
-  let value = "";
-  let valueDe,
-    valueLang = "";
-  let rowcount;
 
-  async function clearText(event, index) {
-    valueDe = "";
-    /* This will be taken when Update function is written */
-    /* let testUpdate = await Object.values(labelinColl)[index]; */
+  export let data = [{}],
+    mandatory = false,
+    textarea = false;
+  let label;
+  const dispatch = createEventDispatcher();
+
+  function addRow(e) {
+    /*  data[Object.keys(data)[e]] = ""; */
+    data[Object.values(data)[e]] = "";
+  }
+  async function clearText(i) {
+    data[Object.keys(data)[i]] = "";
+    data[Object.values(data)[i]] = "";
+    delete data[Object.keys(data)[i]];
   }
 </script>
-
-<style>
-  .icon {
-    color: red;
-    width: 50px;
-    height: 50px;
-    font-size: small;
-  }
-  /* .add {
-    line-height: 1%;
-    font-size: small;
-  } */
-</style>
 
 <table>
 
   <tr>
-    <td>
-      <input
-        type="text"
-        placeholder="Add New Language"
-        bind:value={valueLang} />
-    </td>
-    <td>
-      <input
-        type="text"
-        placeholder="Add New Text Value"
-        bind:value={valueDe} />
-    </td>
-    <td class="icon" on:click|preventDefault={clearText}>Clear Text</td>
-
+    <th>Language</th>
+    <th>value</th>
   </tr>
+
+  {#each Object.keys(data) as label, i (i)}
+    <tr>
+      <td>
+        <input type="text" bind:value={label} />
+      </td>
+      {#if textarea === true}
+        <td>
+          <input type="textarea" bind:value={data[label]} />
+        </td>
+      {:else}
+        <td>
+          <input type="text" bind:value={data[label]} />
+        </td>
+      {/if}
+      {#if Object.keys(data).length > 1}
+        <td>
+          <a href on:click|preventDefault={clearText(i)}>Clear Text</a>
+        </td>
+      {/if}
+    </tr>
+  {/each}
+
+  <a href class="add" on:click|preventDefault={addRow}>Add New Record</a>
 </table>

@@ -5,14 +5,19 @@
   import { collectionrequest as request } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
-  /* import CollectionItems from "../components/CollectionItems.svelte"; */
+  import CollectionItems from "../components/CollectionItems.svelte";
 
   export let id = undefined;
-  export let index, selected, item;
+  /* export let index, selected, item; */
+
   const dispatch = createEventDispatcher();
   let token = $authState.token;
+  let collection = [];
   let rowcount = [];
-  let itemCount = [];
+  let itemCountId,
+    itemCountSlug,
+    itemCountType,
+    itemCountLabel = [];
 
   let showItems = ["id", "label", "slug", "type"];
 
@@ -22,9 +27,16 @@
 
   async function getCollectionRecords({ id }) {
     try {
-      rowcount = await request(token, id);
+      /* rowcount = await request(token, id); */
+      collection = await request(token, id);
+      itemCountId = collection.items.map(row => row.id);
+      itemCountSlug = collection.items.map(row => row.slug);
+      itemCountType = collection.items.map(row => row.type);
+      itemCountLabel = collection.items.map(row => row.label);
+      console.log("collection", collection);
     } catch (ignore) {}
   }
+
   function displayItems(event) {
     item = rowcount.items;
     dispatch("select", { index });
@@ -55,7 +67,7 @@
   }
 </style>
 
-{#if rowcount}
+<!-- {#if rowcount}
   <ul>
     <li>
       {#each Object.keys(rowcount) as item}
@@ -124,8 +136,8 @@
             {:else if item === 'ordered' && rowcount.ordered !== true}
               <input type="checkbox" unchecked />
             {/if}
-            <!--  <label for="item">{item}:</label>
-            <input type="text" bind:value={rowcount[item]} /> -->
+              <label for="item">{item}:</label>
+            <input type="text" bind:value={rowcount[item]} /> 
           </li>
         {/if}
       {/each}
@@ -137,4 +149,38 @@
     <button id="save">Save</button>
     <button id="publish">Save & Publish</button>
   </div>
+{/if} -->
+
+{#if collection}
+  <span class="children-inline">
+    <label for="id">Id:</label>
+    <input type="text" bind:value={collection.id} readonly />
+  </span>
+  <label for="slug">Slug:</label>
+  <input type="text" bind:value={collection.slug} />
+  <span class="children-inline">
+    <label for="Ordered">Ordered:</label>
+
+    {#if collection.ordered === true}
+      <input type="checkbox" bind:value={collection.ordered} checked />
+    {:else}
+      <input type="checkbox" bind:value={collection.ordered} />
+    {/if}
+  </span>
+  <label for="public">Public:</label>
+  <input type="text" bind:value={collection.public} readonly />
+  <label for="label">Label:</label>
+  <TextValueEditor data={collection.label} mandatory="true" textarea="false" />
+  <label for="items">Items:</label>
+  <!-- <ul>
+        {#each Object.keys(collection) as element}
+      {#if (element = 'items')} 
+      {#each Object.keys(collection['items']) as element1}
+      <li>{element1}</li>
+    {/each}
+       {/if}
+    {/each}
+    <li>{itemCountId}</li>
+    <li />
+  </ul> -->
 {/if}
