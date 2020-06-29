@@ -5,7 +5,7 @@
   import { collectionrequest as request } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
-  import CollectionItems from "../components/CollectionItems.svelte";
+  // import CollectionItems from "../components/CollectionItems.svelte";
 
   export let id = undefined;
   /* export let index, selected, item; */
