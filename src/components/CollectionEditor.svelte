@@ -1,25 +1,24 @@
 <script>
   import { state as authState } from "../auth.js";
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
   import SlugResolver from "../components/SlugResolver.svelte";
-  import { collectionrequest as request } from "../api/collection.js";
+  import { getCollection } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
   // import CollectionItems from "../components/CollectionItems.svelte";
 
   export let id = undefined;
-  /* export let index, selected, item; */
 
-  const dispatch = createEventDispatcher();
   let token = $authState.token;
-  let collection = [];
-  let rowcount = [];
-  let itemCountId,
-    itemCountSlug,
-    itemCountType,
-    itemCountLabel = [];
-
-  let showItems = ["id", "label", "slug", "type"];
+  let collection = {
+    id,
+    slug: "",
+    label: {},
+    ordered: false,
+    public: false,
+    items: [],
+    parents: []
+  };
 
   onMount(async () => {
     await getCollectionRecords({ id });
@@ -27,8 +26,8 @@
 
   async function getCollectionRecords({ id }) {
     try {
-      /* rowcount = await request(token, id); */
-      collection = await request(token, id);
+      // TODO: this lookup can fail if the id isn't good
+      collection = await getCollection(token, id);
       itemCountId = collection.items.map(row => row.id);
       itemCountSlug = collection.items.map(row => row.slug);
       itemCountType = collection.items.map(row => row.type);
@@ -151,28 +150,30 @@
   </div>
 {/if} -->
 
-{#if collection}
-  <span class="children-inline">
-    <label for="id">Id:</label>
-    <input type="text" bind:value={collection.id} readonly />
-  </span>
-  <label for="slug">Slug:</label>
-  <input type="text" bind:value={collection.slug} />
-  <span class="children-inline">
-    <label for="Ordered">Ordered:</label>
-
-    {#if collection.ordered === true}
-      <input type="checkbox" bind:value={collection.ordered} checked />
-    {:else}
-      <input type="checkbox" bind:value={collection.ordered} />
-    {/if}
-  </span>
-  <label for="public">Public:</label>
-  <input type="text" bind:value={collection.public} readonly />
-  <label for="label">Label:</label>
-  <TextValueEditor data={collection.label} mandatory="true" textarea="false" />
-  <label for="items">Items:</label>
-  <!-- <ul>
+<span class="children-inline">
+  <label for="id">Id:</label>
+  <input type="text" bind:value={collection.id} readonly />
+</span>
+<label for="slug">Slug:</label>
+<input type="text" bind:value={collection.slug} />
+<span class="children-inline">
+  <label for="Ordered">Ordered:</label>
+  <input type="checkbox" bind:checked={collection.ordered} />
+</span>
+<label for="public">Public:</label>
+<input type="text" bind:value={collection.public} readonly />
+<label for="label">Label:</label>
+<TextValueEditor
+  bind:data={collection.label}
+  mandatory={true}
+  textarea={false} />
+<label for="summary">Summary</label>
+<TextValueEditor
+  bind:data={collection.summary}
+  mandatory={false}
+  textarea={true} />
+<label for="items">Items:</label>
+<!-- <ul>
         {#each Object.keys(collection) as element}
       {#if (element = 'items')} 
       {#each Object.keys(collection['items']) as element1}
@@ -183,4 +184,3 @@
     <li>{itemCountId}</li>
     <li />
   </ul> -->
-{/if}

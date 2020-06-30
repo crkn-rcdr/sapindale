@@ -1,7 +1,6 @@
 import { request } from "../api";
 
-// TODO: ask Divya to rename this
-async function collectionrequest(token, collection) {
+async function getCollection(token, collection) {
   /*  let prefix = encodeURIComponent("69429/"); */
   return await request(token, "GET", ["collection", collection].join("/"));
 }
@@ -20,4 +19,4 @@ async function searchSlug(token, prefix) {
   }
 }
 
-export { collectionrequest, resolveSlug, searchSlug };
+export { getCollection, resolveSlug, searchSlug };

@@ -486,3 +486,9 @@ textarea {
 .danger {
   color: var(--color-danger);
 }
+
+td input,
+td select,
+td textarea {
+  margin-bottom: 0;
+}
