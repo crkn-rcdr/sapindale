@@ -14,6 +14,8 @@
 
   let token = $authState.token;
 
+  const statuslimit = 1000;
+
   let depositor = "",
     whichgroup = "",
     hidegroup = false,
@@ -120,7 +122,8 @@
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
-        endkey: JSON.stringify(endkey)
+        endkey: JSON.stringify(endkey),
+        limit: statuslimit
       })
     );
   }
@@ -371,12 +374,22 @@
                 <td>{status.key[3]}</td>
               {/if}
               <td>
-                <button
-                  on:click={() => {
-                    viewStatus(status.key);
-                  }}>
-                  {status.value}
-                </button>
+                {#if status.value > statuslimit}
+                  <button
+                    on:click={() => {
+                      viewStatus(status.key);
+                    }}>
+                    {statuslimit}
+                  </button>
+                  of {status.value}
+                {:else}
+                  <button
+                    on:click={() => {
+                      viewStatus(status.key);
+                    }}>
+                    {status.value}
+                  </button>
+                {/if}
               </td>
             </tr>
           {/each}
