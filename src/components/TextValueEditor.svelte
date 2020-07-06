@@ -1,37 +1,37 @@
 <script>
-  import { beforeUpdate } from "svelte";
+  import { beforeUpdate, afterUpdate, tick, onMount, onDestroy } from "svelte";
   export let data = {},
     mandatory = false,
     textarea = false,
     state = "VALID";
-
   let pairs = [];
-  beforeUpdate(() => {
-    if (data && state === "VALID") {
-      pairs = Object.keys(data).map(key => {
-        return { language: key, value: data[key] };
-      });
-      console.log(pairs);
+  let label;
+
+  //Updates data object with new entires
+  function input(inputField, Value, keyValue, i) {
+    if (inputField == "language" && (Value != null || value != "")) {
+      data[Value] = data[Object.keys(data)[i]];
+      delete data[Object.keys(data)[i]];
+      data = data;
+    } else if (inputField == "langValue") {
+      if (Value != null || value != "") {
+        data[keyValue] = Value;
+        data = data;
+      }
     }
-  });
-
-  function input(event) {
-    // TODO: determine if the resulting pairs list can create a valid data object
-    // for the state to be valid, each language key needs to be unique, and no language key can be empty
-    // if the state is valid, set state to "VALID" and update data with the current state
-    // data = pairs.reduce((acc, pair) => { acc[pair.language] = pair.value; return acc }, {})
-    // l = [1,2,3,4,5]; sum = l.reduce((acc, element) => {acc += element;}, 0)
   }
-
+  //TO add new record
   function addRow(e) {
-    /*  data[Object.keys(data)[e]] = ""; */
-    data[Object.values(data)[e]] = "";
+    data[""] = "";
   }
-  // TODO: this should actually clear the row
-  async function clearText(i) {
-    data[Object.keys(data)[i]] = "";
-    data[Object.values(data)[i]] = "";
-    delete data[Object.keys(data)[i]];
+  // TO clear the row
+  async function removeRecord(i) {
+    if (Object.keys(data).length > 1) {
+      delete data[Object.keys(data)[i]];
+      data = data;
+    } else {
+      alert("You cannot delete the only record ");
+    }
   }
 </script>
 
@@ -55,29 +55,41 @@
     <th>value</th>
   </tr>
 
-  {#each pairs as pair, index (pair.language)}
+  {#each Object.keys(data) as textValue, i (i)}
     <tr>
       <td>
-        <input
-          type="text"
-          class="languageInput"
-          minlength="2"
-          maxlength="4"
-          bind:value={pair.language}
-          on:input={input} />
+        {#if data[textValue] == '' || data[textValue] == null || data[textValue] == undefined}
+          <input
+            type="text"
+            name="language"
+            class="languageInput"
+            minlength="2"
+            maxlength="4"
+            bind:value={label}
+            on:blur={input('language', label, '', i)} />
+        {:else}
+          <label for="language">{textValue}</label>
+        {/if}
       </td>
       {#if textarea}
         <td>
-          <textarea bind:value={pair.value} on:input={input} />
+          <textarea
+            name="langValue"
+            bind:value={data[textValue]}
+            on:blur={input('langValue', data[textValue], textValue, i)} />
         </td>
       {:else}
         <td>
-          <input type="text" bind:value={pair.value} on:input={input} />
+          <input
+            name="langValue"
+            type="text"
+            bind:value={data[textValue]}
+            on:blur={input('langValue', data[textValue], textValue, i)} />
         </td>
       {/if}
-      {#if !mandatory || pairs.length > 1}
+      {#if !mandatory || data[textValue].length > 1}
         <td>
-          <a href on:click|preventDefault={clearText(index)}>Clear Text</a>
+          <a href on:click|preventDefault={removeRecord(i)}>Remove Record</a>
         </td>
       {/if}
     </tr>

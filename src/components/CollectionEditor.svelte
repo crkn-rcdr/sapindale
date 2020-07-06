@@ -28,10 +28,7 @@
     try {
       // TODO: this lookup can fail if the id isn't good
       collection = await getCollection(token, id);
-      itemCountId = collection.items.map(row => row.id);
-      itemCountSlug = collection.items.map(row => row.slug);
-      itemCountType = collection.items.map(row => row.type);
-      itemCountLabel = collection.items.map(row => row.label);
+
       console.log("collection", collection);
     } catch (ignore) {}
   }
@@ -168,10 +165,12 @@
   mandatory={true}
   textarea={false} />
 <label for="summary">Summary</label>
-<TextValueEditor
-  bind:data={collection.summary}
-  mandatory={false}
-  textarea={true} />
+{#if collection.summary}
+  <TextValueEditor
+    bind:data={collection.summary}
+    mandatory={false}
+    textarea={true} />
+{/if}
 <label for="items">Items:</label>
 <!-- <ul>
         {#each Object.keys(collection) as element}
