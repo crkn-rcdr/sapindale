@@ -91,7 +91,7 @@
             on:blur={input('langValue', data[textValue], textValue, i)} />
         </td>
       {/if}
-      {#if Object.keys(data).length > 1 && mandatory}
+      {#if (Object.keys(data).length > 1 && mandatory) || textarea}
         <td>
           <a href on:click|preventDefault={removeRecord(i)}>Remove Record</a>
         </td>
