@@ -5,6 +5,7 @@
   import { getCollection } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
+  import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
 
@@ -88,7 +89,8 @@
       <li>public:{item.public}</li>
       <li>type:{item.type}</li>
       <li>
-        label: {Object.keys(item.label)}:{Object.values(item.label).join('=')}
+        label:
+        <IIIFTextDisplay data={item.label} />
       </li>
 
     </ul>
@@ -101,7 +103,8 @@
     <li>id:{parent.id}</li>
     <li>slug:{parent.slug}</li>
     <li>
-      label: {Object.keys(parent.label)}:{Object.values(parent.label).join('=')}
+      label:
+      <IIIFTextDisplay data={parent.label} />
     </li>
 
   </ul>
