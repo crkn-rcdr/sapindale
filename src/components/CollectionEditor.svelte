@@ -5,7 +5,6 @@
   import { getCollection } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
-  // import CollectionItems from "../components/CollectionItems.svelte";
 
   export let id = undefined;
 
@@ -14,11 +13,13 @@
     id,
     slug: "",
     label: {},
+    summary: {},
     ordered: false,
     public: false,
     items: [],
     parents: []
   };
+  let reduceParents = {};
 
   onMount(async () => {
     await getCollectionRecords({ id });
@@ -27,7 +28,7 @@
   async function getCollectionRecords({ id }) {
     try {
       // TODO: this lookup can fail if the id isn't good
-      collection = await getCollection(token, id);
+      collection = Object.assign(collection, await getCollection(token, id));
 
       console.log("collection", collection);
     } catch (ignore) {}
@@ -36,7 +37,6 @@
   function displayItems(event) {
     item = rowcount.items;
     dispatch("select", { index });
-    console.log("show", item);
   }
 </script>
 
@@ -44,9 +44,7 @@
   .line {
     display: -webkit-box;
   }
-  .spacewidth {
-    line-height: 0.5rem;
-  }
+
   .scroll {
     overflow-y: scroll;
     height: calc(100vh - 300px);
@@ -54,98 +52,7 @@
     background-color: #1d808b15;
     color: #141010;
   }
-  .add {
-    line-height: 1%;
-    font-size: small;
-  }
-  .align {
-    display: inline-grid;
-  }
 </style>
-
-<!-- {#if rowcount}
-  <ul>
-    <li>
-      {#each Object.keys(rowcount) as item}
-        {#if typeof rowcount[item] == 'object'}
-          <li>
-            {item}:
-            {#if item !== 'items' && item !== 'parents'}
-              <span class="line">
-                <table>
-                  <tr>
-                    <th>Language</th>
-                    <th>Value</th>
-                  </tr>
-                  {#each Object.keys(rowcount[item]) as element}
-                    <tr>
-                      <td>
-                        <input type="text" bind:value={element} />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          bind:value={rowcount[item][element]} />
-                      </td>
-                    </tr>
-                  {/each}
-                </table>
-              </span>
-              {#if item === 'label'}
-                <span class="align">
-                  <TextValueEditor />
-                  <button class="add">Add</button>
-                </span>
-              {/if}
-            {/if}
-            {#if item === 'items' || item === 'parents'}
-              <div class="scroll">
-                {#each Object.keys(rowcount[item]) as element}
-                  <ul>
-                    <pre>
-                      {#each Object.keys(rowcount[item][element]) as items}
-                        {#if showItems.includes(items)}
-                          <li class="spacewidth" on:click={displayItems}>
-
-                            {#if items !== 'label'}
-                              {items}:{rowcount[item][element][items]}
-                            {:else if items == 'label'}
-                              {#each Object.keys(rowcount[item][element][items]) as labels}
-                                {labels}:{rowcount[item][element][items][labels]}
-                              {/each}
-                            {/if}
-
-                          </li>
-                        {/if}
-                      {/each}
-                    </pre>
-                  </ul>
-                {/each}
-              </div>
-            {/if}
-          </li>
-        {:else}
-          <li>
-            {item}:{rowcount[item]}
-            {#if item === 'ordered' && rowcount.ordered === true}
-              <input type="checkbox" checked />
-            {:else if item === 'ordered' && rowcount.ordered !== true}
-              <input type="checkbox" unchecked />
-            {/if}
-              <label for="item">{item}:</label>
-            <input type="text" bind:value={rowcount[item]} /> 
-          </li>
-        {/if}
-      {/each}
-
-    </li>
-  </ul>
-
-  <div class="buttons">
-    <button id="save">Save</button>
-    <button id="publish">Save & Publish</button>
-  </div>
-{/if} -->
 
 <span class="children-inline">
   <label for="id">Id:</label>
@@ -165,21 +72,37 @@
   mandatory={true}
   textarea={false} />
 <label for="summary">Summary</label>
-{#if collection.summary}
-  <TextValueEditor
-    bind:data={collection.summary}
-    mandatory={false}
-    textarea={true} />
-{/if}
+
+<TextValueEditor
+  bind:data={collection.summary}
+  mandatory={false}
+  textarea={true} />
+
 <label for="items">Items:</label>
-<!-- <ul>
-        {#each Object.keys(collection) as element}
-      {#if (element = 'items')} 
-      {#each Object.keys(collection['items']) as element1}
-      <li>{element1}</li>
-    {/each}
-       {/if}
-    {/each}
-    <li>{itemCountId}</li>
-    <li />
-  </ul> -->
+<div class="scroll">
+
+  {#each collection.items as item}
+    <ul>
+      <li>id:{item.id}</li>
+      <li>slug:{item.slug}</li>
+      <li>public:{item.public}</li>
+      <li>type:{item.type}</li>
+      <li>
+        label: {Object.keys(item.label)}:{Object.values(item.label).join('=')}
+      </li>
+
+    </ul>
+  {/each}
+
+</div>
+<label for="parents">Parents:</label>
+{#each collection.parents as parent}
+  <ul>
+    <li>id:{parent.id}</li>
+    <li>slug:{parent.slug}</li>
+    <li>
+      label: {Object.keys(parent.label)}:{Object.values(parent.label).join('=')}
+    </li>
+
+  </ul>
+{/each}

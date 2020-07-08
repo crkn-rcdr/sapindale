@@ -1,18 +1,23 @@
 <script>
-  import { beforeUpdate, afterUpdate, tick, onMount, onDestroy } from "svelte";
   export let data = {},
     mandatory = false,
-    textarea = false,
-    state = "VALID";
+    textarea = false;
+
   let pairs = [];
   let label;
+  let labelPresent = false;
 
   //Updates data object with new entires
   function input(inputField, Value, keyValue, i) {
     if (inputField == "language" && (Value != null || value != "")) {
-      data[Value] = data[Object.keys(data)[i]];
-      delete data[Object.keys(data)[i]];
-      data = data;
+      if (Value in data) {
+        labelPresent = true;
+      } else {
+        labelPresent = false;
+        data[Value] = data[Object.keys(data)[i]];
+        delete data[Object.keys(data)[i]];
+        data = data;
+      }
     } else if (inputField == "langValue") {
       if (Value != null || value != "") {
         data[keyValue] = Value;
@@ -21,17 +26,13 @@
     }
   }
   //TO add new record
-  function addRow(e) {
+  /*  function addRow(e) {
     data[""] = "";
-  }
+  } */
   // TO clear the row
   async function removeRecord(i) {
-    if (Object.keys(data).length > 1) {
-      delete data[Object.keys(data)[i]];
-      data = data;
-    } else {
-      alert("You cannot delete the only record ");
-    }
+    delete data[Object.keys(data)[i]];
+    data = data;
   }
 </script>
 
@@ -46,6 +47,9 @@
   .addnew a {
     color: var(--color-bg);
   }
+  .exist {
+    color: red;
+  }
 </style>
 
 <table>
@@ -58,7 +62,7 @@
   {#each Object.keys(data) as textValue, i (i)}
     <tr>
       <td>
-        {#if data[textValue] == '' || data[textValue] == null || data[textValue] == undefined}
+        <!--  {#if data[textValue] == '' || data[textValue] == null || data[textValue] == undefined}
           <input
             type="text"
             name="language"
@@ -67,9 +71,9 @@
             maxlength="4"
             bind:value={label}
             on:blur={input('language', label, '', i)} />
-        {:else}
-          <label for="language">{textValue}</label>
-        {/if}
+        {:else} -->
+        <label for="language">{textValue}</label>
+        <!--   {/if} -->
       </td>
       {#if textarea}
         <td>
@@ -87,7 +91,7 @@
             on:blur={input('langValue', data[textValue], textValue, i)} />
         </td>
       {/if}
-      {#if !mandatory || data[textValue].length > 1}
+      {#if Object.keys(data).length > 1 && mandatory}
         <td>
           <a href on:click|preventDefault={removeRecord(i)}>Remove Record</a>
         </td>
@@ -95,8 +99,35 @@
     </tr>
   {/each}
   <tr>
-    <td class="addnew" colspan="3">
+    <td>
+
+      <input
+        type="text"
+        name="language"
+        class="languageInput"
+        minlength="2"
+        maxlength="4"
+        bind:value={label}
+        on:blur={input('language', label, '', '')} />
+
+    </td>
+    <td>
+      {#if labelPresent}
+        <p class="exist">
+          Language Exist, enter a new language or Edit the existing value
+        </p>
+      {:else}
+        <p>Enter New Language</p>
+      {/if}
+    </td>
+
+  </tr>
+  <!--  <tr class="addnew">
+    <td>
       <a href class="add" on:click|preventDefault={addRow}>Add new language</a>
     </td>
-  </tr>
+    <td>
+      <a href class="add" on:click|preventDefault={addRow}>Add new Record</a>
+    </td>
+  </tr> -->
 </table>
