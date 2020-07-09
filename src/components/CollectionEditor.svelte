@@ -20,6 +20,8 @@
     items: [],
     parents: []
   };
+  let summaryDisplay = false;
+  let showCreate = true;
   let reduceParents = {};
 
   onMount(async () => {
@@ -38,6 +40,12 @@
   function displayItems(event) {
     item = rowcount.items;
     dispatch("select", { index });
+  }
+  function addSummary() {
+    if (Object.getOwnPropertyNames(collection.summary).length === 0) {
+      summaryDisplay = true;
+      showCreate = false;
+    }
   }
 </script>
 
@@ -73,11 +81,17 @@
   mandatory={true}
   textarea={false} />
 <label for="summary">Summary</label>
-
-<TextValueEditor
-  bind:data={collection.summary}
-  mandatory={false}
-  textarea={true} />
+{#if summaryDisplay}
+  <TextValueEditor
+    bind:data={collection.summary}
+    mandatory={false}
+    textarea={true} />
+{/if}
+{#if showCreate}
+  <button class="create" on:click|preventDefault={addSummary}>
+    Add New Summary
+  </button>
+{/if}
 
 <label for="items">Items:</label>
 <div class="scroll">
