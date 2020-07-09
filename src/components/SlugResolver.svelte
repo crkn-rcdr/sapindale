@@ -3,7 +3,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { resolveSlug as resolveCollectionSlug } from "../api/collection.js";
   import { resolveSlug as resolveManifestSlug } from "../api/manifest.js";
-  import spinner from "../spinner.svelte";
+  import Spinner from "svelte-spinner";
 
   let token = $authState.token;
   export let value = "",
@@ -55,6 +55,6 @@
   {:else if state === 'FAILED'}
     Error searching for slugs.
   {:else if value.length > 0}
-    <spinner />
+    <Spinner />
   {/if}
 </span>

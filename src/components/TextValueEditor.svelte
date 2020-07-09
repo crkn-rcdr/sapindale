@@ -3,17 +3,16 @@
     mandatory = false,
     textarea = false;
 
-  let pairs = [];
   let label;
   let labelPresent = false;
 
   //Updates data object with new entires
   function input(inputField, Value, keyValue, i) {
-    if (inputField == "language" && (Value != null || value != "")) {
+    if (inputField == "language" && (Value != null || Value != "")) {
       if (Value in data) {
         labelPresent = true;
+        data = data;
       } else {
-        labelPresent = false;
         data[Value] = data[Object.keys(data)[i]];
         delete data[Object.keys(data)[i]];
         data = data;
@@ -25,10 +24,15 @@
       }
     }
   }
-  //TO add new record
-  /*  function addRow(e) {
-    data[""] = "";
-  } */
+  //TO clear and reset entry
+  function clearEntry(label) {
+    if (label != undefined) {
+      if (!(label in data) && label.length < 2) {
+        labelPresent = false;
+      }
+    }
+  }
+
   // TO clear the row
   async function removeRecord(i) {
     delete data[Object.keys(data)[i]];
@@ -43,8 +47,6 @@
   .addnew {
     background-color: var(--color);
     text-align: center;
-  }
-  .addnew a {
     color: var(--color-bg);
   }
   .exist {
@@ -62,18 +64,7 @@
   {#each Object.keys(data) as textValue, i (i)}
     <tr>
       <td>
-        <!--  {#if data[textValue] == '' || data[textValue] == null || data[textValue] == undefined}
-          <input
-            type="text"
-            name="language"
-            class="languageInput"
-            minlength="2"
-            maxlength="4"
-            bind:value={label}
-            on:blur={input('language', label, '', i)} />
-        {:else} -->
         <label for="language">{textValue}</label>
-        <!--   {/if} -->
       </td>
       {#if textarea}
         <td>
@@ -93,7 +84,7 @@
       {/if}
       {#if (Object.keys(data).length > 1 && mandatory) || textarea}
         <td>
-          <a href on:click|preventDefault={removeRecord(i)}>Remove Record</a>
+          <a href on:click|preventDefault={removeRecord(i)}>Remove Entry</a>
         </td>
       {/if}
     </tr>
@@ -108,26 +99,21 @@
         minlength="2"
         maxlength="4"
         bind:value={label}
-        on:blur={input('language', label, '', '')} />
+        onchange={clearEntry(label)} />
 
     </td>
     <td>
-      {#if labelPresent}
-        <p class="exist">
-          Language Exist, enter a new language or Edit the existing value
-        </p>
-      {:else}
-        <p>Enter New Language</p>
+      {#if labelPresent && label in data}
+        <p class="exist">Language Exist</p>
+      {:else if !labelPresent}
+        <a
+          href
+          class="addnew"
+          on:click|preventDefault={input('language', label, '', '')}>
+          Add New Language
+        </a>
       {/if}
     </td>
 
   </tr>
-  <!--  <tr class="addnew">
-    <td>
-      <a href class="add" on:click|preventDefault={addRow}>Add new language</a>
-    </td>
-    <td>
-      <a href class="add" on:click|preventDefault={addRow}>Add new Record</a>
-    </td>
-  </tr> -->
 </table>

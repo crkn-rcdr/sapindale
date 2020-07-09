@@ -42,9 +42,9 @@
 </script>
 
 <style>
-  .line {
+  /* .line {
     display: -webkit-box;
-  }
+  } */
 
   .scroll {
     overflow-y: scroll;
