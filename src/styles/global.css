@@ -271,8 +271,8 @@ button {
   font-size: medium;
   font-weight: bold;
   line-height: var(--line-height);
-  margin: 0.5rem 0;
-  padding: 1rem 2rem;
+  /* margin: 0.5rem 0;
+  padding: 1rem 2rem; */
 }
 
 button {
@@ -329,7 +329,7 @@ button[disabled]:hover {
   filter: none;
 }
 
-form {
+form.full {
   border: 1px solid var(--color-bg-secondary);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow) var(--color-shadow);
@@ -340,7 +340,7 @@ form {
   text-align: var(--justify-normal);
 }
 
-form header {
+form.full header {
   margin: 1.5rem 0;
   padding: 1.5rem 0;
 }
@@ -479,10 +479,17 @@ textarea {
   min-height: 10rem;
 }
 
-.children-inline > * {
+.children-inline > *,
+form.inline > * {
   display: inline;
 }
 
 .danger {
   color: var(--color-danger);
+}
+
+td input,
+td select,
+td textarea {
+  margin-bottom: 0;
 }

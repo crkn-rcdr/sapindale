@@ -10,6 +10,11 @@
   function clear(event) {
     slug = undefined;
   }
+  function displayUrl(event) {
+    displayValue = event.detail.noidValue;
+    displayType = event.detail.noidType;
+    console.log("values", displayType, displayValue);
+  }
 </script>
 
 <h1>Slug Lookup</h1>

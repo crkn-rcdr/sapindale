@@ -1,81 +1,89 @@
 <script>
-  import FaBackspace from "svelte-icons/fa/FaBackspace.svelte";
-  import { state as authState } from "../auth.js";
-  import { collectionrequest } from "../api/collection.js";
-  let value = "";
-  let valueDe,
-    valueLang = "";
-  let rowcount;
-  let labelinColl = [];
+  export let data = {},
+    mandatory = false,
+    textarea = false;
 
-  let id, db;
+  let newLanguage = "";
+  $: newLanguageDisabled = newLanguage.length < 2 || newLanguage.length > 4;
+  let newLanguageAlreadyExists = false;
 
-  let token = $authState.token;
-
-  async function collection() {
-    let prefix = encodeURIComponent("69429/");
-    rowcount = await collectionrequest(token, prefix + id);
-
-    labelinColl = rowcount.label;
+  // Adds a new entry to data
+  function addEntry() {
+    if (!newLanguageDisabled) {
+      if (Object.keys(data).includes(newLanguage)) {
+        newLanguageAlreadyExists = true;
+      } else {
+        data[newLanguage] = "";
+        newLanguage = "";
+        data = data;
+      }
+    }
   }
-  async function clearText(index) {
-    valueDe = "";
-    /* This will be taken when Update function is written */
-    let testUpdate = await Object.values(labelinColl)[index];
+
+  // Clears the warning that appears if a new language already exists
+  function clearWarning() {
+    if (newLanguageAlreadyExists) newLanguageAlreadyExists = false;
+  }
+
+  // Removes an entry
+  function removeEntry(language) {
+    delete data[language];
+    data = data;
   }
 </script>
 
 <style>
-  table,
-  th,
-  tr,
-  td {
-    border: none;
-  }
-  .icon {
-    color: red;
-    width: 50px;
-    height: 50px;
+  .languageInput {
+    width: 4ch;
   }
 </style>
 
-<h2>Edit Label</h2>
-<label for="collectionid">Type in the Collection ID:</label>
-<input type="text" bind:value={id} on:blur={collection} />
 <table>
+
   <tr>
     <th>Language</th>
     <th>Value</th>
   </tr>
-  {#if labelinColl != null}
-    {#each Object.keys(labelinColl) as label, index}
-      <tr>
-        <td>{label}</td>
-        <td>
-          <input type="text" bind:value={labelinColl[label]} />
-        </td>
-        <td>
-          <FaBackspace />
-        </td>
-      </tr>
-    {/each}
+
+  {#each Object.keys(data).sort() as language}
     <tr>
       <td>
-        <input
-          type="text"
-          placeholder="Add New Language"
-          bind:value={valueLang} />
+        <b>{language}</b>
       </td>
-      <td>
-        <input
-          type="text"
-          placeholder="Add New Text Value"
-          bind:value={valueDe} />
-      </td>
-      <td class="icon" on:click|preventDefault={clearText}>
-        <FaBackspace />
-      </td>
+      {#if textarea}
+        <td>
+          <textarea bind:value={data[language]} />
+        </td>
+      {:else}
+        <td>
+          <input type="text" bind:value={data[language]} />
+        </td>
+      {/if}
+      {#if !(Object.keys(data).length < 2 && mandatory)}
+        <td>
+          <a href on:click|preventDefault={removeEntry(language)}>
+            Remove entry
+          </a>
+        </td>
+      {/if}
     </tr>
-  {/if}
+  {/each}
 </table>
-<button class="add">Add Label</button>
+<form class="inline">
+  <input
+    type="text"
+    class="languageInput"
+    minlength="2"
+    maxlength="4"
+    bind:value={newLanguage}
+    on:input={clearWarning} />
+  <button
+    type="submit"
+    on:click|preventDefault={addEntry}
+    disabled={newLanguageDisabled}>
+    Add new language
+  </button>
+  {#if newLanguageAlreadyExists}
+    <span class="danger">There is already an entry for this language.</span>
+  {/if}
+</form>

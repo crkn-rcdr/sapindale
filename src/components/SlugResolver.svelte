@@ -3,7 +3,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { resolveSlug as resolveCollectionSlug } from "../api/collection.js";
   import { resolveSlug as resolveManifestSlug } from "../api/manifest.js";
-  import spinner from "../spinner.svelte";
+  import Spinner from "svelte-spinner";
 
   let token = $authState.token;
   export let value = "",
@@ -36,6 +36,11 @@
       state = "FAILED";
     }
   }
+  function noidClick(event) {
+    let noidValue = encodeURIComponent(slugList.noid);
+    let noidType = slugList.type;
+    dispatch("selected", { noidValue, noidType });
+  }
 </script>
 
 <span class="children-inline">
@@ -50,6 +55,6 @@
   {:else if state === 'FAILED'}
     Error searching for slugs.
   {:else if value.length > 0}
-    <spinner />
+    <Spinner />
   {/if}
 </span>
