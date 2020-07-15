@@ -233,20 +233,27 @@
     processindication = undefined;
   }
 
-  async function doAction() {
+  async function doAction(type = "") {
     console.log("doAction");
 
     var updates = {};
 
     for (const id of selectedIDs) {
-      updates[id] = {
-        dosmelt: true,
-        slug: slugs[id]
-      };
+      if (type === "clear") {
+        updates[id] = {
+          smelt: "{}"
+        };
+      } else {
+        updates[id] = {
+          dosmelt: true,
+          slug: slugs[id]
+        };
+      }
     }
 
     processindication = {
       start: true,
+      type: type,
       aips: selectedIDs.length
     };
 
@@ -254,6 +261,7 @@
 
     processindication = {
       start: false,
+      type: type,
       aips: selectedIDs.length
     };
   }
@@ -611,20 +619,27 @@
               <td>
                 {#if processindication}
                   {#if processindication.start}
-                    Initiating creation of archival manifests for {processindication.aips}
+                    Initiating {processindication.type} for {processindication.aips}
                     AIPs...
                     <span class="danger">Please Wait</span>
                   {:else}
-                    Initiated creation of archival manifests for {processindication.aips}
+                    Initiated {processindication.type} for {processindication.aips}
                     AIPs...
                   {/if}
                 {:else}
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction();
+                      doAction('creation of archival manifests');
                     }}>
                     Initiate
+                  </button>
+                  <button
+                    type="submit"
+                    on:click={() => {
+                      doAction('clear');
+                    }}>
+                    Clear
                   </button>
                 {/if}
               </td>

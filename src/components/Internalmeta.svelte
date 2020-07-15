@@ -292,31 +292,33 @@
       {#if actiontext}
         {actiontext}
       {:else if !hideactions}
-        <select bind:value={approveaction}>
-          <option value="">nothing</option>
-          <option value="approve">approve</option>
-          <option value="unapprove">unapprove</option>
-        </select>
-        and add
-        <select multiple bind:value={collectionsadd} size="10">
-          {#each capcollections as tag}
-            <option value={tag._id}>{tag._id}</option>
-          {/each}
-        </select>
-        and subtract
-        <select multiple bind:value={collectionssub} size="10">
-          {#each capcollections as tag}
-            <option value={tag._id}>{tag._id}</option>
-          {/each}
-        </select>
-        collection tags:
-        <button
-          type="submit"
-          on:click={() => {
-            doAction();
-          }}>
-          Do it
-        </button>
+        <span class="children-inline">
+          <select bind:value={approveaction}>
+            <option value="">nothing</option>
+            <option value="approve">approve</option>
+            <option value="unapprove">unapprove</option>
+          </select>
+          and add
+          <select multiple bind:value={collectionsadd} size="10">
+            {#each capcollections as tag}
+              <option value={tag._id}>{tag._id}</option>
+            {/each}
+          </select>
+          and subtract
+          <select multiple bind:value={collectionssub} size="10">
+            {#each capcollections as tag}
+              <option value={tag._id}>{tag._id}</option>
+            {/each}
+          </select>
+          collection tags:
+          <button
+            type="submit"
+            on:click={() => {
+              doAction();
+            }}>
+            Do it
+          </button>
+        </span>
       {/if}
 
     </fieldset>
