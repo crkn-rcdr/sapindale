@@ -375,6 +375,8 @@
   async function createIdentifier(identifier) {
     document.getElementById("buttoncreate-" + identifier).style.display =
       "none"; // Should I create new hash and use {if} ?
+    var objid = identifier.replace(/^.*\./,'');
+
     var req = {
       nocreate: true,
       processreq: JSON.stringify({
@@ -383,7 +385,7 @@
         empty: true,
         configid: packageconfig,
         identifier:
-          identifier in AIPidentifier ? AIPidentifier[identifier] : identifier
+          identifier in AIPidentifier ? AIPidentifier[identifier] : objid
       })
     };
     await packagingrequests(token, [identifier], req);
