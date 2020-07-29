@@ -2,12 +2,6 @@ FROM node:lts as dev
 
 WORKDIR /sapindale
 
-ENV NODE_ENV=development \
-  UPHOLSTERY=https://upholstery.canadiana.ca \
-  CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
-  PACKAGING=https://packaging.canadiana.ca \
-  API=https://api.canadiana.ca/v1
-
 COPY --chown=node:node package.json yarn.lock webpack.config.js ./
 RUN yarn install
 
@@ -30,12 +24,6 @@ COPY src ./src/
 
 RUN yarn install
 
-ENV NODE_ENV=production \
-  UPHOLSTERY=https://upholstery.canadiana.ca \
-  CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
-  PACKAGING=https://packaging.canadiana.ca \
-  API=https://api.canadiana.ca/v1
-
 RUN yarn run build
 
 FROM node:lts-alpine AS prod
@@ -50,13 +38,6 @@ COPY --from=builder --chown=node:node /sapindale/__sapper__ ./__sapper__/
 COPY --chown=node:node static ./static/
 
 RUN yarn install --prod
-
-ENV NODE_ENV=production \
-  PORT=8080 \
-  UPHOLSTERY=https://upholstery.canadiana.ca \
-  CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 \
-  API=https://api.canadiana.ca/v1
-
 
 EXPOSE 8080
 

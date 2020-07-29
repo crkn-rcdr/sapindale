@@ -1,3 +1,4 @@
+import url from "url";
 import sirv from "sirv";
 import polka from "polka";
 import compression from "compression";
@@ -30,11 +31,16 @@ const { handler } = polka().use(
   compression({ threshold: 0 }),
   sirv("static", { dev }),
   sapper.middleware({
-    session: (req, res) => {
+    session: (req, _res) => {
+      const redirectUrl = url.format({
+        protocol: req.headers["x-forwarded-proto"],
+        host: req.headers["x-forwarded-host"],
+        path: req.path,
+      });
       if (req.cookies.auth_token) {
-        return parseJWT(req.cookies.auth_token);
+        return { ...parseJWT(req.cookies.auth_token), redirectUrl };
       } else {
-        return {};
+        return { redirectUrl };
       }
     },
   })

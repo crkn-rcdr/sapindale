@@ -12,6 +12,9 @@ services:
     volumes:
       - ./src:/sapindale/src
       - ./static:/sapindale/static
+    environment:
+      NODE_ENV: development
+      PORT: 8080
 networks:
   access-platform:
     external: true

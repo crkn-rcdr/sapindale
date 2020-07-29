@@ -1,10 +1,9 @@
 <script context="module">
   export async function preload(page, session) {
-    const { authenticated, name, email } = session;
+    const { authenticated, name, email, redirectUrl } = session;
     if (authenticated) {
       return { authenticated, name, email };
     } else {
-      const redirectUrl = page.toString();
       return { redirectUrl, authenticated: false };
     }
   }
@@ -12,6 +11,7 @@
 
 <script>
   export let authenticated, redirectUrl, name;
+  let loginUrl = `https://auth.canadiana.ca/azuread/login?redirectUrl=${redirectUrl}`;
 </script>
 
 <style>
@@ -39,10 +39,7 @@
       {#if authenticated}
         Logged in as: {name}
       {:else}
-        <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-          Login
-        </a>
+        <a href={loginUrl}>Login</a>
       {/if}
     </li>
   </ul>
@@ -52,10 +49,7 @@
     <slot />
   {:else}
     <p>
-      <a
-        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-        Please log in to continue.
-      </a>
+      <a href={loginUrl}>Please log in to continue.</a>
     </p>
   {/if}
 </main>

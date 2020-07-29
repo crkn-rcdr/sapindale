@@ -8,7 +8,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const mode = process.env.NODE_ENV;
 const upholstery = process.env.UPHOLSTERY;
 const cantaloupe = process.env.CANTALOUPE;
-const packaging = process.env.PACKAGING;
 const api = process.env.API;
 const dev = mode === "development";
 
@@ -59,7 +58,6 @@ module.exports = {
         "process.env.NODE_ENV": JSON.stringify(mode),
         "process.env.UPHOLSTERY": JSON.stringify(upholstery),
         "process.env.CANTALOUPE": JSON.stringify(cantaloupe),
-        "process.env.PACKAGING": JSON.stringify(packaging),
         "process.env.API": JSON.stringify(api),
       }),
       ...plugins,

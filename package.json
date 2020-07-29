@@ -4,11 +4,11 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 API=https://api.canadiana.ca/v1 sapper dev",
+    "dev": "sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
-    "docker:prod": "docker-compose build"
+    "docker:dev": "docker-compose -f docker-compose.dev.yml -f docker-compose.override.yml up --build",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml -f docker-compose.override.yml build"
   },
   "dependencies": {
     "compression": "^1.7.4",
