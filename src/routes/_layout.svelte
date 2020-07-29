@@ -1,11 +1,17 @@
-<script>
-  import { state as authState } from "../auth.js";
-  import { onMount } from "svelte";
-  let redirectUrl = undefined;
+<script context="module">
+  export async function preload(page, session) {
+    const { authenticated, name, email } = session;
+    if (authenticated) {
+      return { authenticated, name, email };
+    } else {
+      const redirectUrl = page.toString();
+      return { redirectUrl, authenticated: false };
+    }
+  }
+</script>
 
-  onMount(async () => {
-    redirectUrl = window.location.origin;
-  });
+<script>
+  export let authenticated, redirectUrl, name;
 </script>
 
 <style>
@@ -30,9 +36,9 @@
   </a>
   <ul>
     <li>
-      {#if $authState.status === 'SUCCESS'}
-        Logged in as: {$authState.name}
-      {:else if $authState.status === 'FAILED'}
+      {#if authenticated}
+        Logged in as: {name}
+      {:else}
         <a
           href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
           Login
@@ -42,10 +48,10 @@
   </ul>
 </nav>
 <main>
-  {#if $authState.status === 'SUCCESS'}
+  {#if authenticated}
     <slot />
   {:else}
-    <p class="text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24">
+    <p>
       <a
         href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
         Please log in to continue.

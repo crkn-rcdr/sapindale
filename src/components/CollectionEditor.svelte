@@ -1,5 +1,5 @@
 <script>
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
   import SlugResolver from "../components/SlugResolver.svelte";
   import { getCollection } from "../api/collection.js";
@@ -8,9 +8,9 @@
   import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
-  export let res;
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
   $: collection = {
     id,
     slug: "",
@@ -112,7 +112,7 @@
       </button>
     {/if}
   </article>
-  <p>{res}</p>
+
   {#if Object.getOwnPropertyNames(collection.parents).length > 1}
     <article>
       <h4>Parents:</h4>

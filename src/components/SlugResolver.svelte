@@ -1,11 +1,11 @@
 <script>
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
   import { createEventDispatcher, onMount } from "svelte";
   import { resolveSlug as resolveCollectionSlug } from "../api/collection.js";
   import { resolveSlug as resolveManifestSlug } from "../api/manifest.js";
   import Spinner from "svelte-spinner";
-
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
   export let value = "",
     label = "Slug",
     mode = "manifest",

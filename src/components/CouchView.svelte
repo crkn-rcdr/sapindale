@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import { goto } from "@sapper/app";
   import { design_doc_views as getViews, view as fetchView } from "../couch.js";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
 
   export let db = undefined,
     view = undefined, // if the view is found at '_design/$ddoc/_view/$v', this will be '$ddoc/$v'
@@ -11,7 +11,8 @@
 
   normalizeOptions();
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
   let views = {};
   let onlyIDs = false;
 

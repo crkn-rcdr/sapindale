@@ -1,6 +1,6 @@
 <script>
-  import { state as authState } from "../auth.js";
-
+  import { stores } from "@sapper/app";
+  const { session } = stores();
   let legacy = false;
 </script>
 
@@ -65,7 +65,7 @@
       </li>
       <li>
         <a
-          href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
+          href="{process.env.UPHOLSTERY}/cookie?token={$session.token}"
           id="Futon"
           target="_blank"
           class="danger">

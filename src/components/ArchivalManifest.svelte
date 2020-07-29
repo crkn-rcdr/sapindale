@@ -1,4 +1,5 @@
 <script>
+  import { stores } from "@sapper/app";
   import {
     dipstagingdatabase,
     dipstagingdocs,
@@ -9,10 +10,9 @@
   } from "../couch/dipstaging.js";
   import TypeAhead from "../components/TypeAhead.svelte";
   import SlugResolver from "../components/SlugResolver.svelte";
-  import { state as authState } from "../auth.js";
   import { depositors } from "../commonvars.js";
-
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   const statuslimit = 1000;
 
