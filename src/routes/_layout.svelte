@@ -19,8 +19,6 @@
     display: block;
   }
   .brand img {
-    height: 48px;
-    width: 48px;
     vertical-align: middle;
   }
 </style>
@@ -31,7 +29,11 @@
 
 <nav>
   <a href="/" class="brand">
-    <img src="/canadiana-logo.svg" alt="Canadiana Logo" />
+    <img
+      src="/canadiana-logo.svg"
+      height="48"
+      width="48"
+      alt="Canadiana Logo" />
     Canadiana Platform Administration
   </a>
   <ul>
