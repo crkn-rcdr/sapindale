@@ -2,7 +2,7 @@
   export async function preload(page, session) {
     const { authenticated, name, email, redirectUrl } = session;
     if (authenticated) {
-      return { authenticated, name, email };
+      return { redirectUrl, authenticated, name, email };
     } else {
       return { redirectUrl, authenticated: false };
     }
@@ -12,6 +12,7 @@
 <script>
   export let authenticated, redirectUrl, name;
   let loginUrl = `${process.env.AUTH}/azuread/login?redirectUrl=${redirectUrl}`;
+  let logoutUrl = `${process.env.AUTH}/logout?redirectUrl=${redirectUrl}`;
 </script>
 
 <style>
@@ -39,9 +40,10 @@
   <ul>
     <li>
       {#if authenticated}
-        Logged in as: {name}
+        Logged in as: {name}.
+        <a href={logoutUrl}>Log out</a>
       {:else}
-        <a href={loginUrl}>Login</a>
+        <a href={loginUrl}>Log in</a>
       {/if}
     </li>
   </ul>
