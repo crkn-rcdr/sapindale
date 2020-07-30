@@ -13,4 +13,5 @@ Svelte/Sapper setup for access platform administration tools. Based on [the webp
 - `UPHOLSTERY`: URL for accessing [upholstery](https://github.com/crkn-rcdr/upholstery)
 - `CANTALOUPE`: URL for accessing [a Cantaloupe installation](https://github.com/crkn-rcdr/cihm-cantaloupe)
 - `API`: URL for accessing the [Canadiana platform API](https://github.com/crkn-rcdr/lapin). Make sure to include the version number.
-- `JWT_SECRET`: Secret for signing Canadiana JWTs, as provided in the `auth_token` cookie by [amsa](https://github.com/crkn-rcdr/amsa)
+- `AUTH`: URL for accessing [amsa](https://github.com/crkn-rcdr/amsa)
+- `JWT_SECRET`: Secret for signing Canadiana JWTs, as provided in the `auth_token` cookie by amsa

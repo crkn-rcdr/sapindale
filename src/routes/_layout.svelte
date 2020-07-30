@@ -11,7 +11,7 @@
 
 <script>
   export let authenticated, redirectUrl, name;
-  let loginUrl = `https://auth.canadiana.ca/azuread/login?redirectUrl=${redirectUrl}`;
+  let loginUrl = `${process.env.AUTH}/azuread/login?redirectUrl=${redirectUrl}`;
 </script>
 
 <style>

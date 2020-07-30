@@ -9,6 +9,7 @@ const mode = process.env.NODE_ENV;
 const upholstery = process.env.UPHOLSTERY;
 const cantaloupe = process.env.CANTALOUPE;
 const api = process.env.API;
+const auth = process.env.AUTH;
 const dev = mode === "development";
 
 const alias = { svelte: path.resolve("node_modules", "svelte") };
@@ -59,6 +60,7 @@ module.exports = {
         "process.env.UPHOLSTERY": JSON.stringify(upholstery),
         "process.env.CANTALOUPE": JSON.stringify(cantaloupe),
         "process.env.API": JSON.stringify(api),
+        "process.env.AUTH": JSON.stringify(auth),
       }),
       ...plugins,
     ],
