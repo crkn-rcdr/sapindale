@@ -65,7 +65,7 @@
       </li>
       <li>
         <a
-          href="{process.env.UPHOLSTERY}/cookie?token={$session.token}"
+          href="{process.env.UPHOLSTERY}/_utils/"
           id="Futon"
           target="_blank"
           class="danger">
