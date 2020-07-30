@@ -63,15 +63,6 @@
       <li>
         <a href="/findduplicates">Find Duplicates</a>
       </li>
-      <li>
-        <a
-          href="{process.env.UPHOLSTERY}/_utils/"
-          id="Futon"
-          target="_blank"
-          class="danger">
-          Futon (Please do not edit unless you know what you are doing)
-        </a>
-      </li>
     </ul>
   </aside>
 </section>
