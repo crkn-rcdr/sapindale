@@ -1,7 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { stores } from "@sapper/app";
-  import { testCantaloupe } from "../couch.js";
   import SortableList from "../components/SortableList.svelte";
 
   export let items;
