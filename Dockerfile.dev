@@ -1,0 +1,17 @@
+FROM node:14
+
+ENV NODE_ENV development
+WORKDIR /sapindale
+
+COPY --chown=node:node package.json yarn.lock webpack.config.js ./
+RUN yarn install
+
+# allows sapper dev client to run over https
+RUN sed -i 's/http/https/g' node_modules/sapper/sapper-dev-client.js
+
+COPY --chown=node:node src ./src/
+COPY --chown=node:node static ./static/
+
+EXPOSE 8080 10000
+
+CMD ["yarn", "run", "dev"]

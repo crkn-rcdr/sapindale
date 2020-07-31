@@ -8,19 +8,15 @@
 
 <script>
   import CanvasEditor from "../../components/CanvasEditor.svelte";
-  import { testCantaloupe } from "../../couch.js";
-  import { state as authState } from "../../auth.js";
+  /* import { state as authState } from "../../auth.js"; */
+  import { stores } from "@sapper/app";
 
   export let id;
-  let manifestdata = {};
   let itemValue;
   let rList;
-  let ctoken = $authState.cantaloupeToken;
-  let token = $authState.token;
-  let manifestData = testCantaloupe(id, ctoken, token);
-  Promise.resolve(manifestData).then(function(value) {
-    itemValue = value;
-  });
+  /*  let ctoken = $authState.cantaloupeToken; */
+  const { session } = stores();
+  let token = $session.token;
 
   $: m = JSON.stringify(rList, null, 2);
   let manifest;

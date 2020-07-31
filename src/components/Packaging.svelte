@@ -7,7 +7,7 @@
     packagingdocs
   } from "../couch/packaging.js";
   import { onMount } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
 
   var filesize = require("filesize");
 
@@ -57,7 +57,8 @@
     clabel = false,
     processindication = undefined;
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   // This was previously in config.json -- what are out plans for this type of thing with svelte?
   const stages = [

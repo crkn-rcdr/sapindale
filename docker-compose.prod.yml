@@ -4,11 +4,14 @@ services:
   sapindale:
     build:
       context: .
-      target: prod
-    image: sapindale:latest
+      dockerfile: Dockerfile.prod
+    image: sapindale:prod
     networks:
       access-platform:
         ipv4_address: 172.30.0.8
+    environment:
+      NODE_ENV: production
+      PORT: 8080
 networks:
   access-platform:
     external: true

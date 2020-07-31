@@ -5,11 +5,12 @@
     repositoryreplicate
   } from "../couch/repository.js";
   import { onMount } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
 
   var filesize = require("filesize");
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   export let repostats = undefined,
     verified = {},

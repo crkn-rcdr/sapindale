@@ -4,7 +4,7 @@ services:
   sapindale:
     build:
       context: .
-      target: dev
+      dockerfile: Dockerfile.dev
     image: sapindale:dev
     networks:
       access-platform:
@@ -12,6 +12,8 @@ services:
     volumes:
       - ./src:/sapindale/src
       - ./static:/sapindale/static
+    environment:
+      PORT: 8080
 networks:
   access-platform:
     external: true
