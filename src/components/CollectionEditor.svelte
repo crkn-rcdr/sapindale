@@ -9,9 +9,9 @@
 
   export let id = undefined;
 
-  const { session } = stores();
-  let token = $session.token;
-  $: collection = {
+  /*  const { session } = stores();
+  let token = $session.token; */
+  export let collection = {
     id,
     slug: "",
     label: {},
@@ -25,7 +25,7 @@
   let showCreate = true;
   let reduceParents = {};
 
-  onMount(async () => {
+  /* onMount(async () => {
     await getCollectionRecords({ id });
   });
 
@@ -36,7 +36,7 @@
 
       console.log("collection", collection);
     } catch (ignore) {}
-  }
+  } */
 
   function displayItems(event) {
     item = rowcount.items;
@@ -119,9 +119,7 @@
       {#each collection.parents as parent}
         <ul>
           <li>
-            <a
-              href="/collection/{encodeURIComponent(parent.id)}"
-              rel="external">
+            <a href="/collection/{encodeURIComponent(parent.id)}">
               {parent.slug}
             </a>
           </li>
