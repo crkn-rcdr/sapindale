@@ -1,6 +1,6 @@
 <script>
-  import { state as authState } from "../auth.js";
-
+  import { stores } from "@sapper/app";
+  const { session } = stores();
   let legacy = false;
 </script>
 
@@ -62,15 +62,6 @@
       </li>
       <li>
         <a href="/findduplicates">Find Duplicates</a>
-      </li>
-      <li>
-        <a
-          href="{process.env.UPHOLSTERY}/cookie?token={$authState.token}"
-          id="Futon"
-          target="_blank"
-          class="danger">
-          Futon (Please do not edit unless you know what you are doing)
-        </a>
       </li>
     </ul>
   </aside>

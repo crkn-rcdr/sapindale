@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
   const dispatch = createEventDispatcher();
   export let item;
   export let index;

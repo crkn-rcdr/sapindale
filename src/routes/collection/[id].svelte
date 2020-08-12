@@ -11,7 +11,6 @@
   import TextValueEditor from "../../components/TextValueEditor.svelte";
   export let id;
   id = encodeURIComponent(id);
-  console.log("id", id);
 </script>
 
 <svelte:head>

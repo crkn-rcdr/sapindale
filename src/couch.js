@@ -1,5 +1,4 @@
 import qs from "query-string";
-import testManifestData from "./cantaloupe.js";
 
 const upholsteryUrl = process.env.UPHOLSTERY;
 
@@ -21,59 +20,26 @@ async function _request(token, path, options, method, payload) {
   return await response.json();
 }
 
-async function _couch_request(token, path, options, method, payload) {
-  let result = await _request(
-    token,
-    ["couch", path].join("/"),
-    options,
-    method,
-    payload
-  );
-
-  return result;
-}
-
-async function _api_request(token, path, options, method, payload) {
-  let result = await _request(
-    token,
-    ["api/manifest", path].join("/"),
-    options,
-    method,
-    payload
-  );
-  return result;
-}
-
 async function documents(token, db, options) {
-  let result = await _couch_request(
-    token,
-    [db, "_all_docs"].join("/"),
-    options
-  );
+  let result = await _request(token, [db, "_all_docs"].join("/"), options);
   return result.rows.filter((row) => !row.key.startsWith("_design"));
 }
 
 async function idLookup(token, db, idList) {
-  let result = await _couch_request(
-    token,
-    [db, "_all_docs"].join("/"),
-    {},
-    "POST",
-    {
-      keys: idList,
-    }
-  );
+  let result = await _request(token, [db, "_all_docs"].join("/"), {}, "POST", {
+    keys: idList,
+  });
   return result;
 }
 async function design_doc_views(token) {
-  let dbs = await _couch_request(token, "_all_dbs");
+  let dbs = await _request(token, "_all_dbs");
   let views = {};
   await Promise.all(
     dbs
       .filter((db) => db[0] !== "_" && db !== "bin")
       .map(async (db) => {
         let ddocs = (
-          await _couch_request(token, [db, "_all_docs"].join("/"), {
+          await _request(token, [db, "_all_docs"].join("/"), {
             startkey: JSON.stringify("_design"),
             endkey: JSON.stringify("_design\uFFEF"),
             include_docs: true,
@@ -92,7 +58,7 @@ async function design_doc_views(token) {
 
 async function view(token, db, ddoc, view, options) {
   if (!options.limit) options.limit = 500;
-  let result = await _couch_request(
+  let result = await _request(
     token,
     [db, "_design", ddoc, "_view", view].join("/"),
     options
@@ -100,32 +66,4 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-async function testCantaloupe(id, ctoken, token) {
-  let cvs = await _api_request(token, `${id}`);
-  let listItems = cvs.canvases;
-  var generateList = listItems.map((n) => {
-    let constructPath = {};
-    constructPath.id = n.id;
-    constructPath.label = n.label;
-    let path = n.master.url.replace(
-      "https://swift.canadiana.ca/v1/AUTH_crkn/repository/",
-      ""
-    );
-    let canvasURL = testManifestData(ctoken, path);
-    constructPath.full = canvasURL;
-    constructPath.thumbnail = canvasURL;
-    return constructPath;
-  });
-  return {
-    label: cvs.label,
-    items: generateList,
-  };
-}
-export {
-  _couch_request,
-  idLookup,
-  documents,
-  design_doc_views,
-  view,
-  testCantaloupe,
-};
+export { _request, idLookup, documents, design_doc_views, view };

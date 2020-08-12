@@ -1,7 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import { state as authState } from "../auth.js";
-  import { testCantaloupe } from "../couch.js";
+  import { stores } from "@sapper/app";
   import SortableList from "../components/SortableList.svelte";
 
   export let items;

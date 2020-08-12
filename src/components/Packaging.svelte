@@ -7,7 +7,7 @@
     packagingdocs
   } from "../couch/packaging.js";
   import { onMount } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
 
   var filesize = require("filesize");
 
@@ -57,7 +57,8 @@
     clabel = false,
     processindication = undefined;
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   // This was previously in config.json -- what are out plans for this type of thing with svelte?
   const stages = [
@@ -375,6 +376,8 @@
   async function createIdentifier(identifier) {
     document.getElementById("buttoncreate-" + identifier).style.display =
       "none"; // Should I create new hash and use {if} ?
+    var objid = identifier.replace(/^.*\./,'');
+
     var req = {
       nocreate: true,
       processreq: JSON.stringify({
@@ -383,7 +386,7 @@
         empty: true,
         configid: packageconfig,
         identifier:
-          identifier in AIPidentifier ? AIPidentifier[identifier] : identifier
+          identifier in AIPidentifier ? AIPidentifier[identifier] : objid
       })
     };
     await packagingrequests(token, [identifier], req);

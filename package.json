@@ -4,21 +4,24 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "PORT=8080 UPHOLSTERY=https://upholstery.canadiana.ca CANTALOUPE=https://image-mamirolle.canadiana.ca/iiif/2 API=https://api.canadiana.ca/v1 sapper dev",
+    "dev": "sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
-    "docker:prod": "docker-compose build"
+    "docker:dev": "docker-compose -f docker-compose.dev.yml -f docker-compose.override.yml up --build",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml -f docker-compose.override.yml up --build"
   },
   "dependencies": {
     "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "filesize": "^6.1.0",
+    "njwt": "^1.0.0",
+    "node-fetch": "^2.6.0",
     "polka": "^0.5.2",
     "query-string": "^6.8.3",
     "sirv": "^0.4.2",
     "svelte-icons": "^2.1.0",
     "svelte-sortable-list": "^1.1.0",
-    "svelte-spinner": "^2.0.2",
-    "filesize": "^6.1.0"
+    "svelte-spinner": "^2.0.2"
   },
   "devDependencies": {
     "autoprefixer": "^9.7.0",

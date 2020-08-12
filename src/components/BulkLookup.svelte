@@ -1,10 +1,11 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
   import { idLookup } from "../couch.js";
 
   const dispatch = createEventDispatcher();
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
   let idList;
   let prefix = "";
   export let id, db;

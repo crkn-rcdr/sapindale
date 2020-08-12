@@ -5,9 +5,10 @@
     capcollectiondocs
   } from "../couch/internalmeta.js";
   import { onMount } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
 
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   // This should eventually be in a common place
   export let depositors = [

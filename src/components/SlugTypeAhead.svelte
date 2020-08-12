@@ -1,6 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import { state as authState } from "../auth.js";
+  import { stores } from "@sapper/app";
   import {
     resolveSlug as resolveCollectionSlug,
     searchSlug as searchCollectionSlug
@@ -15,7 +15,8 @@
 
   let prefix = "";
   let lookupList = [];
-  let token = $authState.token;
+  const { session } = stores();
+  let token = $session.token;
 
   export let label = "Please provide a label for this component.";
 

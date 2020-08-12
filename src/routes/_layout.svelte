@@ -1,11 +1,18 @@
-<script>
-  import { state as authState } from "../auth.js";
-  import { onMount } from "svelte";
-  let redirectUrl = undefined;
+<script context="module">
+  export async function preload(page, session) {
+    const { authenticated, name, email, redirectUrl } = session;
+    if (authenticated) {
+      return { redirectUrl, authenticated, name, email };
+    } else {
+      return { redirectUrl, authenticated: false };
+    }
+  }
+</script>
 
-  onMount(async () => {
-    redirectUrl = window.location.origin;
-  });
+<script>
+  export let authenticated, redirectUrl, name;
+  let loginUrl = `${process.env.AUTH}/azuread/login?redirectUrl=${redirectUrl}`;
+  let logoutUrl = `${process.env.AUTH}/logout?redirectUrl=${redirectUrl}`;
 </script>
 
 <style>
@@ -13,8 +20,6 @@
     display: block;
   }
   .brand img {
-    height: 48px;
-    width: 48px;
     vertical-align: middle;
   }
 </style>
@@ -25,31 +30,30 @@
 
 <nav>
   <a href="/" class="brand">
-    <img src="/canadiana-logo.svg" alt="Canadiana Logo" />
+    <img
+      src="/canadiana-logo.svg"
+      height="48"
+      width="48"
+      alt="Canadiana Logo" />
     Canadiana Platform Administration
   </a>
   <ul>
     <li>
-      {#if $authState.status === 'SUCCESS'}
-        Logged in as: {$authState.name}
-      {:else if $authState.status === 'FAILED'}
-        <a
-          href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-          Login
-        </a>
+      {#if authenticated}
+        Logged in as: {name}.
+        <a href={logoutUrl}>Log out</a>
+      {:else}
+        <a href={loginUrl}>Log in</a>
       {/if}
     </li>
   </ul>
 </nav>
 <main>
-  {#if $authState.status === 'SUCCESS'}
+  {#if authenticated}
     <slot />
   {:else}
-    <p class="text-white text-center text-xl bg-primary pt-8 py-2 m-2 h-24">
-      <a
-        href="https://auth.canadiana.ca/1/azuread/login?redirectUrl={redirectUrl}">
-        Please log in to continue.
-      </a>
+    <p>
+      <a href={loginUrl}>Please log in to continue.</a>
     </p>
   {/if}
 </main>
