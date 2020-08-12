@@ -8,9 +8,11 @@
   import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
+  export let res;
 
   const { session } = stores();
   let token = $session.token;
+  
   $: collection = {
     id,
     slug: "",
