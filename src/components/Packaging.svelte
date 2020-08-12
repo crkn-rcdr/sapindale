@@ -376,7 +376,7 @@
   async function createIdentifier(identifier) {
     document.getElementById("buttoncreate-" + identifier).style.display =
       "none"; // Should I create new hash and use {if} ?
-    var objid = identifier.replace(/^.*\./,'');
+    var objid = identifier.replace(/^.*\./, "");
 
     var req = {
       nocreate: true,
@@ -707,7 +707,7 @@
       Hide?
     </label>
     ) Choose which group of AIPs from
-    <select bind:value={whichgroup} on:change={loadgroup}>
+    <select bind:value={whichgroup} on:blur={loadgroup}>
       <option value="">(please pick)</option>
       <option value="fs">filesystem</option>
       <option value="status">processing status</option>
@@ -747,13 +747,13 @@
     {:else if whichgroup == 'status'}
       <p class="children-inline">
         Show
-        <select id="statustype" bind:value={statustype} on:change={loadgroup}>
+        <select id="statustype" bind:value={statustype} on:blur={loadgroup}>
           <option value="s">success</option>
           <option value="f">failure</option>
           <option value="b">success and failure</option>
         </select>
         grouping by
-        <select id="statuslevel" bind:value={statuslevel} on:change={loadgroup}>
+        <select id="statuslevel" bind:value={statuslevel} on:blur={loadgroup}>
           <option value="0">all</option>
           <option value="1">success/failure</option>
           <option value="2">if there a message?</option>
@@ -1093,7 +1093,7 @@ Some buttons to show/hide specific parts
         {#each packagedocs as doc}
           <dt>
             <span class="children-inline">
-              <label>
+              <strong>
                 {#if doc._id in ingestchecks}
                   <input
                     type="checkbox"
@@ -1101,7 +1101,7 @@ Some buttons to show/hide specific parts
                     on:change={updateaiplist} />
                 {/if}
                 {doc._id}
-              </label>
+              </strong>
               {#if AIPidentifier[doc._id]}({AIPidentifier[doc._id]}){/if}
             </span>
           </dt>

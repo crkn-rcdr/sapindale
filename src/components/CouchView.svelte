@@ -180,7 +180,7 @@
       class="data-list border"
       id="db.select"
       bind:value={db}
-      on:change={reselectView}>
+      on:blur={reselectView}>
       {#each Object.keys(views) as database}
         <option selected={database === db}>{database}</option>
       {/each}

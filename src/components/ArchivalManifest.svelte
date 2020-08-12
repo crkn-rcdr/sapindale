@@ -292,7 +292,7 @@
       Hide?
     </label>
     ) Choose which group of AIPs from
-    <select bind:value={whichgroup} on:change={loadgroup}>
+    <select bind:value={whichgroup} on:blur={loadgroup}>
       <option value="">(please pick)</option>
       <option value="date">packaging date</option>
       <option value="smelt">processing queue</option>
@@ -336,13 +336,13 @@
     {:else if whichgroup == 'status'}
       <p class="children-inline">
         Show
-        <select id="statustype" bind:value={statustype} on:change={loadgroup}>
+        <select id="statustype" bind:value={statustype} on:blur={loadgroup}>
           <option value="s">success</option>
           <option value="f">failure</option>
           <option value="b">success and failure</option>
         </select>
         grouping by
-        <select id="statuslevel" bind:value={statuslevel} on:change={loadgroup}>
+        <select id="statuslevel" bind:value={statuslevel} on:blur={loadgroup}>
           <option value="0">all</option>
           <option value="1">success/failure</option>
           <option value="2">if there a message?</option>
