@@ -280,8 +280,10 @@
 {#if viewContents.length > 0}
   <h2>Output</h2>
   {#if viewContents[0].id}
-    <label for="onlyIDs">Hide keys and values</label>
-    <input type="checkbox" id="onlyIDs" bind:checked={onlyIDs} />
+    <div>
+      <label for="onlyIDs">Hide keys and values</label>
+      <input type="checkbox" id="onlyIDs" bind:checked={onlyIDs} />
+    </div>
   {/if}
   <table class="border-collapse">
     <thead>
