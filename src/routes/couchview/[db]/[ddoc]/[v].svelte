@@ -14,7 +14,6 @@
       options.range = options.range === "true";
 
       const views = await getViews(token);
-      console.log("views->", views);
       return { db, view, options, views };
     }
   }
