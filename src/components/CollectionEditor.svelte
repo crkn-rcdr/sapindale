@@ -8,7 +8,6 @@
   import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
-  export let res;
 
   export let collection = {
     id,
