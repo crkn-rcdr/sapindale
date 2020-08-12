@@ -1,20 +1,28 @@
 <script context="module">
-  export async function preload(page) {
+  import { getCollection } from "../../api/collection.js";
+  export async function preload(page, session) {
     const { id } = page.params;
+    const { token, authenticated } = session;
+    if (authenticated) {
+      const collection = await getCollection(token, encodeURIComponent(id));
 
-    return { id };
+      return {
+        id,
+        collection
+      };
+    }
   }
 </script>
 
 <script>
   import CollectionEditor from "../../components/CollectionEditor.svelte";
-  import TextValueEditor from "../../components/TextValueEditor.svelte";
-  export let id;
+
+  export let id, collection;
   id = encodeURIComponent(id);
 </script>
 
 <svelte:head>
   <title>Sapindale — Collection Editor</title>
 </svelte:head>
-<!-- <TextValueEditor /> -->
-<CollectionEditor {id} />
+
+<CollectionEditor {id} {collection} />

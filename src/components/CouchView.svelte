@@ -7,13 +7,14 @@
 
   export let db = undefined,
     view = undefined, // if the view is found at '_design/$ddoc/_view/$v', this will be '$ddoc/$v'
-    options = {};
+    options = {},
+    views = {};
 
   normalizeOptions();
 
   const { session } = stores();
   let token = $session.token;
-  let views = {};
+
   let onlyIDs = false;
 
   onMount(async () => {
@@ -65,8 +66,10 @@
   }
 
   function reselectView() {
-    let ddoc = Object.keys(views[db])[0];
-    view = `${ddoc}/${views[db][ddoc][0]}`;
+    if (db && view) {
+      let ddoc = Object.keys(views[db])[0];
+      view = `${ddoc}/${views[db][ddoc][0]}`;
+    }
   }
 
   let viewContents = [];

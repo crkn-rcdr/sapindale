@@ -1,25 +1,32 @@
 <script context="module">
   import qs from "query-string";
-  export async function preload(page) {
-    const { db, ddoc, v } = page.params;
-    const view = `${ddoc}/${v}`;
-    const options = page.query;
+  import {
+    design_doc_views as getViews,
+    view as fetchView
+  } from "../../../../couch.js";
+  export async function preload(page, session) {
+    const { token, authenticated } = session;
+    if (authenticated) {
+      const { db, ddoc, v } = page.params;
+      const view = `${ddoc}/${v}`;
+      const options = page.query;
+      options.reduce = options.reduce === "true";
+      options.range = options.range === "true";
 
-    options.reduce = options.reduce === "true";
-    options.range = options.range === "true";
-
-    return { db, view, options };
+      const views = await getViews(token);
+      return { db, view, options, views };
+    }
   }
 </script>
 
 <script>
   import CouchView from "../../../../components/CouchView.svelte";
 
-  export let db, view, options;
+  export let db, view, options, views;
 </script>
 
 <svelte:head>
   <title>Sapindale — Couch view output</title>
 </svelte:head>
 
-<CouchView {db} {view} {options} />
+<CouchView {db} {view} {options} {views} />
