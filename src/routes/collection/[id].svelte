@@ -8,7 +8,6 @@
 
       return {
         id,
-        authenticated,
         collection
       };
     }
@@ -18,7 +17,7 @@
 <script>
   import CollectionEditor from "../../components/CollectionEditor.svelte";
 
-  export let id, authenticated, collection;
+  export let id, collection;
   id = encodeURIComponent(id);
 </script>
 
@@ -26,4 +25,4 @@
   <title>Sapindale — Collection Editor</title>
 </svelte:head>
 
-<CollectionEditor {id} {authenticated} {collection} />
+<CollectionEditor {id} {collection} />
