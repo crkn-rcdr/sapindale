@@ -25,19 +25,6 @@
   let showCreate = true;
   let reduceParents = {};
 
-  /* onMount(async () => {
-    await getCollectionRecords({ id });
-  });
-
-  async function getCollectionRecords({ id }) {
-    try {
-      // TODO: this lookup can fail if the id isn't good
-      collection = Object.assign(collection, await getCollection(token, id));
-
-      console.log("collection", collection);
-    } catch (ignore) {}
-  } */
-
   function displayItems(event) {
     item = rowcount.items;
     dispatch("select", { index });
