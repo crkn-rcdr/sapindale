@@ -8,6 +8,10 @@ import cookieParser from "cookie-parser";
 import nJwt from "njwt";
 import "./styles/global.css";
 
+// this is probably a bad idea, but it'll do for now
+import nodeFetch from "node-fetch";
+global.fetch = nodeFetch;
+
 const { NODE_ENV, PORT, JWT_SECRET } = process.env;
 const dev = NODE_ENV === "development";
 const parseJWT = (token) => {
