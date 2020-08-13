@@ -35,7 +35,8 @@ const { handler } = polka().use(
       const redirectUrl = url.format({
         protocol: req.headers["x-forwarded-proto"],
         host: req.headers["x-forwarded-host"],
-        path: req.path,
+        pathname: req.path,
+        query: req.query,
       });
       if (req.cookies.auth_token) {
         return { ...parseJWT(req.cookies.auth_token), redirectUrl };
