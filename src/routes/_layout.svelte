@@ -12,7 +12,7 @@
 <script>
   export let authenticated, redirectUrl, name;
   let loginUrl = `${process.env.AUTH}/azuread/login?redirectUrl=${redirectUrl}`;
-  let logoutUrl = `${process.env.AUTH}/logout?redirectUrl=${redirectUrl}`;
+  let logoutUrl = `${process.env.AUTH}/logout`;
 </script>
 
 <style>
