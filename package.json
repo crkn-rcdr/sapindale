@@ -15,7 +15,7 @@
     "cookie-parser": "^1.4.5",
     "filesize": "^6.1.0",
     "njwt": "^1.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "polka": "^0.5.2",
     "query-string": "^6.8.3",
     "sirv": "^0.4.2",
