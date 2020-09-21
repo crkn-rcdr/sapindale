@@ -2,92 +2,63 @@
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
   import SlugResolver from "../components/SlugResolver.svelte";
-  import { getCollection } from "../api/collection.js";
+  import { getManifest } from "../api/manifest.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
   import SortableList from "../components/SortableList.svelte";
   import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
 
-  export let collection = {
+  export let manifest = {
     id,
     slug: "",
     label: {},
     summary: {},
-    ordered: false,
-    public: false,
-    items: [],
+    public: "",
+    ocrPdf: "",
+
+    canvases: [],
     parents: []
   };
   let summaryDisplay = false;
   let showCreate = true;
   let reduceParents = {};
 
-  function displayItems(event) {
-    item = rowcount.items;
+  function displayCanvases(event) {
+    canvas = manifest.canvases;
     dispatch("select", { index });
   }
   function addSummary() {
-    if (Object.getOwnPropertyNames(collection.summary).length === 0) {
+    if (Object.getOwnPropertyNames(manifest.summary).length === 0) {
       summaryDisplay = true;
       showCreate = false;
     }
   }
 </script>
 
-<style>
-  .scroll {
-    overflow-y: scroll;
-    height: calc(100vh - 450px);
-    width: calc(100% - 150px);
-    background-color: var(--color-secondary-accent);
-    color: var(--color-text);
-  }
-  section {
-    display: block;
-  }
-  .left {
-    width: 50%;
-    position: fixed;
-    float: left;
-  }
-  .right {
-    float: right;
-    width: 50%;
-  }
-  article ul {
-    list-style: none;
-    width: 65%;
-  }
-</style>
-
 <section class="left">
   <article class="children-inline">
     <h4>Id:</h4>
-    <input type="text" bind:value={collection.id} readonly />
+    <input type="text" bind:value={manifest.id} readonly />
   </article>
   <article class="children-inline">
     <h4>Slug:</h4>
-    <input type="text" bind:value={collection.slug} />
-  </article>
-  <article class="children-inline">
-    <h4>Ordered:</h4>
-    <input type="checkbox" bind:checked={collection.ordered} />
+    <input type="text" bind:value={manifest.slug} />
   </article>
   <article class="children-inline">
     <h4>Public:</h4>
-    <input type="text" bind:value={collection.public} readonly />
+    <input type="text" bind:value={manifest.public} readonly />
   </article>
   <article>
     <h4>Label:</h4>
     <TextValueEditor
-      bind:data={collection.label}
+      bind:data={manifest.label}
       mandatory={true}
       textarea={false} />
     <label for="summary">Summary</label>
     {#if summaryDisplay}
       <TextValueEditor
-        bind:data={collection.summary}
+        bind:data={manifest.summary}
         mandatory={false}
         textarea={true} />
     {/if}
@@ -98,10 +69,10 @@
     {/if}
   </article>
 
-  {#if Object.getOwnPropertyNames(collection.parents).length > 1}
+  {#if Object.getOwnPropertyNames(manifest.parents).length > 1}
     <article>
       <h4>Parents:</h4>
-      {#each collection.parents as parent}
+      {#each manifest.parents as parent}
         <ul>
           <li>
             <a href="/collection/{encodeURIComponent(parent.id)}">
@@ -119,27 +90,12 @@
       {/each}
     </article>
   {/if}
-</section>
-
-<section class="right">
-  <h4>Items:</h4>
-  {#if collection.ordered}
-    <article class="scroll">
-      {#each collection.items as item}
-        <ul>
-          <li>{item.id}</li>
-          <li>{item.slug}</li>
-          <li>{item.public}</li>
-          <li>{item.type}</li>
-          <li>
-            <IIIFTextDisplay data={item.label} />
-          </li>
-
-        </ul>
-      {/each}
-    </article>
-  {:else}
-    <p>The Collection has {collection.itemCount} Items</p>
+  {#if Object.getOwnPropertyNames(manifest.canvases).length > 1}
+    <h4>Canvases:</h4>
+    {#each manifest.canvases as canvas}
+      <ul>
+        <li>{canvas.id}</li>
+      </ul>
+    {/each}
   {/if}
-
 </section>

@@ -1,12 +1,27 @@
 <script context="module">
-  export async function preload(page) {
+  import { getManifest } from "../../api/manifest.js";
+  export async function preload(page, session) {
     const { id } = page.params;
+    const { token, authenticated } = session;
+    if (authenticated) {
+      const manifest = await getManifest(token, encodeURIComponent(id));
 
-    return { id };
+      return {
+        id,
+        manifest
+      };
+    }
   }
 </script>
 
 <script>
+  import ManifestEditor from "../../components/ManifestEditor.svelte";
+
+  export let id, manifest;
+  id = encodeURIComponent(id);
+</script>
+
+<!-- <script>
   import CanvasEditor from "../../components/CanvasEditor.svelte";
   /* import { state as authState } from "../../auth.js"; */
   import { stores } from "@sapper/app";
@@ -27,9 +42,7 @@
   let reorderList = ev => {
     rList = ev.detail;
   };
-</script>
-
-<svelte:head>
+</script><svelte:head>
   <title>Sapindale — Manifest Editor</title>
 </svelte:head>
 
@@ -49,4 +62,9 @@
       on:manifestUpdate={update}
       on:reorderedList={reorderList} />
   </div>
-{/if}
+{/if} -->
+<svelte:head>
+  <title>Sapindale — Manifest Editor</title>
+</svelte:head>
+
+<ManifestEditor {id} {manifest} />
