@@ -4,7 +4,6 @@
   import SlugResolver from "../components/SlugResolver.svelte";
   import { getManifest } from "../api/manifest.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
-  import SortableList from "../components/SortableList.svelte";
   import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let id = undefined;
@@ -20,21 +19,23 @@
     canvases: [],
     parents: []
   };
-  let summaryDisplay = false;
-  let showCreate = true;
   let reduceParents = {};
-
-  function displayCanvases(event) {
-    canvas = manifest.canvases;
-    dispatch("select", { index });
-  }
-  function addSummary() {
-    if (Object.getOwnPropertyNames(manifest.summary).length === 0) {
-      summaryDisplay = true;
-      showCreate = false;
-    }
-  }
 </script>
+
+<style>
+  section {
+    display: block;
+  }
+  .left {
+    width: 50%;
+    position: fixed;
+    float: left;
+  }
+  article ul {
+    list-style: none;
+    width: 65%;
+  }
+</style>
 
 <section class="left">
   <article class="children-inline">
@@ -55,18 +56,6 @@
       bind:data={manifest.label}
       mandatory={true}
       textarea={false} />
-    <label for="summary">Summary</label>
-    {#if summaryDisplay}
-      <TextValueEditor
-        bind:data={manifest.summary}
-        mandatory={false}
-        textarea={true} />
-    {/if}
-    {#if showCreate}
-      <button class="create" on:click|preventDefault={addSummary}>
-        Add New Summary
-      </button>
-    {/if}
   </article>
 
   {#if Object.getOwnPropertyNames(manifest.parents).length > 1}
@@ -90,6 +79,8 @@
       {/each}
     </article>
   {/if}
+</section>
+<!-- <section>
   {#if Object.getOwnPropertyNames(manifest.canvases).length > 1}
     <h4>Canvases:</h4>
     {#each manifest.canvases as canvas}
@@ -98,4 +89,4 @@
       </ul>
     {/each}
   {/if}
-</section>
+</section> -->

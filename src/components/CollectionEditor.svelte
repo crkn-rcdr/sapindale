@@ -23,10 +23,6 @@
   let showCreate = true;
   let reduceParents = {};
 
-  function displayItems(event) {
-    item = rowcount.items;
-    dispatch("select", { index });
-  }
   function addSummary() {
     if (Object.getOwnPropertyNames(collection.summary).length === 0) {
       summaryDisplay = true;
