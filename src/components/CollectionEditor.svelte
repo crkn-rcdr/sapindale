@@ -23,10 +23,6 @@
   let showCreate = true;
   let reduceParents = {};
 
-  function displayItems(event) {
-    item = rowcount.items;
-    dispatch("select", { index });
-  }
   function addSummary() {
     if (Object.getOwnPropertyNames(collection.summary).length === 0) {
       summaryDisplay = true;
@@ -120,22 +116,26 @@
     </article>
   {/if}
 </section>
+
 <section class="right">
   <h4>Items:</h4>
-  <article class="scroll">
+  {#if collection.ordered}
+    <article class="scroll">
+      {#each collection.items as item}
+        <ul>
+          <li>{item.id}</li>
+          <li>{item.slug}</li>
+          <li>{item.public}</li>
+          <li>{item.type}</li>
+          <li>
+            <IIIFTextDisplay data={item.label} />
+          </li>
 
-    {#each collection.items as item}
-      <ul>
-        <li>{item.id}</li>
-        <li>{item.slug}</li>
-        <li>{item.public}</li>
-        <li>{item.type}</li>
-        <li>
-          <IIIFTextDisplay data={item.label} />
-        </li>
+        </ul>
+      {/each}
+    </article>
+  {:else}
+    <p>The Collection has {collection.itemCount} Items</p>
+  {/if}
 
-      </ul>
-    {/each}
-
-  </article>
 </section>

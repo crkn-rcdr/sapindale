@@ -3,7 +3,6 @@
   import { quintOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
-  import CanvasThumbnail from "./CanvasThumbnail.svelte";
   import CollectionEditor from "./CollectionEditor.svelte";
   const hasAPI = "IntersectionObserver";
   let current = "";
@@ -113,13 +112,7 @@
           out:send={{ key: item.id }}
           animate:flip={{ duration: 300 }}
           class:over={item.id === isOver}>
-          <CanvasThumbnail
-            {item}
-            {index}
-            selected={index === selectedIndex}
-            on:canvasSelected
-            lazy="hasAPI"
-            on:imageUpdate={update} />
+
           <CollectionEditor {index} {item} selected={index === selectedIndex} />
         </li>
       {/each}
