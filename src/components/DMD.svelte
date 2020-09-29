@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
+  import { newid, updatedoc, getdoc } from "../couch/dmdtask.js";
 
   const { session } = stores();
   let token = $session.token;
@@ -51,60 +52,105 @@
     }
   ];
 
-  let depositor = "",
-    filetype = "",
+  let depositor = undefined,
+    mdtype = undefined,
     metadatafile = undefined,
-    metadataname = undefined;
+    mdname = undefined;
+
+  onMount(async () => {
+    if (id) {
+      let thisdoc = {};
+      try {
+        thisdoc = await getdoc(token, id);
+      } catch (ignore) {}
+      console.log(thisdoc);
+      if ("depositor" in thisdoc) {
+        depositor = thisdoc.depositor;
+      }
+      if ("mdtype" in thisdoc) {
+        mdtype = thisdoc.mdtype;
+      }
+      if ("mdname" in thisdoc) {
+        mdname = thisdoc.mdname;
+      }
+    }
+  });
 
   async function getfile() {
     console.log(this.files);
     if (this.files.length) {
       // Object of type File, which can be used as body: in fetch()
       metadatafile = this.files[0];
-      metadataname = metadatafile.name;
+      mdname = metadatafile.name;
     } else {
       metadatafile = undefined;
-      metadataname = undefined;
+      mdname = undefined;
     }
+  }
+
+  async function updateTask() {
+    if (!id) {
+      id = await newid(token);
+
+      history.pushState({ id: history.state.id + 1 }, "", `/dmd/${id}`);
+    }
+    console.log(
+      await updatedoc(token, id, {
+        depositor: depositor === "" ? undefined : depositor,
+        mdtype: mdtype === "" ? undefined : mdtype,
+        mdname: mdname
+      })
+    );
   }
 </script>
 
-{#if id}
-  ID={id}
-{:else}
+<legend>
+  Select depositor:
+  <select bind:value={depositor}>
+    <option value="" />
+    {#each depositors as thisdepositor}
+      <option value={thisdepositor.id}>{thisdepositor.name}</option>
+    {/each}
+  </select>
+</legend>
 
-  <legend>
-    Select depositor:
-    <select bind:value={depositor}>
-      <option value="" />
-      {#each depositors as thisdepositor}
-        <option value={thisdepositor.id}>{thisdepositor.name}</option>
-      {/each}
-    </select>
-  </legend>
+<legend>
+  Select type:
+  <select bind:value={mdtype}>
+    <option value="" />
+    <option value="issueinfocsv">Issueinfo CSV</option>
+    <option value="dccsv">Dublin Core CSV</option>
+    <option value="marc490">MARC - ID in 490</option>
+    <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
+    <option value="marcooe">MARC - ID in ooe interpretation</option>
+  </select>
+</legend>
 
-  <legend>
-    Select type:
-    <select bind:value={filetype}>
-      <option value="" />
-      <option value="issueinfocsv">Issueinfo CSV</option>
-      <option value="dccsv">Dublin Core CSV</option>
-      <option value="marc490">MARC - ID in 490</option>
-      <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
-      <option value="marcooe">MARC - ID in ooe interpretation</option>
-    </select>
-  </legend>
+<legend>
+  Upload file:
+  <input type="file" id="upload" name="upload" on:change={getfile} />
+</legend>
 
-  <legend>
-    Upload file:
-    <input type="file" id="upload" name="upload" on:change={getfile} />
-  </legend>
-
-  <table>
-    <tr>{depositor}</tr>
-    <tr>{filetype}</tr>
-    <tr>
-      {#if metadataname}{metadataname}{/if}
-    </tr>
-  </table>
-{/if}
+<button
+  type="submit"
+  on:click={() => {
+    updateTask();
+  }}>
+  {#if id}Update{:else}Create{/if}
+</button>
+<br />
+<br />
+<table>
+  <tr>
+    {#if id}{id}{/if}
+  </tr>
+  <tr>
+    {#if depositor}{depositor}{/if}
+  </tr>
+  <tr>
+    {#if mdtype}{mdtype}{/if}
+  </tr>
+  <tr>
+    {#if mdname}{mdname}{/if}
+  </tr>
+</table>
