@@ -1,4 +1,4 @@
-import { _request as couchRequest } from "../couch.js";
+import { _request as couchRequest, _fetch as couchFetch } from "../couch.js";
 
 export const dmdtaskdatabase = "dmdtask";
 
@@ -40,4 +40,25 @@ async function getdoc(token, docid) {
   );
 }
 
-export { newid, updatedoc, getdoc };
+async function uploadAttach(token, docid, rev, file) {
+  if (!docid || !rev || !file.name) {
+    alert("Missing information for upload");
+    return;
+  }
+  let response = await couchFetch(
+    token,
+    [dmdtaskdatabase, docid, file.name].join("/"),
+    { "If-Match": rev, "Content-Type": file.type },
+    undefined,
+    "PUT",
+    file
+  );
+  if (response.status !== 201) {
+    alert("Problem uploading attachment for " + docid);
+    return;
+  } else {
+    return true;
+  }
+}
+
+export { newid, updatedoc, getdoc, uploadAttach };
