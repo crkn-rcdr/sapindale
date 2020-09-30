@@ -75,50 +75,69 @@
       mydoc = thisdoc;
       if ("_attachments" in mydoc && mdname in mydoc._attachments)
         myattachment = mydoc._attachments[mdname];
-
-      console.log(mydoc, myattachment);
     } else {
       mydoc = undefined;
       myattachment = undefined;
     }
   }
 
-  async function getfile() {
+  async function checkSetId() {
+    if (!id) {
+      id = await newid(token);
+
+      history.pushState({ id: history.state.id + 1 }, "", `/dmd/${id}`);
+    }
+  }
+
+  async function uploadFile() {
     if (this.files.length) {
+      await checkSetId();
+      await updateLocalFromDoc(); // Need to get latest _rev
       // Object of type File, which can be used as body: in fetch()
       metadatafile = this.files[0];
+      if (!(await uploadAttach(token, id, mydoc._rev, metadatafile))) {
+        alert("Error uploading attachment");
+        return;
+      }
       mdname = metadatafile.name;
+      await updatedoc(token, id, {
+        mdname: mdname
+      });
+      await updateLocalFromDoc(); // Again to get the updates just made
     } else {
       metadatafile = undefined;
       mdname = undefined;
     }
   }
 
-  async function updateTask() {
-    if (!id) {
-      id = await newid(token);
-
-      history.pushState({ id: history.state.id + 1 }, "", `/dmd/${id}`);
-    }
-
+  async function updateDepositor() {
+    await checkSetId();
     await updatedoc(token, id, {
-      depositor: depositor === "" ? undefined : depositor,
-      mdtype: mdtype === "" ? undefined : mdtype,
-      mdname: mdname
+      depositor: depositor
     });
-
     await updateLocalFromDoc();
+  }
 
-    if (metadatafile && !uploadAttach(token, id, mydoc._rev, metadatafile)) {
-      alert("Error uploading attachment");
-      return;
-    }
+  async function updateMdtype() {
+    await checkSetId();
+    await updatedoc(token, id, {
+      mdtype: mdtype
+    });
+    await updateLocalFromDoc();
+  }
+
+  async function doSplit() {
+    await checkSetId();
+    await updatedoc(token, id, {
+      split: true
+    });
+    await updateLocalFromDoc();
   }
 </script>
 
 <legend>
   Select depositor:
-  <select bind:value={depositor}>
+  <select bind:value={depositor} on:blur={updateDepositor}>
     <option value="" />
     {#each depositors as thisdepositor}
       <option value={thisdepositor.id}>{thisdepositor.name}</option>
@@ -128,7 +147,7 @@
 
 <legend>
   Select type:
-  <select bind:value={mdtype}>
+  <select bind:value={mdtype} on:blur={updateMdtype}>
     <option value="" />
     <option value="issueinfocsv">Issueinfo CSV</option>
     <option value="dccsv">Dublin Core CSV</option>
@@ -158,7 +177,7 @@
   {/if}
   <legend>
     Upload file:
-    <input type="file" id="upload" name="upload" on:change={getfile} />
+    <input type="file" id="upload" name="upload" on:change={uploadFile} />
   </legend>
 
 </fieldset>
@@ -166,9 +185,9 @@
 <button
   type="submit"
   on:click={() => {
-    updateTask();
+    doSplit();
   }}>
-  {#if id}Update{:else}Create{/if}
+  Initiate Split
 </button>
 <br />
 <br />
