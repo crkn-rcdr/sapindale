@@ -4,8 +4,12 @@
   import SlugResolver from "../components/SlugResolver.svelte";
   import { getCollection } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
-  import SortableList from "../components/SortableList.svelte";
+  import DragDropList from "../components/DragDropList.svelte";
   import IIIFTextDisplay from "./IIIFTextDisplay";
+  import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
+  import FaListOl from "svelte-icons/fa/FaListOl.svelte";
+  import FaListUl from "svelte-icons/fa/FaListUl.svelte";
+  import IoIosArrowDropdown from "svelte-icons/io/IoIosArrowDropdown.svelte";
 
   export let id = undefined;
 
@@ -22,6 +26,7 @@
   let summaryDisplay = false;
   let showCreate = true;
   let reduceParents = {};
+  let activeId = "";
 
   function addSummary() {
     if (Object.getOwnPropertyNames(collection.summary).length === 0) {
@@ -29,6 +34,19 @@
       showCreate = false;
     }
   }
+
+  const expand = item => {
+    collection.items = collection.items.map(s => {
+      if (s.id === item.id) {
+        activeId = item.id;
+      }
+      console.log("s", s);
+      return s;
+    });
+    /*  let items = collection.items.map(s => s.id);
+    let test = collection.items;
+    console.log(test); */
+  };
 </script>
 
 <style>
@@ -54,6 +72,13 @@
   article ul {
     list-style: none;
     width: 65%;
+  }
+  .icon {
+    color: var(--color);
+    display: inline-flex;
+    height: 45px;
+    width: 150px;
+    align-items: center;
   }
 </style>
 
@@ -118,20 +143,52 @@
 </section>
 
 <section class="right">
-  <h4>Items:</h4>
+  <div class="icon">
+    {#if collection.ordered}
+      <h4>Items:</h4>
+      <FaListOl />
+    {:else}
+      <h4>Items:</h4>
+      <FaListUl />
+    {/if}
+  </div>
   {#if collection.ordered}
     <article class="scroll">
+      <DragDropList bind:data={collection.items} />
       {#each collection.items as item}
         <ul>
-          <li>{item.id}</li>
-          <li>{item.slug}</li>
-          <li>{item.public}</li>
-          <li>{item.type}</li>
           <li>
-            <IIIFTextDisplay data={item.label} />
-          </li>
+            <!--  <DragDropList bind:data={collection.items} /> -->
+            <!--  <button on:click={() => expand(item)}>{item.id}</button> -->
 
+            {#if item.id == activeId}
+              <div>
+                <li>{item.id}</li>
+                <li>{item.slug}</li>
+                <li>{item.public}</li>
+                <li>{item.type}</li>
+                <li>
+                  <IIIFTextDisplay data={item.label} />
+                </li>
+              </div>
+            {/if}
+          </li>
         </ul>
+        <!-- <div>
+
+          {#each collection.items as item}
+            <ul>
+              <li>{item.id}</li>
+              <li>{item.slug}</li>
+              <li>{item.public}</li>
+              <li>{item.type}</li>
+              <li>
+                <IIIFTextDisplay data={item.label} />
+              </li>
+
+            </ul>
+          {/each}
+        </div> -->
       {/each}
     </article>
   {:else}
