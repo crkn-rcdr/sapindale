@@ -1,5 +1,6 @@
 <script>
   import { flip } from "svelte/animate";
+  import IIIFTextDisplay from "./IIIFTextDisplay";
 
   export let data = {};
   /* export let removesItems = false; */
@@ -16,7 +17,7 @@
     // modify dragged element (which is actually dragged)
     dragged.innerHTML = grabbed.innerHTML;
     // record offset from cursor to top of element
-   
+
     offsetY = grabbed.getBoundingClientRect().y - clientY;
     drag(clientY);
   }
@@ -153,7 +154,13 @@
           ev.preventDefault();
           touchEnter(ev.touches[0]);
         }}>
-        {items.slug}
+
+        <ul>
+          <li>{items.slug}</li>
+          <li>
+            <IIIFTextDisplay data={items.label} />
+          </li>
+        </ul>
       </div>
     {/each}
   </div>
