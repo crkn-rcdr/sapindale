@@ -155,10 +155,23 @@
           ev.preventDefault();
           touchEnter(ev.touches[0]);
         }}>
-        {#if items.id.startsWith('69429/s') || items.id.startsWith('69429/m')}
+        {#if items.id.startsWith('69429/s')}
           <ul class="list">
             <li>
-              <a href={items.id}>{items.slug}</a>
+              <a href="/collection/{encodeURIComponent(items.id)}">
+                {items.slug}
+              </a>
+            </li>
+            <li>
+              <IIIFTextDisplay data={items.label} />
+            </li>
+          </ul>
+        {:else if items.id.startsWith('69429/m')}
+          <ul class="list">
+            <li>
+              <a href="/manifest/{encodeURIComponent(items.id)}">
+                {items.slug}
+              </a>
             </li>
             <li>
               <IIIFTextDisplay data={items.label} />
