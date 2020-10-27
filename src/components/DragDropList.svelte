@@ -67,6 +67,7 @@
     z-index: 5;
     display: flex;
     flex-direction: column;
+    list-style: none;
   }
   .item {
     box-sizing: border-box;
@@ -74,7 +75,7 @@
     width: 100%;
     min-height: 3em;
     margin-bottom: 0.5em;
-    background-color: rgb(146, 39, 39);
+    background-color: rgb(190, 211, 210);
     border: 1px solid rgb(190, 190, 190);
     border-radius: 2px;
     user-select: none;
@@ -154,13 +155,20 @@
           ev.preventDefault();
           touchEnter(ev.touches[0]);
         }}>
-
-        <ul>
-          <li>{items.slug}</li>
-          <li>
-            <IIIFTextDisplay data={items.label} />
-          </li>
-        </ul>
+        {#if items.id.startsWith('69429/s') || items.id.startsWith('69429/m')}
+          <ul class="list">
+            <li>
+              <a href={items.id}>{items.slug}</a>
+            </li>
+            <li>
+              <IIIFTextDisplay data={items.label} />
+            </li>
+          </ul>
+        {:else}
+          <ul>
+            <p>The canvas items comes here</p>
+          </ul>
+        {/if}
       </div>
     {/each}
   </div>
