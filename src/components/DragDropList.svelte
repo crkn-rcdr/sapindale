@@ -1,9 +1,12 @@
 <script>
   import { flip } from "svelte/animate";
   import IIIFTextDisplay from "./IIIFTextDisplay";
+  import Handle from "../components/Handle.svelte";
+  import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
+  import FaListOl from "svelte-icons/fa/FaListOl.svelte";
 
   export let data = {};
-  /* export let removesItems = false; */
+
   let dragged;
   let grabbed;
   let lastTarget;
@@ -59,35 +62,37 @@
 </script>
 
 <style>
-  main {
+  div {
+    display: flex;
+  }
+  .dragdroplist {
     position: relative;
   }
   .list {
-    cursor: grab;
+    cursor: hand;
     z-index: 5;
     display: flex;
     flex-direction: column;
     list-style: none;
   }
   .item {
-    box-sizing: border-box;
     display: inline-flex;
-    width: 100%;
+    /* width: 50%;
     min-height: 3em;
     margin-bottom: 0.5em;
     background-color: rgb(190, 211, 210);
     border: 1px solid rgb(190, 190, 190);
-    border-radius: 2px;
+    border-radius: 2px; */
     user-select: none;
-    z-index: 10;
+    z-index: 2;
   }
-  .item:last-child {
+  /*  .item:last-child {
     margin-bottom: 0;
-  }
-  .item > * {
+  } */
+  /* .item > * {
     margin: auto;
-  }
-  /*  #grabbed {
+  } */
+  /* #grabbed {
     opacity: 0;
   } */
   #dragged {
@@ -104,6 +109,11 @@
   #dragged.haunting {
     z-index: 20;
     opacity: 1;
+  }
+  .orderList {
+    height: 20%;
+    width: 20%;
+    display: inline-flex;
   }
 </style>
 
@@ -133,56 +143,67 @@
       ev.stopPropagation();
       release(ev.touches[0]);
     }}>
-    {#each data as items, i (items.id ? items.id : JSON.stringify(items))}
-      <div
-        id="grabbed"
-        class="item"
-        data-index={i}
-        data-id={items.id}
-        data-grabY="0"
-        on:mousedown={function(ev) {
-          grab(ev.clientY, this);
-        }}
-        on:touchstart={function(ev) {
-          grab(ev.touches[0].clientY, this);
-        }}
-        on:mouseenter={function(ev) {
-          ev.stopPropagation();
-          dragEnter(ev, ev.target);
-        }}
-        on:touchmove={function(ev) {
-          ev.stopPropagation();
-          ev.preventDefault();
-          touchEnter(ev.touches[0]);
-        }}>
-        {#if items.id.startsWith('69429/s')}
-          <ul class="list">
-            <li>
-              <a href="/collection/{encodeURIComponent(items.id)}">
-                {items.slug}
-              </a>
-            </li>
-            <li>
-              <IIIFTextDisplay data={items.label} />
-            </li>
-          </ul>
-        {:else if items.id.startsWith('69429/m')}
-          <ul class="list">
-            <li>
-              <a href="/manifest/{encodeURIComponent(items.id)}">
-                {items.slug}
-              </a>
-            </li>
-            <li>
-              <IIIFTextDisplay data={items.label} />
-            </li>
-          </ul>
-        {:else}
-          <ul>
-            <p>The canvas items comes here</p>
-          </ul>
-        {/if}
+    {#each data as items, i}
+      <div>
+        <div
+          class="item"
+          data-index={i}
+          data-id={items.id}
+          data-grabY="0"
+          on:mousedown={function(ev) {
+            grab(ev.clientY, this);
+          }}
+          on:touchstart={function(ev) {
+            grab(ev.touches[0].clientY, this);
+          }}
+          on:mouseenter={function(ev) {
+            ev.stopPropagation();
+            dragEnter(ev, ev.target);
+          }}
+          on:touchmove={function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            touchEnter(ev.touches[0]);
+          }}>
+          <Handle>
+            <FaArrowsAlt />
+          </Handle>
+        </div>
+        <div>
+          <aside class="orderList">
+            <FaListOl />
+          </aside>
+          {#if items.id.startsWith('69429/s')}
+            <ul class="list">
+              <li>
+                <a href="/collection/{encodeURIComponent(items.id)}">
+                  {items.slug}
+                </a>
+              </li>
+              <li>
+                <IIIFTextDisplay data={items.label} />
+              </li>
+            </ul>
+          {:else if items.id.startsWith('69429/m')}
+            <ul class="list">
+              <li>
+                <a href="/manifest/{encodeURIComponent(items.id)}">
+                  {items.slug}
+                </a>
+              </li>
+              <li>
+                <IIIFTextDisplay data={items.label} />
+              </li>
+            </ul>
+          {:else}
+            <ul>
+              <p>The canvas items comes here</p>
+            </ul>
+          {/if}
+
+        </div>
       </div>
     {/each}
+
   </div>
 </main>

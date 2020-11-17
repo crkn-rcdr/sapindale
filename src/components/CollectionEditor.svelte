@@ -34,19 +34,6 @@
       showCreate = false;
     }
   }
-
-  const expand = item => {
-    collection.items = collection.items.map(s => {
-      if (s.id === item.id) {
-        activeId = item.id;
-      }
-      console.log("s", s);
-      return s;
-    });
-    /*  let items = collection.items.map(s => s.id);
-    let test = collection.items;
-    console.log(test); */
-  };
 </script>
 
 <style>
@@ -158,8 +145,6 @@
       {#each collection.items as item}
         <ul>
           <li>
-            <!--  <DragDropList bind:data={collection.items} /> -->
-            <!--  <button on:click={() => expand(item)}>{item.id}</button> -->
 
             {#if item.id == activeId}
               <div>
@@ -174,21 +159,6 @@
             {/if}
           </li>
         </ul>
-        <!-- <div>
-
-          {#each collection.items as item}
-            <ul>
-              <li>{item.id}</li>
-              <li>{item.slug}</li>
-              <li>{item.public}</li>
-              <li>{item.type}</li>
-              <li>
-                <IIIFTextDisplay data={item.label} />
-              </li>
-
-            </ul>
-          {/each}
-        </div> -->
       {/each}
     </article>
   {:else}
