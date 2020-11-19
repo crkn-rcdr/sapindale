@@ -64,9 +64,7 @@
 <style>
   div {
     display: flex;
-  }
-  .dragdroplist {
-    position: relative;
+    width: 80%;
   }
   .list {
     cursor: hand;
@@ -77,24 +75,9 @@
   }
   .item {
     display: inline-flex;
-    /* width: 50%;
-    min-height: 3em;
-    margin-bottom: 0.5em;
-    background-color: rgb(190, 211, 210);
-    border: 1px solid rgb(190, 190, 190);
-    border-radius: 2px; */
     user-select: none;
     z-index: 2;
   }
-  /*  .item:last-child {
-    margin-bottom: 0;
-  } */
-  /* .item > * {
-    margin: auto;
-  } */
-  /* #grabbed {
-    opacity: 0;
-  } */
   #dragged {
     pointer-events: none;
     z-index: -5;
@@ -117,7 +100,7 @@
   }
 </style>
 
-<main class="dragdroplist">
+<main>
   <div
     bind:this={dragged}
     id="dragged"
@@ -173,6 +156,8 @@
           <aside class="orderList">
             <FaListOl />
           </aside>
+        </div>
+        <div>
           {#if items.id.startsWith('69429/s')}
             <ul class="list">
               <li>

@@ -40,7 +40,7 @@
   .scroll {
     overflow-y: scroll;
     height: calc(100vh - 450px);
-    width: calc(100% - 150px);
+    width: calc(100% - 300px);
     background-color: var(--color-secondary-accent);
     color: var(--color-text);
   }
