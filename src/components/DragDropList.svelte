@@ -62,6 +62,9 @@
 </script>
 
 <style>
+  .dragdroplist {
+    position: relative;
+  }
   div {
     display: flex;
     width: 80%;
@@ -100,7 +103,7 @@
   }
 </style>
 
-<main>
+<main class="dragdroplist">
   <div
     bind:this={dragged}
     id="dragged"

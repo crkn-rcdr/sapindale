@@ -10,6 +10,7 @@
     height: 20%;
     width: 20%;
     display: inline-flex;
+    color: red;
   }
 </style>
 
