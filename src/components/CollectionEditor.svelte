@@ -141,8 +141,8 @@
   </div>
   {#if collection.ordered}
     <article class="scroll">
-      <DragDropList bind:data={collection.items} />
-      {#each collection.items as item}
+      <!--  <DragDropList bind:data={collection.items} /> -->
+      <!-- {#each collection.items as item}
         <ul>
           <li>
 
@@ -159,7 +159,19 @@
             {/if}
           </li>
         </ul>
-      {/each}
+      {/each} -->
+
+      <DragDropList bind:data={collection.items}>
+        <span slot="item">
+          {#each collection.items as item}
+            <ul>
+              <li>{item.slug}</li>
+            </ul>
+          {/each}
+        </span>
+        <!-- <IIIFTextDisplay data={item.label} /> -->
+      </DragDropList>
+
     </article>
   {:else}
     <p>The Collection has {collection.itemCount} Items</p>

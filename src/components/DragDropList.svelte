@@ -2,8 +2,10 @@
   import { flip } from "svelte/animate";
   import IIIFTextDisplay from "./IIIFTextDisplay";
   import Handle from "../components/Handle.svelte";
-  import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
+  import MdDragHandle from "svelte-icons/md/MdDragHandle.svelte";
   import FaListOl from "svelte-icons/fa/FaListOl.svelte";
+  import Icon from "svelte-awesome/components/Icon.svelte";
+  import TextValueEditor from "../components/TextValueEditor.svelte";
 
   export let data = {};
 
@@ -65,19 +67,23 @@
   .dragdroplist {
     position: relative;
   }
-  div {
+  .alignContent1 {
     display: flex;
     width: 80%;
   }
+  .alignContent:hover > .alignContent1 {
+    border: 1px solid #0a2020fe;
+  }
   .list {
     cursor: hand;
+    padding-inline-start: 0%;
     z-index: 5;
     display: flex;
     flex-direction: column;
     list-style: none;
   }
   .item {
-    display: inline-flex;
+    /* display: inline-flex; */
     user-select: none;
     z-index: 2;
   }
@@ -96,11 +102,11 @@
     z-index: 20;
     opacity: 1;
   }
-  .orderList {
-    height: 20%;
-    width: 20%;
+  /* .orderList {
+    height: 25%;
+    width: 25%;
     display: inline-flex;
-  }
+  } */
 </style>
 
 <main class="dragdroplist">
@@ -130,65 +136,72 @@
       release(ev.touches[0]);
     }}>
     {#each data as items, i}
-      <div>
-        <div
-          class="item"
-          data-index={i}
-          data-id={items.id}
-          data-grabY="0"
-          on:mousedown={function(ev) {
-            grab(ev.clientY, this);
-          }}
-          on:touchstart={function(ev) {
-            grab(ev.touches[0].clientY, this);
-          }}
-          on:mouseenter={function(ev) {
-            ev.stopPropagation();
-            dragEnter(ev, ev.target);
-          }}
-          on:touchmove={function(ev) {
-            ev.stopPropagation();
-            ev.preventDefault();
-            touchEnter(ev.touches[0]);
-          }}>
-          <Handle>
-            <FaArrowsAlt />
-          </Handle>
-        </div>
-        <div>
-          <aside class="orderList">
-            <FaListOl />
-          </aside>
-        </div>
-        <div>
-          {#if items.id.startsWith('69429/s')}
-            <ul class="list">
-              <li>
-                <a href="/collection/{encodeURIComponent(items.id)}">
-                  {items.slug}
-                </a>
-              </li>
-              <li>
-                <IIIFTextDisplay data={items.label} />
-              </li>
-            </ul>
-          {:else if items.id.startsWith('69429/m')}
-            <ul class="list">
-              <li>
-                <a href="/manifest/{encodeURIComponent(items.id)}">
-                  {items.slug}
-                </a>
-              </li>
-              <li>
-                <IIIFTextDisplay data={items.label} />
-              </li>
-            </ul>
-          {:else}
-            <ul>
-              <p>The canvas items comes here</p>
-            </ul>
-          {/if}
+      <div class="alignContent">
+        <div class="alignContent1">
+          <div
+            class="item"
+            data-index={i}
+            data-id={items.id}
+            data-grabY="0"
+            on:mousedown={function(ev) {
+              grab(ev.clientY, this);
+            }}
+            on:touchstart={function(ev) {
+              grab(ev.touches[0].clientY, this);
+            }}
+            on:mouseenter={function(ev) {
+              ev.stopPropagation();
+              dragEnter(ev, ev.target);
+            }}
+            on:touchmove={function(ev) {
+              ev.stopPropagation();
+              ev.preventDefault();
+              touchEnter(ev.touches[0]);
+            }}>
+            <Handle>
+              <MdDragHandle />
 
+            </Handle>
+          </div>
+
+          <!--  <div>
+            {#if items.id.startsWith('69429/s')}
+              <ul class="list">
+                <li>
+                  <a href="/collection/{encodeURIComponent(items.id)}">
+                    {items.slug}
+                  </a>
+                </li>
+                <li>
+                  <IIIFTextDisplay data={items.label} />
+                </li>
+              </ul>
+            {:else if items.id.startsWith('69429/m')}
+              <ul class="list">
+                <li>
+                  <a href="/manifest/{encodeURIComponent(items.id)}">
+                    {items.slug}
+                  </a>
+
+                </li>
+                <li>
+                  <IIIFTextDisplay bind:data={items.label} />
+                  
+                </li>
+              </ul>
+            {:else}
+              <ul>
+                <p>The canvas items comes here</p>
+              </ul>
+            {/if}
+
+          </div> -->
+
+          <!--  <div class="orderList">
+            <FaListOl />
+          </div>
+           -->
+          <slot name="item" />
         </div>
       </div>
     {/each}

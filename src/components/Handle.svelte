@@ -7,13 +7,13 @@
 
 <style>
   .dragHand {
-    height: 20%;
-    width: 20%;
+    height: 50%;
+    width: 50%;
     display: inline-flex;
     color: red;
   }
 </style>
 
-<aside class="dragHand">
+<div class="dragHand">
   <slot />
-</aside>
+</div>
