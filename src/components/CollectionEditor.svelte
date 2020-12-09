@@ -141,36 +141,24 @@
   </div>
   {#if collection.ordered}
     <article class="scroll">
-      <!--  <DragDropList bind:data={collection.items} /> -->
-      <!-- {#each collection.items as item}
+      <DragDropList bind:data={collection.items} />
+      <!--This is to show the collection items changes after reordering-->
+      {#each collection.items as item}
         <ul>
           <li>
 
-            {#if item.id == activeId}
-              <div>
-                <li>{item.id}</li>
-                <li>{item.slug}</li>
-                <li>{item.public}</li>
-                <li>{item.type}</li>
-                <li>
-                  <IIIFTextDisplay data={item.label} />
-                </li>
-              </div>
-            {/if}
+            <div>
+
+              <li>{item.slug}</li>
+
+              <li>
+                <IIIFTextDisplay data={item.label} />
+              </li>
+            </div>
+
           </li>
         </ul>
-      {/each} -->
-
-      <DragDropList bind:data={collection.items}>
-        <span slot="item">
-          {#each collection.items as item}
-            <ul>
-              <li>{item.slug}</li>
-            </ul>
-          {/each}
-        </span>
-        <!-- <IIIFTextDisplay data={item.label} /> -->
-      </DragDropList>
+      {/each}
 
     </article>
   {:else}

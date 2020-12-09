@@ -8,6 +8,7 @@
   import TextValueEditor from "../components/TextValueEditor.svelte";
 
   export let data = {};
+  
 
   let dragged;
   let grabbed;
@@ -160,11 +161,11 @@
             }}>
             <Handle>
               <MdDragHandle />
-
             </Handle>
+
           </div>
 
-          <!--  <div>
+          <div>
             {#if items.id.startsWith('69429/s')}
               <ul class="list">
                 <li>
@@ -186,7 +187,7 @@
                 </li>
                 <li>
                   <IIIFTextDisplay bind:data={items.label} />
-                  
+
                 </li>
               </ul>
             {:else}
@@ -195,13 +196,12 @@
               </ul>
             {/if}
 
-          </div> -->
+          </div>
 
           <!--  <div class="orderList">
             <FaListOl />
           </div>
            -->
-          <slot name="item" />
         </div>
       </div>
     {/each}
