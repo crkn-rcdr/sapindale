@@ -8,7 +8,6 @@
   import TextValueEditor from "../components/TextValueEditor.svelte";
 
   export let data = {};
-  
 
   let dragged;
   let grabbed;
@@ -76,7 +75,7 @@
     border: 1px solid #0a2020fe;
   }
   .list {
-    cursor: hand;
+    cursor: pointer;
     padding-inline-start: 0%;
     z-index: 5;
     display: flex;

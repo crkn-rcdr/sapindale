@@ -56,7 +56,7 @@
     float: right;
     width: 50%;
   }
-  article ul {
+  div ul {
     list-style: none;
     width: 65%;
   }
@@ -70,29 +70,29 @@
 </style>
 
 <section class="left">
-  <article class="children-inline">
-    <h4>Id:</h4>
+  <div class="children-inline">
+    <label for="Id">Id:</label>
     <input type="text" bind:value={collection.id} readonly />
-  </article>
-  <article class="children-inline">
-    <h4>Slug:</h4>
+  </div>
+  <div class="children-inline">
+    <label for="Slug">Slug:</label>
     <input type="text" bind:value={collection.slug} />
-  </article>
-  <article class="children-inline">
-    <h4>Ordered:</h4>
+  </div>
+  <div class="children-inline">
+    <label for="Ordered">Ordered:</label>
     <input type="checkbox" bind:checked={collection.ordered} />
-  </article>
-  <article class="children-inline">
-    <h4>Public:</h4>
+  </div>
+  <div class="children-inline">
+    <label for="Public">Public:</label>
     <input type="text" bind:value={collection.public} readonly />
-  </article>
-  <article>
-    <h4>Label:</h4>
+  </div>
+  <div>
+    <label for="TextLabel">Label:</label>
     <TextValueEditor
       bind:data={collection.label}
       mandatory={true}
       textarea={false} />
-    <label for="summary">Summary</label>
+    <label for="summary">Summary:</label>
     {#if summaryDisplay}
       <TextValueEditor
         bind:data={collection.summary}
@@ -104,11 +104,11 @@
         Add New Summary
       </button>
     {/if}
-  </article>
+  </div>
 
   {#if Object.getOwnPropertyNames(collection.parents).length > 1}
-    <article>
-      <h4>Parents:</h4>
+    <div>
+      <label for="Parents">Parents:</label>
       {#each collection.parents as parent}
         <ul>
           <li>
@@ -125,22 +125,22 @@
 
         </ul>
       {/each}
-    </article>
+    </div>
   {/if}
 </section>
 
 <section class="right">
   <div class="icon">
     {#if collection.ordered}
-      <h4>Items:</h4>
+      <label for="Items">Items:</label>
       <FaListOl />
     {:else}
-      <h4>Items:</h4>
+      <label for="Items">Items:</label>
       <FaListUl />
     {/if}
   </div>
   {#if collection.ordered}
-    <article class="scroll">
+    <div class="scroll">
       <DragDropList bind:data={collection.items} />
       <!--This is to show the collection items changes after reordering-->
       {#each collection.items as item}
@@ -160,7 +160,7 @@
         </ul>
       {/each}
 
-    </article>
+    </div>
   {:else}
     <p>The Collection has {collection.itemCount} Items</p>
   {/if}
