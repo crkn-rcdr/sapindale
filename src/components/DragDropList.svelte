@@ -1,209 +1,94 @@
 <script>
+  // Modifies the example found here: https://svelte.dev/repl/4949485c5a8f46e7bdbeb73ed565a9c7?version=3.24.1
+  import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import IIIFTextDisplay from "./IIIFTextDisplay";
-  import Handle from "../components/Handle.svelte";
-  import MdDragHandle from "svelte-icons/md/MdDragHandle.svelte";
-  import FaListOl from "svelte-icons/fa/FaListOl.svelte";
-  import Icon from "svelte-awesome/components/Icon.svelte";
-  import TextValueEditor from "../components/TextValueEditor.svelte";
+  import FaBars from "svelte-icons/fa/FaBars.svelte";
+  export let items = [];
+  const flipDurationMs = 200;
+  let dragDisabled = true;
 
-  export let data = {};
-
-  let dragged;
-  let grabbed;
-  let lastTarget;
-  let mouseY = 0; // pointer y coordinate within client
-  let offsetY = 0; // y distance from top of grabbed element to pointer
-  let layerY = 0; // distance from top of list to top of client
-  function grab(clientY, element) {
-    // modify grabbed element
-    grabbed = element;
-    grabbed.dataset.grabY = clientY;
-    // modify dragged element (which is actually dragged)
-    dragged.innerHTML = grabbed.innerHTML;
-    // record offset from cursor to top of element
-
-    offsetY = grabbed.getBoundingClientRect().y - clientY;
-    drag(clientY);
-  }
-  // drag handler updates cursor position
-  function drag(clientY) {
-    if (grabbed) {
-      mouseY = clientY;
-      layerY = dragged.parentNode.getBoundingClientRect().y;
+  function handleConsider(e) {
+    const {
+      items: newItems,
+      info: { source, trigger }
+    } = e.detail;
+    items = newItems;
+    // Ensure dragging is stopped on drag finish via keyboard
+    if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
+      dragDisabled = true;
     }
   }
-  // touchEnter handler emulates the mouseenter event for touch input
-  // (more or less)
-  function touchEnter(ev) {
-    drag(ev.clientY);
-    // trigger dragEnter the first time the cursor moves over a list item
-    let target = document
-      .elementFromPoint(ev.clientX, ev.clientY)
-      .closest(".item");
-    if (target && target != lastTarget) {
-      lastTarget = target;
-      dragEnter(ev, target);
+  function handleFinalize(e) {
+    const {
+      items: newItems,
+      info: { source }
+    } = e.detail;
+    items = newItems;
+    // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
+    if (source === SOURCES.POINTER) {
+      dragDisabled = true;
     }
   }
-  function dragEnter(ev, target) {
-    // swap items in data
-    if (grabbed && target != grabbed && target.classList.contains("item")) {
-      moveData(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
-    }
+  function startDrag(e) {
+    // preventing default to prevent lag on touch devices (because of the browser checking for screen scrolling)
+    e.preventDefault();
+    dragDisabled = false;
   }
-  // does the actual moving of items in data
-  function moveData(from, to) {
-    let tempAssign = data[from];
-    data = [...data.slice(0, from), ...data.slice(from + 1)];
-    data = [...data.slice(0, to), tempAssign, ...data.slice(to)];
-  }
-  function release(ev) {
-    grabbed = null;
+  function handleKeyDown(e) {
+    if ((e.key === "Enter" || e.key === " ") && dragDisabled)
+      dragDisabled = false;
   }
 </script>
 
 <style>
-  .dragdroplist {
+  /* div {
     position: relative;
-  }
-  .alignContent1 {
-    display: flex;
-    width: 80%;
-  }
-  .alignContent:hover > .alignContent1 {
-    border: 1px solid #0a2020fe;
-  }
-  .list {
-    cursor: pointer;
-    padding-inline-start: 0%;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-  }
-  .item {
-    /* display: inline-flex; */
-    user-select: none;
-    z-index: 2;
-  }
-  #dragged {
-    pointer-events: none;
-    z-index: -5;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-  }
-  #dragged * {
-    pointer-events: none;
-  }
-  #dragged.haunting {
-    z-index: 20;
-    opacity: 1;
-  }
-  /* .orderList {
-    height: 25%;
-    width: 25%;
-    display: inline-flex;
+    height: 1.5em;
+    width: 10em;
+    text-align: center;
+    border: 1px solid black;
+    margin: 0.2em;
+    padding: 0.3em;
   } */
+  .icon {
+    display: block;
+    width: 2em;
+    height: 2em;
+    color: var(--color);
+  }
+  .handle:hover,
+  .handle:focus {
+    background-color: var(--color);
+    color: white;
+  }
 </style>
 
-<main class="dragdroplist">
-  <div
-    bind:this={dragged}
-    id="dragged"
-    class={grabbed ? 'item haunting' : 'item'}
-    style={'top: ' + (mouseY + offsetY - layerY) + 'px'}>
-    <p />
-  </div>
-  <div
-    class="list"
-    on:mousemove={function(ev) {
-      ev.stopPropagation();
-      drag(ev.clientY);
-    }}
-    on:touchmove={function(ev) {
-      ev.stopPropagation();
-      drag(ev.touches[0].clientY);
-    }}
-    on:mouseup={function(ev) {
-      ev.stopPropagation();
-      release(ev);
-    }}
-    on:touchend={function(ev) {
-      ev.stopPropagation();
-      release(ev.touches[0]);
-    }}>
-    {#each data as items, i}
-      <div class="alignContent">
-        <div class="alignContent1">
-          <div
-            class="item"
-            data-index={i}
-            data-id={items.id}
-            data-grabY="0"
-            on:mousedown={function(ev) {
-              grab(ev.clientY, this);
-            }}
-            on:touchstart={function(ev) {
-              grab(ev.touches[0].clientY, this);
-            }}
-            on:mouseenter={function(ev) {
-              ev.stopPropagation();
-              dragEnter(ev, ev.target);
-            }}
-            on:touchmove={function(ev) {
-              ev.stopPropagation();
-              ev.preventDefault();
-              touchEnter(ev.touches[0]);
-            }}>
-            <Handle>
-              <MdDragHandle />
-            </Handle>
-
-          </div>
-
-          <div>
-            {#if items.id.startsWith('69429/s')}
-              <ul class="list">
-                <li>
-                  <a href="/collection/{encodeURIComponent(items.id)}">
-                    {items.slug}
-                  </a>
-                </li>
-                <li>
-                  <IIIFTextDisplay data={items.label} />
-                </li>
-              </ul>
-            {:else if items.id.startsWith('69429/m')}
-              <ul class="list">
-                <li>
-                  <a href="/manifest/{encodeURIComponent(items.id)}">
-                    {items.slug}
-                  </a>
-
-                </li>
-                <li>
-                  <IIIFTextDisplay bind:data={items.label} />
-
-                </li>
-              </ul>
-            {:else}
-              <ul>
-                <p>The canvas items comes here</p>
-              </ul>
-            {/if}
-
-          </div>
-
-          <!--  <div class="orderList">
-            <FaListOl />
-          </div>
-           -->
-        </div>
-      </div>
-    {/each}
-
-  </div>
-</main>
+<table
+  use:dndzone={{ items, dragDisabled, flipDurationMs }}
+  on:consider={handleConsider}
+  on:finalize={handleFinalize}>
+  {#each items as item (item.id)}
+    <tr animate:flip={{ duration: flipDurationMs }}>
+      <td>
+        <span
+          tabindex={dragDisabled ? 0 : -1}
+          aria-label="drag-handle"
+          class="icon handle"
+          style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
+          on:mousedown={startDrag}
+          on:touchstart={startDrag}
+          on:keydown={handleKeyDown}>
+          <FaBars />
+        </span>
+      </td>
+      <td>Type icon (TODO)</td>
+      <td>
+        <a href="/{item.type}/{encodeURIComponent(item.id)}">
+          <IIIFTextDisplay data={item.label} />
+        </a>
+      </td>
+      <td>Remove (TODO)</td>
+    </tr>
+  {/each}
+</table>
