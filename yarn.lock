@@ -2864,6 +2864,13 @@ supports-color@^6.1.0:
   dependencies:
     has-flag "^3.0.0"
 
+svelte-awesome@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/svelte-awesome/-/svelte-awesome-2.3.0.tgz#03735c1ba1940e931c41271a5ebf72e2ae9e292c"
+  integrity sha512-xXU3XYJmr5PK9e3pCpW6feU/tNpAhERWDrgDxkC0DU6LNum02zzc00I17bmUWTSRdKLf+IFbA5hWvCm1V8g+/A==
+  dependencies:
+    svelte "^3.15.0"
+
 svelte-dev-helper@^1.1.9:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/svelte-dev-helper/-/svelte-dev-helper-1.1.9.tgz#7d187db5c6cdbbd64d75a32f91b8998bde3273c3"
@@ -2891,6 +2898,11 @@ svelte-spinner@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/svelte-spinner/-/svelte-spinner-2.0.2.tgz#ec090651dd7ef2ccdaa5ba972ee456a2e306ae2c"
   integrity sha512-tIsvy/udEdVxwf5HYg9zFvXVxGmS1O+zq2K1ush6ojNZy0DY+ZoW8lRYQEbvXMkU6ur2NfTECGV5ZSA4Rw6XRg==
+
+svelte@^3.15.0:
+  version "3.31.0"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.31.0.tgz#13966e5f55b975bc86675469bb2c58dd0e558d97"
+  integrity sha512-r+n8UJkDqoQm1b+3tA3Lh6mHXKpcfOSOuEuIo5gE2W9wQYi64RYX/qE6CZBDDsP/H4M+N426JwY7XGH4xASvGQ==
 
 svelte@^3.24:
   version "3.24.1"
