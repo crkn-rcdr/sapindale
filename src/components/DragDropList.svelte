@@ -57,21 +57,30 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    border: 1px solid var(--color-bg-secondary);
+    border-radius: var(--border-radius);
+    border-spacing: 0;
+  }
+  .dragList > :nth-child(even) {
+    background-color: var(--color-accent);
   }
   .dragListItem {
     display: flex;
     align-items: center;
   }
-  .dragListItem > :not(:first-child) {
-    margin-left: 1rem;
+  .dragListItem > * {
+    margin: 0 0.5rem;
   }
   .dragListItem > .icon {
-    flex: min-content 1 0;
+    min-width: 2rem;
+    min-height: 2rem;
     width: 2rem;
     height: 2rem;
+    display: flex;
+    align-items: center;
   }
   .dragListItem > .expand {
-    flex: auto 1 0;
+    margin-right: auto;
   }
   .handle {
     color: var(--color);
@@ -79,7 +88,15 @@
   .handle:hover,
   .handle:focus {
     background-color: var(--color);
-    color: white;
+    color: var(--color-bg);
+  }
+  .danger {
+    color: var(--color-danger);
+  }
+  .danger:hover,
+  .danger:focus {
+    background-color: var(--color-danger);
+    color: var(--color-bg);
   }
 </style>
 
@@ -90,16 +107,16 @@
   on:finalize={handleFinalize}>
   {#each items as item, i (item.id)}
     <li class="dragListItem" animate:flip={{ duration: flipDurationMs }}>
-      <span
+      <button
         tabindex={dragDisabled ? 0 : -1}
         aria-label="drag-handle"
-        class="icon handle"
+        class="not-styled icon handle"
         style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
         on:mousedown={startDrag}
         on:touchstart={startDrag}
         on:keydown={handleKeyDown}>
         <HandleIcon />
-      </span>
+      </button>
       <span class="icon">
         {#if item.type === 'manifest'}
           {#if item.manifestType === 'pdf'}
@@ -116,9 +133,9 @@
       <a class="expand" href="/{item.type}/{encodeURIComponent(item.id)}">
         <IIIFTextDisplay data={item.label} />
       </a>
-      <span class="icon danger" style="cursor:pointer" on:click={removeItem(i)}>
+      <button class="not-styled icon danger" on:click={removeItem(i)}>
         <XIcon />
-      </span>
+      </button>
     </li>
   {/each}
 </ul>
