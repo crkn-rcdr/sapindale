@@ -45,18 +45,12 @@
     if ((e.key === "Enter" || e.key === " ") && dragDisabled)
       dragDisabled = false;
   }
+  function removeItem(index) {
+    items = [...items.slice(0, index), ...items.slice(index + 1)];
+  }
 </script>
 
 <style>
-  /* div {
-    position: relative;
-    height: 1.5em;
-    width: 10em;
-    text-align: center;
-    border: 1px solid black;
-    margin: 0.2em;
-    padding: 0.3em;
-  } */
   .dragList {
     display: flex;
     flex-direction: column;
@@ -94,7 +88,7 @@
   use:dndzone={{ items, dragDisabled, flipDurationMs }}
   on:consider={handleConsider}
   on:finalize={handleFinalize}>
-  {#each items as item (item.id)}
+  {#each items as item, i (item.id)}
     <li class="dragListItem" animate:flip={{ duration: flipDurationMs }}>
       <span
         tabindex={dragDisabled ? 0 : -1}
@@ -122,7 +116,7 @@
       <a class="expand" href="/{item.type}/{encodeURIComponent(item.id)}">
         <IIIFTextDisplay data={item.label} />
       </a>
-      <span class="icon danger">
+      <span class="icon danger" style="cursor:pointer" on:click={removeItem(i)}>
         <XIcon />
       </span>
     </li>
