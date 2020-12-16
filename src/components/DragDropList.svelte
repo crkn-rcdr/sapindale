@@ -9,8 +9,10 @@
   import UnorderedIcon from "svelte-icons/fa/FaListUl.svelte";
   import PdfIcon from "svelte-icons/md/MdPictureAsPdf.svelte";
   import MulticanvasIcon from "svelte-icons/md/MdLibraryBooks.svelte";
+  import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
 
   export let items = [];
+  let type = "collection";
   const flipDurationMs = 200;
   let dragDisabled = true;
 
@@ -121,4 +123,8 @@
       </span>
     </li>
   {/each}
+
 </ul>
+<span>
+  <SlugTypeAhead bind:type label="Slug:" restrictType="true" />
+</span>
