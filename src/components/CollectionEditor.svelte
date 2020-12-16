@@ -81,12 +81,18 @@
       </table>
     {/if}
     <p>TODO: add an "Add to collection" interface</p>
+    <p>
+      TODO: add context-sensitive buttons for creating, updating, and/or
+      publishing the collection
+    </p>
   </div>
 
   <div>
     <h2>Items</h2>
     {#if initialOrdered}
       <DragDropList bind:items={collection.items} />
+      <p>TODO: implement item removal</p>
+      <p>TODO: implement adding a single item</p>
     {:else}
       <p>
         This collection has {collection.itemCount} items. You can add items
@@ -94,6 +100,7 @@
         items from it by accessing the editor for those items directly.
       </p>
     {/if}
+    <p>TODO: implement adding items by batch</p>
   </div>
 </div>
 
