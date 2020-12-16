@@ -68,7 +68,9 @@
         {#each collection.parents as parent}
           <tr>
             <td>
-              <a href="/collection/{encodeURIComponent(parent.id)}">
+              <a
+                rel="external"
+                href="/collection/{encodeURIComponent(parent.id)}">
                 {parent.slug}
               </a>
             </td>
