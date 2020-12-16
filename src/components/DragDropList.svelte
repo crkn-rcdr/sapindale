@@ -3,7 +3,13 @@
   import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import IIIFTextDisplay from "./IIIFTextDisplay";
-  import FaBars from "svelte-icons/fa/FaBars.svelte";
+  import HandleIcon from "svelte-icons/fa/FaBars.svelte";
+  import XIcon from "svelte-icons/fa/FaTimesCircle.svelte";
+  import OrderedIcon from "svelte-icons/fa/FaListOl.svelte";
+  import UnorderedIcon from "svelte-icons/fa/FaListUl.svelte";
+  import PdfIcon from "svelte-icons/md/MdPictureAsPdf.svelte";
+  import MulticanvasIcon from "svelte-icons/md/MdLibraryBooks.svelte";
+
   export let items = [];
   const flipDurationMs = 200;
   let dragDisabled = true;
@@ -51,10 +57,29 @@
     margin: 0.2em;
     padding: 0.3em;
   } */
-  .icon {
-    display: block;
-    width: 2em;
-    height: 2em;
+  .dragList {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dragListItem {
+    display: flex;
+    align-items: center;
+  }
+  .dragListItem > :not(:first-child) {
+    margin-left: 1rem;
+  }
+  .dragListItem > .icon {
+    flex: min-content 1 0;
+    width: 2rem;
+    height: 2rem;
+  }
+  .dragListItem > .expand {
+    flex: auto 1 0;
+  }
+  .handle {
     color: var(--color);
   }
   .handle:hover,
@@ -64,31 +89,42 @@
   }
 </style>
 
-<table
+<ul
+  class="dragList"
   use:dndzone={{ items, dragDisabled, flipDurationMs }}
   on:consider={handleConsider}
   on:finalize={handleFinalize}>
   {#each items as item (item.id)}
-    <tr animate:flip={{ duration: flipDurationMs }}>
-      <td>
-        <span
-          tabindex={dragDisabled ? 0 : -1}
-          aria-label="drag-handle"
-          class="icon handle"
-          style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
-          on:mousedown={startDrag}
-          on:touchstart={startDrag}
-          on:keydown={handleKeyDown}>
-          <FaBars />
-        </span>
-      </td>
-      <td>Type icon (TODO)</td>
-      <td>
-        <a href="/{item.type}/{encodeURIComponent(item.id)}">
-          <IIIFTextDisplay data={item.label} />
-        </a>
-      </td>
-      <td>Remove (TODO)</td>
-    </tr>
+    <li class="dragListItem" animate:flip={{ duration: flipDurationMs }}>
+      <span
+        tabindex={dragDisabled ? 0 : -1}
+        aria-label="drag-handle"
+        class="icon handle"
+        style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
+        on:mousedown={startDrag}
+        on:touchstart={startDrag}
+        on:keydown={handleKeyDown}>
+        <HandleIcon />
+      </span>
+      <span class="icon">
+        {#if item.type === 'manifest'}
+          {#if item.manifestType === 'pdf'}
+            <PdfIcon />
+          {:else}
+            <MulticanvasIcon />
+          {/if}
+        {:else if item.ordered}
+          <OrderedIcon />
+        {:else}
+          <UnorderedIcon />
+        {/if}
+      </span>
+      <a class="expand" href="/{item.type}/{encodeURIComponent(item.id)}">
+        <IIIFTextDisplay data={item.label} />
+      </a>
+      <span class="icon danger">
+        <XIcon />
+      </span>
+    </li>
   {/each}
-</table>
+</ul>
