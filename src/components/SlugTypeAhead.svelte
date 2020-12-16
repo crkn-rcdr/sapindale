@@ -11,71 +11,78 @@
   } from "../api/manifest.js";
 
   const dispatch = createEventDispatcher();
-  export let mode;
+  export let type;
+  export let restrictType = false;
+  if (!type) restrictType = false;
+  export let label = "Please provide a label for this component.";
 
   let prefix = "";
   let lookupList = [];
+  let error = "";
   const { session } = stores();
   let token = $session.token;
 
-  export let label = "Please provide a label for this component.";
-
-  function clear() {
-    lookupList = [];
-    dispatch("deselected", {});
-  }
-
   async function lookupSlug() {
+    let searchMethod =
+      type === "manifest" ? searchManifestSlug : searchCollectionSlug;
     try {
-      let searchMethod =
-        mode === "manifest" ? searchManifestSlug : searchCollectionSlug;
       lookupList = await searchMethod(token, prefix);
-    } catch (ignore) {}
+    } catch (e) {
+      error = e.message;
+    }
   }
+
   async function selectItem(event) {
-    let resolveMethod =
-      mode === "manifest" ? resolveManifestSlug : resolveCollectionSlug;
-    let slug = await resolveMethod(token, prefix);
-    dispatch("selected", slug);
+    if (lookupList && lookupList.includes(prefix)) {
+      let resolveMethod =
+        type === "manifest" ? resolveManifestSlug : resolveCollectionSlug;
+      try {
+        let slug = await resolveMethod(token, prefix);
+        dispatch("selected", slug);
+      } catch (e) {
+        error = e.message;
+      }
+    }
   }
 </script>
 
-<style>
-  label {
-    display: block;
-    width: 150px;
-    text-align: left;
-  }
+{#if !restrictType}
+  <div class="typeSelect">
+    <input
+      type="radio"
+      id="manifestRadio"
+      bind:group={type}
+      on:change={lookupSlug}
+      value="manifest" />
+    <label for="manifestRadio">Manifest</label>
 
-  input[type="text"],
-  datalist {
-    width: 500px;
-  }
-</style>
+    <input
+      type="radio"
+      id="collectionRadio"
+      bind:group={type}
+      on:change={lookupSlug}
+      value="collection" />
+    <label for="collectionRadio">Collection</label>
+  </div>
+{/if}
 
-<label>
-  <input type="radio" bind:group={mode} on:select={clear} value="manifest" />
-  Manifest
-</label>
-
-<label>
-  <input type="radio" bind:group={mode} on:select={clear} value="collection" />
-  Collection
-</label>
-
-<label for={`${prefix}.input`}>{label}</label>
+<label for="slugInput">{label}</label>
 <input
   type="text"
-  id="{prefix}.input"
-  list={`${lookupList}.prefix`}
+  id="slugInput"
+  list="slugList"
   bind:value={prefix}
   on:input={lookupSlug}
   on:change={selectItem} />
 
-<datalist id={`${lookupList}.prefix`}>
-  {#if lookupList != null}
+<datalist id="slugList">
+  {#if lookupList}
     {#each lookupList as item}
       <option>{item}</option>
     {/each}
   {/if}
 </datalist>
+
+{#if error}
+  <p class="danger">{error}</p>
+{/if}
