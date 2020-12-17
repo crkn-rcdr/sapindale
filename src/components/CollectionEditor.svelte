@@ -4,8 +4,9 @@
   import SlugResolver from "../components/SlugResolver.svelte";
   import { getCollection } from "../api/collection.js";
   import TextValueEditor from "../components/TextValueEditor.svelte";
-  import SortableList from "../components/SortableList.svelte";
+  import DragDropList from "../components/DragDropList.svelte";
   import IIIFTextDisplay from "./IIIFTextDisplay";
+  import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
 
   export let id = undefined;
 
@@ -19,123 +20,89 @@
     items: [],
     parents: []
   };
-  let summaryDisplay = false;
-  let showCreate = true;
-  let reduceParents = {};
 
-  function addSummary() {
-    if (Object.getOwnPropertyNames(collection.summary).length === 0) {
-      summaryDisplay = true;
-      showCreate = false;
-    }
-  }
+  let initialSlug = collection.slug;
+  let initialOrdered = collection.ordered;
 </script>
 
 <style>
-  .scroll {
-    overflow-y: scroll;
-    height: calc(100vh - 450px);
-    width: calc(100% - 150px);
-    background-color: var(--color-secondary-accent);
-    color: var(--color-text);
+  .columns {
+    display: flex;
   }
-  section {
-    display: block;
+  .columns > * {
+    flex: 0 1 100%;
   }
-  .left {
-    width: 50%;
-    position: fixed;
-    float: left;
+  .columns > *:not(:first-child) {
+    margin-left: 2rem;
   }
-  .right {
-    float: right;
-    width: 50%;
-  }
-  article ul {
-    list-style: none;
-    width: 65%;
+  table {
+    white-space: normal;
   }
 </style>
 
-<section class="left">
-  <article class="children-inline">
-    <h4>Id:</h4>
-    <input type="text" bind:value={collection.id} readonly />
-  </article>
-  <article class="children-inline">
-    <h4>Slug:</h4>
-    <input type="text" bind:value={collection.slug} />
-  </article>
-  <article class="children-inline">
-    <h4>Ordered:</h4>
-    <input type="checkbox" bind:checked={collection.ordered} />
-  </article>
-  <article class="children-inline">
-    <h4>Public:</h4>
-    <input type="text" bind:value={collection.public} readonly />
-  </article>
-  <article>
-    <h4>Label:</h4>
-    <TextValueEditor
-      bind:data={collection.label}
-      mandatory={true}
-      textarea={false} />
-    <label for="summary">Summary</label>
-    {#if summaryDisplay}
+<h1>
+  {#if initialSlug}Editing {initialSlug}{:else}Editing a new collection{/if}
+</h1>
+
+<div class="columns">
+  <div>
+    <div class="children-inline">
+      <label for="Slug">Slug:</label>
+      <input type="text" bind:value={collection.slug} />
+    </div>
+    <div class="children-inline">
+      <label for="Ordered">Ordered:</label>
+      <input type="checkbox" bind:checked={collection.ordered} />
+    </div>
+    <div>
+      <label for="TextLabel">Label:</label>
       <TextValueEditor
-        bind:data={collection.summary}
-        mandatory={false}
-        textarea={true} />
+        bind:data={collection.label}
+        mandatory={true}
+        textarea={false} />
+    </div>
+
+    <h2>Parent Collections</h2>
+    {#if collection.parents.length > 1}
+      <table>
+        {#each collection.parents as parent}
+          <tr>
+            <td>
+              <a
+                rel="external"
+                href="/collection/{encodeURIComponent(parent.id)}">
+                {parent.slug}
+              </a>
+            </td>
+            <td>
+              <IIIFTextDisplay data={parent.label} />
+            </td>
+            <td>Remove (TODO)</td>
+          </tr>
+        {/each}
+      </table>
     {/if}
-    {#if showCreate}
-      <button class="create" on:click|preventDefault={addSummary}>
-        Add New Summary
-      </button>
+    <p>TODO: add an "Add to collection" interface</p>
+    <p>
+      TODO: add context-sensitive buttons for creating, updating, and/or
+      publishing the collection
+    </p>
+  </div>
+
+  <div>
+    <h2>Items</h2>
+    {#if initialOrdered}
+      <DragDropList bind:items={collection.items} />
+      <p>TODO: implement adding a single item</p>
+    {:else}
+      <p>
+        This collection has {collection.itemCount} items. You can add items
+        (collections or manifests) to this collection below, and you can remove
+        items from it by accessing the editor for those items directly.
+      </p>
     {/if}
-  </article>
+    <p>TODO: implement adding items by batch</p>
+  </div>
+</div>
 
-  {#if Object.getOwnPropertyNames(collection.parents).length > 1}
-    <article>
-      <h4>Parents:</h4>
-      {#each collection.parents as parent}
-        <ul>
-          <li>
-            <a href="/collection/{encodeURIComponent(parent.id)}">
-              {parent.slug}
-            </a>
-          </li>
-          <li>
-            <IIIFTextDisplay data={parent.label} />
-            (
-            <a href={parent.noid}>{parent.slug}</a>
-            )
-          </li>
-
-        </ul>
-      {/each}
-    </article>
-  {/if}
-</section>
-
-<section class="right">
-  <h4>Items:</h4>
-  {#if collection.ordered}
-    <article class="scroll">
-      {#each collection.items as item}
-        <ul>
-          <li>{item.id}</li>
-          <li>{item.slug}</li>
-          <li>{item.public}</li>
-          <li>{item.type}</li>
-          <li>
-            <IIIFTextDisplay data={item.label} />
-          </li>
-
-        </ul>
-      {/each}
-    </article>
-  {:else}
-    <p>The Collection has {collection.itemCount} Items</p>
-  {/if}
-
-</section>
+<pre>{JSON.stringify(collection, null, 2)}</pre>
