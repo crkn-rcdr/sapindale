@@ -2,7 +2,7 @@
   // import { stores } from "@sapper/app";
   // const { session } = stores();
   // let legacy = false;
-  import SlugSelector from "../components/SlugSelector.svelte";
+  import SlugSelector from "../components/Index/SlugSelector.svelte";
 </script>
 
 <style>

@@ -5,7 +5,7 @@
     packagingrequests,
     packagingconfigs,
     packagingdocs
-  } from "../couch/packaging.js";
+  } from "../couch/packaging";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 

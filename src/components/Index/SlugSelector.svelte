@@ -1,6 +1,6 @@
 <script>
   import { goto } from "@sapper/app";
-  import SlugTypeAhead from "../components/SlugTypeAhead.svelte";
+  import SlugTypeAhead from "../Slug/TypeAhead";
   let type = "manifest";
 
   async function selected(event) {

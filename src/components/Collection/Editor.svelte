@@ -1,12 +1,11 @@
 <script>
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
-  import SlugResolver from "../components/SlugResolver.svelte";
-  import { getCollection } from "../api/collection.js";
-  import TextValueEditor from "../components/TextValueEditor.svelte";
-  import DragDropList from "../components/DragDropList.svelte";
-  import IIIFTextDisplay from "./IIIFTextDisplay";
-  import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
+  import { getCollection } from "../../api/collection";
+  import SlugResolver from "../Slug/Resolver.svelte";
+  import ItemList from "./ItemList.svelte";
+  import TextDisplay from "../IIIF/TextDisplay";
+  import TextEditor from "../IIIF/TextEditor";
 
   export let id = undefined;
 
@@ -56,7 +55,7 @@
     </div>
     <div>
       <label for="TextLabel">Label:</label>
-      <TextValueEditor
+      <TextEditor
         bind:data={collection.label}
         mandatory={true}
         textarea={false} />
@@ -75,7 +74,7 @@
               </a>
             </td>
             <td>
-              <IIIFTextDisplay data={parent.label} />
+              <TextDisplay data={parent.label} />
             </td>
             <td>Remove (TODO)</td>
           </tr>
@@ -92,7 +91,7 @@
   <div>
     <h2>Items</h2>
     {#if initialOrdered}
-      <DragDropList bind:items={collection.items} />
+      <ItemList bind:items={collection.items} />
       <p>TODO: implement adding a single item</p>
     {:else}
       <p>

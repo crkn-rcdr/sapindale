@@ -3,7 +3,7 @@
     repositoryfilesize,
     repositoryverified,
     repositoryreplicate
-  } from "../couch/repository.js";
+  } from "../couch/repository";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 

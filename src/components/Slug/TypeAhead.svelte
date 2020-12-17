@@ -4,11 +4,11 @@
   import {
     resolveSlug as resolveCollectionSlug,
     searchSlug as searchCollectionSlug
-  } from "../api/collection.js";
+  } from "../../api/collection";
   import {
     resolveSlug as resolveManifestSlug,
     searchSlug as searchManifestSlug
-  } from "../api/manifest.js";
+  } from "../../api/manifest";
 
   const dispatch = createEventDispatcher();
   export let type;

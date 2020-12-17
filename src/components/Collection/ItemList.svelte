@@ -2,13 +2,13 @@
   // Modifies the example found here: https://svelte.dev/repl/4949485c5a8f46e7bdbeb73ed565a9c7?version=3.24.1
   import { dndzone, SOURCES, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  import IIIFTextDisplay from "./IIIFTextDisplay";
-  import HandleIcon from "svelte-icons/fa/FaBars.svelte";
-  import XIcon from "svelte-icons/fa/FaTimesCircle.svelte";
-  import OrderedIcon from "svelte-icons/fa/FaListOl.svelte";
-  import UnorderedIcon from "svelte-icons/fa/FaListUl.svelte";
-  import PdfIcon from "svelte-icons/md/MdPictureAsPdf.svelte";
-  import MulticanvasIcon from "svelte-icons/md/MdLibraryBooks.svelte";
+  import TextDisplay from "../IIIF/TextDisplay";
+  import HandleIcon from "svelte-icons/fa/FaBars";
+  import XIcon from "svelte-icons/fa/FaTimesCircle";
+  import OrderedIcon from "svelte-icons/fa/FaListOl";
+  import UnorderedIcon from "svelte-icons/fa/FaListUl";
+  import PdfIcon from "svelte-icons/md/MdPictureAsPdf";
+  import MulticanvasIcon from "svelte-icons/md/MdLibraryBooks";
 
   export let items = [];
   const flipDurationMs = 200;
@@ -131,7 +131,7 @@
         {/if}
       </span>
       <a class="expand" href="/{item.type}/{encodeURIComponent(item.id)}">
-        <IIIFTextDisplay data={item.label} />
+        <TextDisplay data={item.label} />
       </a>
       <button class="not-styled icon danger" on:click={removeItem(i)}>
         <XIcon />

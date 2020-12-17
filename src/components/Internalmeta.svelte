@@ -3,7 +3,7 @@
     internalmetadocs,
     internalmetarequests,
     capcollectiondocs
-  } from "../couch/internalmeta.js";
+  } from "../couch/internalmeta";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 

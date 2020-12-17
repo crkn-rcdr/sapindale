@@ -1,8 +1,8 @@
 <script>
   import { stores } from "@sapper/app";
   import { createEventDispatcher, onMount } from "svelte";
-  import { resolveSlug as resolveCollectionSlug } from "../api/collection.js";
-  import { resolveSlug as resolveManifestSlug } from "../api/manifest.js";
+  import { resolveSlug as resolveCollectionSlug } from "../../api/collection";
+  import { resolveSlug as resolveManifestSlug } from "../../api/manifest";
   import Spinner from "svelte-spinner";
   const { session } = stores();
   let token = $session.token;

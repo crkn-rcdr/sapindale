@@ -8,9 +8,9 @@
     smeltqview,
     updatebasic
   } from "../couch/dipstaging.js";
-  import TypeAhead from "../components/TypeAhead.svelte";
-  import SlugResolver from "../components/SlugResolver.svelte";
-  import { depositors } from "../commonvars.js";
+  import TypeAhead from "./TypeAhead";
+  import SlugResolver from "./Slug/Resolver";
+  import { depositors } from "../commonvars";
   const { session } = stores();
   let token = $session.token;
 
