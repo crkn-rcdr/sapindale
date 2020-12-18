@@ -93,7 +93,6 @@
     <h2>Items</h2>
     {#if initialOrdered}
       <DragDropList bind:items={collection.items} />
-      <p>TODO: implement item removal</p>
       <p>TODO: implement adding a single item</p>
     {:else}
       <p>
