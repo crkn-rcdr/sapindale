@@ -21,10 +21,6 @@
   id = encodeURIComponent(id);
 </script>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 <svelte:head>
   <title>Sapindale — Manifest Editor</title>
 </svelte:head>
