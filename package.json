@@ -18,10 +18,7 @@
     "node-fetch": "^2.6",
     "polka": "^0.5",
     "query-string": "^6.8",
-    "sirv": "^0.4",
-    "svelte-dnd-action": "^0.6",
-    "svelte-icons": "^2.1",
-    "svelte-spinner": "^2.0"
+    "sirv": "^0.4"
   },
   "devDependencies": {
     "autoprefixer": "^9.7",
@@ -30,7 +27,10 @@
     "npm-run-all": "^4.1",
     "sapper": "^0.28.0",
     "svelte": "^3.31.0",
+    "svelte-dnd-action": "^0.6",
+    "svelte-icons": "^2.1",
     "svelte-loader": "^2.13",
+    "svelte-spinner": "^2.0",
     "webpack": "^4.41"
   }
 }
