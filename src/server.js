@@ -1,54 +1,30 @@
 import url from "url";
-import sirv from "sirv";
 import polka from "polka";
+import cookieParser from "cookie-parser";
 import compression from "compression";
+import sirv from "sirv";
+import { authenticate } from "./resources/auth";
+
 import * as sapper from "@sapper/server";
 import { createServer as http } from "http";
-import cookieParser from "cookie-parser";
-import nJwt from "njwt";
+
 import "./styles/global.css";
 
 // this is probably a bad idea, but it'll do for now
 import nodeFetch from "node-fetch";
 global.fetch = nodeFetch;
 
-const { NODE_ENV, PORT, JWT_SECRET } = process.env;
+const { NODE_ENV, PORT } = process.env;
 const dev = NODE_ENV === "development";
-
-const parseJWT = (token) => {
-  let jwtData;
-  try {
-    jwtData = nJwt.verify(token, JWT_SECRET);
-  } catch (ignore) {}
-  if (jwtData) {
-    return {
-      token,
-      name: jwtData.body.name,
-      email: jwtData.body.email,
-      authenticated: true,
-    };
-  } else {
-    return { authenticated: false };
-  }
-};
 
 const { handler } = polka().use(
   cookieParser(),
   compression({ threshold: 0 }),
   sirv("static", { dev }),
+  authenticate,
   sapper.middleware({
     session: (req, _res) => {
-      const redirectUrl = url.format({
-        protocol: req.headers["x-forwarded-proto"],
-        host: req.headers["x-forwarded-host"],
-        pathname: req.path,
-        query: req.query,
-      });
-      if (req.cookies.auth_token) {
-        return { ...parseJWT(req.cookies.auth_token), redirectUrl };
-      } else {
-        return { redirectUrl };
-      }
+      return req.user || {};
     },
   })
 );

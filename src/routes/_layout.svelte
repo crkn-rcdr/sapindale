@@ -1,18 +1,13 @@
 <script context="module">
   export async function preload(page, session) {
-    const { authenticated, name, email, redirectUrl } = session;
-    if (authenticated) {
-      return { redirectUrl, authenticated, name, email };
-    } else {
-      return { redirectUrl, authenticated: false };
-    }
+    const { name } = session;
+    return { name };
   }
 </script>
 
 <script>
-  export let authenticated, redirectUrl, name;
-  let loginUrl = `${process.env.AUTH}/azuread/login?redirectUrl=${redirectUrl}`;
-  let logoutUrl = `${process.env.AUTH}/logout`;
+  import { logoutUrl } from "../resources/auth";
+  export let name;
 </script>
 
 <style>
@@ -39,21 +34,11 @@
   </a>
   <ul>
     <li>
-      {#if authenticated}
-        Logged in as: {name}.
-        <a href={logoutUrl}>Log out</a>
-      {:else}
-        <a href={loginUrl}>Log in</a>
-      {/if}
+      Logged in as: {name}.
+      <a href={logoutUrl}>Log out</a>
     </li>
   </ul>
 </nav>
 <main>
-  {#if authenticated}
-    <slot />
-  {:else}
-    <p>
-      <a href={loginUrl}>Please log in to continue.</a>
-    </p>
-  {/if}
+  <slot />
 </main>
