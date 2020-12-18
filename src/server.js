@@ -14,6 +14,7 @@ global.fetch = nodeFetch;
 
 const { NODE_ENV, PORT, JWT_SECRET } = process.env;
 const dev = NODE_ENV === "development";
+
 const parseJWT = (token) => {
   let jwtData;
   try {
@@ -30,6 +31,7 @@ const parseJWT = (token) => {
     return { authenticated: false };
   }
 };
+
 const { handler } = polka().use(
   cookieParser(),
   compression({ threshold: 0 }),
