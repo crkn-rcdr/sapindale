@@ -11,19 +11,6 @@
     "docker:prod": "docker-compose -f docker-compose.prod.yml -f docker-compose.override.yml up --build"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "compression": "^1.7.4",
-    "cookie-parser": "^1.4.5",
-    "filesize": "^6.1.0",
-    "njwt": "^1.0.0",
-    "node-fetch": "^2.6.0",
-    "polka": "^0.5.2",
-    "query-string": "^6.8.3",
-    "sirv": "^0.4.2",
-    "svelte-dnd-action": "^0.6.23",
-    "svelte-icons": "^2.1.0",
-    "svelte-spinner": "^2.0.2"
-=======
     "compression": "^1.7",
     "cookie-parser": "^1.4",
     "filesize": "^6.1",
@@ -32,7 +19,6 @@
     "polka": "^0.5",
     "query-string": "^6.8",
     "sirv": "^0.4"
->>>>>>> master
   },
   "devDependencies": {
     "autoprefixer": "^9.7",

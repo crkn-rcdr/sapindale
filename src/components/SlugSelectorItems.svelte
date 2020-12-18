@@ -5,7 +5,6 @@
 
   async function selected(event) {
     /* await goto(`/${type}/${encodeURIComponent(event.detail.noid)}`); */
-    await 
   }
 </script>
 
