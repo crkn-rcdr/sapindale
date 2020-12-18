@@ -1,10 +1,10 @@
 <script>
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
-  import SlugResolver from "../components/SlugResolver.svelte";
-  import { getManifest } from "../api/manifest.js";
-  import TextValueEditor from "../components/TextValueEditor.svelte";
-  import IIIFTextDisplay from "./IIIFTextDisplay";
+  import { getManifest } from "../../api/manifest";
+  import SlugResolver from "../Slug/Resolver";
+  import TextEditor from "../IIIF/TextEditor";
+  import TextDisplay from "../IIIF/TextDisplay";
 
   export let id = undefined;
 
@@ -52,10 +52,7 @@
   </article>
   <article>
     <h4>Label:</h4>
-    <TextValueEditor
-      bind:data={manifest.label}
-      mandatory={true}
-      textarea={false} />
+    <TextEditor bind:data={manifest.label} mandatory={true} textarea={false} />
   </article>
 
   {#if Object.getOwnPropertyNames(manifest.parents).length > 1}
@@ -69,7 +66,7 @@
             </a>
           </li>
           <li>
-            <IIIFTextDisplay data={parent.label} />
+            <TextDisplay data={parent.label} />
             (
             <a href={parent.noid}>{parent.slug}</a>
             )

@@ -15,13 +15,16 @@
 </script>
 
 <script>
-  import ManifestEditor from "../../components/ManifestEditor.svelte";
+  import ManifestEditor from "../../components/Manifest/Editor.svelte";
 
   export let id, manifest;
   id = encodeURIComponent(id);
 </script>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 <svelte:head>
   <title>Sapindale — Manifest Editor</title>
 </svelte:head>

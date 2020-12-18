@@ -1,5 +1,5 @@
 <script>
-  import CouchView from "../components/CouchView.svelte";
+  import CouchView from "../components/Couch/View.svelte";
 </script>
 
 <svelte:head>

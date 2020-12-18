@@ -15,7 +15,7 @@
 </script>
 
 <script>
-  import CollectionEditor from "../../components/CollectionEditor.svelte";
+  import CollectionEditor from "../../components/Collection/Editor.svelte";
 
   export let id, collection;
   id = encodeURIComponent(id);
