@@ -2,7 +2,7 @@
   import qs from "query-string";
   import { onMount } from "svelte";
   import { goto } from "@sapper/app";
-  import { design_doc_views as getViews, view as fetchView } from "../couch";
+  import { design_doc_views as getViews, view as fetchView } from "../../couch";
   import { stores } from "@sapper/app";
 
   export let db = undefined,

@@ -3,7 +3,7 @@
   import {
     design_doc_views as getViews,
     view as fetchView
-  } from "../../../../couch.js";
+  } from "../../../../couch";
   export async function preload(page, session) {
     const { token, authenticated } = session;
     if (authenticated) {
@@ -20,7 +20,7 @@
 </script>
 
 <script>
-  import CouchView from "../../../../components/CouchView.svelte";
+  import CouchView from "../../../../components/Couch/View.svelte";
 
   export let db, view, options, views;
 </script>

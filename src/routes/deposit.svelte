@@ -1,6 +1,6 @@
 <script>
-  import TypeAhead from "../components/TypeAhead.svelte";
-  import BulkLookup from "../components/BulkLookup.svelte";
+  import TypeAhead from "../components/Couch/TypeAhead.svelte";
+  import BulkLookup from "../components/Couch/BulkLookup.svelte";
   let id;
   let bulkId;
   var idInList = [];
@@ -9,7 +9,7 @@
   function select(event) {
     id = event.detail.value;
   }
-  
+
   function search(event) {
     console.log(event);
     bulkId = event.detail.results;
@@ -51,8 +51,7 @@
     db="dipstaging"
     id="aip"
     label="Input an AIP ID:"
-    on:selected={select}
-    />
+    on:selected={select} />
 </div>
 <p>
   {#if id}Selected id: {id}{:else}Select an id by typing it in above.{/if}

@@ -1,7 +1,7 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { stores } from "@sapper/app";
-  import { idLookup } from "../couch";
+  import { idLookup } from "../../couch";
 
   const dispatch = createEventDispatcher();
   const { session } = stores();
