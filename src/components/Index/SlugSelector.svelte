@@ -1,10 +1,12 @@
 <script>
   import { goto } from "@sapper/app";
+  import { removeNoidPrefix } from "../../api";
   import SlugTypeAhead from "../Slug/TypeAhead";
   let type = "manifest";
 
   async function selected(event) {
-    await goto(`/${type}/${encodeURIComponent(event.detail.noid)}`);
+    let noid = removeNoidPrefix(event.detail.noid);
+    await goto(`/${type}/${noid}`);
   }
 </script>
 

@@ -1,15 +1,17 @@
 <script context="module">
-  import { getCollection } from "../../api/collection.js";
   export async function preload(page, session) {
     const { id } = page.params;
-    const { token, authenticated } = session;
-    if (authenticated) {
-      const collection = await getCollection(token, encodeURIComponent(id));
+    const response = await this.fetch(`/collection/${id}.json`);
+
+    if (response.status === 200) {
+      const collection = await response.json();
 
       return {
         id,
         collection
       };
+    } else {
+      this.error(404, "Collection not found");
     }
   }
 </script>

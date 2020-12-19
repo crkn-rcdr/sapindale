@@ -1,6 +1,5 @@
 import url from "url";
 import nJwt from "njwt";
-import redirect from "@polka/redirect";
 
 const parseJWT = (token) => {
   let jwtData;

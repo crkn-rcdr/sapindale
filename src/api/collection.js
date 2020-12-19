@@ -1,8 +1,14 @@
 import { request } from "../api";
 
-async function getCollection(token, collection) {
+const noidPrefix = encodeURIComponent("69429/");
+
+async function getCollection(token, id) {
   /*  let prefix = encodeURIComponent("69429/"); */
-  return await request(token, "GET", ["collection", collection].join("/"));
+  return await request(
+    token,
+    "GET",
+    ["collection", `${noidPrefix}${id}`].join("/")
+  );
 }
 
 async function resolveSlug(token, slug) {
