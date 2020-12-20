@@ -1,13 +1,10 @@
 import { request } from "../api";
 
-const noidPrefix = encodeURIComponent("69429/");
-
 async function getCollection(token, id) {
-  /*  let prefix = encodeURIComponent("69429/"); */
   return await request(
     token,
     "GET",
-    ["collection", `${noidPrefix}${id}`].join("/")
+    ["collection", `${encodeURIComponent(id)}`].join("/")
   );
 }
 

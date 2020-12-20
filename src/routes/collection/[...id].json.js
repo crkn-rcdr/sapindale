@@ -2,7 +2,7 @@ import { getCollection } from "../../api/collection";
 
 export async function get(req, res, next) {
   const token = req.cookies.auth_token;
-  const { id } = req.params;
+  const id = req.params.id.join("/");
 
   const collection = await getCollection(token, id);
 

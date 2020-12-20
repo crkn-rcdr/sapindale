@@ -1,6 +1,6 @@
 <script context="module">
   export async function preload(page, session) {
-    const { id } = page.params;
+    const id = page.params.id.join("/");
     const response = await this.fetch(`/collection/${id}.json`);
 
     if (response.status === 200) {
