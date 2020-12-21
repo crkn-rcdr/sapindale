@@ -19,10 +19,6 @@
   }
 </style>
 
-<svelte:head>
-  <title>Sapindale — Canadiana platform administration</title>
-</svelte:head>
-
 <nav>
   <a href="/" class="brand">
     <img
