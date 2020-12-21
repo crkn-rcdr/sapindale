@@ -22,6 +22,25 @@ const { handler } = polka().use(
   compression({ threshold: 0 }),
   sirv("static", { dev }),
   authenticate,
+  (req, res, next) => {
+    if (req.path.substring(req.path.length - 5) === ".json") {
+      res.finalizeJSON = (apiResponse) => {
+        res.setHeader("Content-Type", "application/json");
+        if ("status" in apiResponse && "content" in apiResponse) {
+          res.statusCode = apiResponse.status;
+          if (apiResponse.status >= 400) {
+            res.end(JSON.stringify({ error: apiResponse.message }));
+          } else {
+            res.end(JSON.stringify(apiResponse.content));
+          }
+        } else {
+          res.statusCode = 200;
+          res.end(JSON.stringify(apiResponse));
+        }
+      };
+    }
+    next();
+  },
   sapper.middleware({
     session: (req, _res) => {
       return req.user || {};

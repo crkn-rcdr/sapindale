@@ -1,7 +1,6 @@
 <script>
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
-  import { getCollection } from "../../api/collection";
   import SlugResolver from "../Slug/Resolver.svelte";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
@@ -15,10 +14,11 @@
     label: {},
     summary: {},
     ordered: false,
-    public: false,
-    items: [],
-    parents: []
+    itemCount: 0,
+    items: []
   };
+
+  export let parents = [];
 
   let initialSlug = collection.slug;
   let initialOrdered = collection.ordered;
@@ -39,9 +39,7 @@
   }
 </style>
 
-<h1>
-  {#if initialSlug}Editing {initialSlug}{:else}Editing a new collection{/if}
-</h1>
+<h1>Editing {initialSlug || 'a new collection'}</h1>
 
 <div class="columns">
   <div>
@@ -62,16 +60,12 @@
     </div>
 
     <h2>Parent Collections</h2>
-    {#if collection.parents.length > 1}
+    {#if parents.length > 1}
       <table>
-        {#each collection.parents as parent}
+        {#each parents as parent}
           <tr>
             <td>
-              <a
-                rel="external"
-                href="/collection/{encodeURIComponent(parent.id)}">
-                {parent.slug}
-              </a>
+              <a href="/collection/{parent.id}">{parent.slug}</a>
             </td>
             <td>
               <TextDisplay data={parent.label} />
@@ -103,5 +97,3 @@
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>
-
-<pre>{JSON.stringify(collection, null, 2)}</pre>
