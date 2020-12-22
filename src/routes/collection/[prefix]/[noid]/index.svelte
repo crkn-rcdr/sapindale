@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-  <title>Sapindale — Collection Editor</title>
+  <title>Canadiana Platform Administration — Editing {collection.slug}</title>
 </svelte:head>
 
 <CollectionEditor {id} {collection} {parents} />
