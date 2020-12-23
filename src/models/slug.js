@@ -1,4 +1,5 @@
-const { viewResultFromKey, searchView } = require("../resources/couch");
+import { viewResultFromKey, searchView } from "../resources/couch";
+import { multiTextValueToSingle } from "../resources/iiif";
 
 async function info(dbName, id) {
   const response = await viewResultFromKey(dbName, "access", "slug", id);
@@ -9,7 +10,7 @@ async function info(dbName, id) {
       content: {
         id,
         noid: slug.id,
-        label: slug.value.label,
+        label: multiTextValueToSingle(slug.value.label),
         isAlias: slug.value.isAlias,
         aliasOf: slug.value.aliasOf,
       },
