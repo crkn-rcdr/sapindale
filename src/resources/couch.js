@@ -76,7 +76,7 @@ async function viewResultsFromKeys(db, ddoc, view, keys) {
 
 async function searchView(db, ddoc, view, prefix, limit) {
   let response = await _request(
-    buildViewPath(db, ddoc, view),
+    _buildViewPath(db, ddoc, view),
     {
       start_key: JSON.stringify(prefix),
       end_key: JSON.stringify(`${prefix}\ufff0`),

@@ -25,13 +25,8 @@ async function info(dbName, id) {
   }
 }
 
-async function search(dbName, prefix, limit) {
-  const response = await searchView(dbName, "access", "slug", prefix, limit);
-  if (response.status === 200) {
-    return response.content;
-  } else {
-    return [];
-  }
+async function search(dbName, prefix, limit = 10) {
+  return await searchView(dbName, "access", "slug", prefix, limit);
 }
 
 export default { info, search };
