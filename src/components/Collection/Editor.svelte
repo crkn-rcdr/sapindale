@@ -1,15 +1,8 @@
 <script>
-<<<<<<< HEAD
-  import { stores, goto } from "@sapper/app";
-  import { onMount, afterUpdate, createEventDispatcher } from "svelte";
-  import { getCollection } from "../../api/collection";
-  import SlugResolver from "../Slug/Resolver.svelte";
-=======
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
   import SlugResolver from "../Slug/Resolver";
   import ParentsList from "./ParentsList";
->>>>>>> 8a2994023f5e0fcdf5b5e8b344741b5c6ccf2c2b
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
