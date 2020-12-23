@@ -12,15 +12,17 @@
   let error = "";
 
   async function lookupSlug() {
-    let response = await fetch(`/${type}/slug/search/${prefix}.json`, {
-      method: "POST",
-      credentials: "same-origin"
-    });
-    let json = await response.json();
-    if (response.status === 200) {
-      lookupList = json;
-    } else {
-      error = json.error;
+    if (prefix) {
+      let response = await fetch(`/${type}/slug/search/${prefix}.json`, {
+        method: "POST",
+        credentials: "same-origin"
+      });
+      let json = await response.json();
+      if (response.status === 200) {
+        lookupList = json;
+      } else {
+        error = json.error;
+      }
     }
   }
 
