@@ -25,8 +25,8 @@
   function selected(event) {
     addedItem = event.detail;
   }
-  function addItem(item) {
-    collection.items.push(item);
+  function addItem(addedItem) {
+    collection.items[collection.items.length] = addedItem;
 
     addedItem = "";
   }
@@ -71,16 +71,14 @@
   <div>
     <h2>Items</h2>
     {#if collection.ordered}
-      {#if !addedItem}
-        <ItemList bind:items={collection.items} />
+      <ItemList bind:items={collection.items} />
 
-        <p>TODO: implement adding a single item</p>
+      <p>TODO: implement adding a single item</p>
 
-        <TypeAhead label="Slug:" on:selected={selected} />
-      {:else if addedItem}
+      <TypeAhead label="Slug:" on:selected={selected} />
+      {#if addedItem}
         <TextDisplay data={addedItem.label} />
         <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
-        <ItemList bind:items={collection.items} />
       {/if}
     {:else}
       <p>
