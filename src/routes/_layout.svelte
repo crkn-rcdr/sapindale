@@ -8,6 +8,7 @@
 <script>
   import { logoutUrl } from "../resources/auth";
   export let name;
+  export let segment;
 </script>
 
 <style>
@@ -19,7 +20,7 @@
   }
 </style>
 
-<nav>
+<nav class="segment.{segment}">
   <a href="/" class="brand">
     <img
       src="/canadiana-logo.svg"
