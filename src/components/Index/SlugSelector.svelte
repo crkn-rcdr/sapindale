@@ -4,7 +4,7 @@
   let type = "manifest";
 
   async function selected(event) {
-    await goto(`/${type}/${encodeURIComponent(event.detail.noid)}`);
+    await goto(`/${type}/${event.detail.noid}`);
   }
 </script>
 

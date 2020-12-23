@@ -12,7 +12,15 @@ const api = process.env.API;
 const auth = process.env.AUTH;
 const dev = mode === "development";
 
-const alias = { svelte: path.resolve("node_modules", "svelte") };
+const srcAliases = {
+  Components: path.resolve("__dirname", "src/components"),
+  Models: path.resolve("__dirname", "src/models"),
+  Resources: path.resolve("__dirname", "src/resources"),
+};
+const clientAlias = {
+  ...srcAliases,
+  svelte: path.resolve("node_modules", "svelte"),
+};
 const extensions = [".mjs", ".js", ".json", ".svelte", ".html"];
 const mainFields = ["svelte", "module", "browser", "main"];
 
@@ -35,7 +43,7 @@ module.exports = {
   client: {
     entry: config.client.entry(),
     output: config.client.output(),
-    resolve: { alias, extensions, mainFields },
+    resolve: { alias: clientAlias, extensions, mainFields },
     module: {
       rules: [
         {
@@ -60,7 +68,6 @@ module.exports = {
         "process.env.UPHOLSTERY": JSON.stringify(upholstery),
         "process.env.CANTALOUPE": JSON.stringify(cantaloupe),
         "process.env.API": JSON.stringify(api),
-        "process.env.AUTH": JSON.stringify(auth),
       }),
       ...plugins,
     ],
@@ -71,7 +78,7 @@ module.exports = {
     entry: config.server.entry(),
     output: config.server.output(),
     target: "node",
-    resolve: { extensions, mainFields },
+    resolve: { alias: srcAliases, extensions, mainFields },
     externals: Object.keys(pkg.dependencies).concat("encoding"),
     module: {
       rules: [

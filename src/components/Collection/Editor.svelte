@@ -2,7 +2,7 @@
   import { stores, goto } from "@sapper/app";
   import { onMount, afterUpdate, createEventDispatcher } from "svelte";
   import { getCollection } from "../../api/collection";
-  import SlugResolver from "../Slug/Resolver.svelte";
+    import SlugResolver from "../Slug/Resolver.svelte";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
@@ -16,9 +16,8 @@
     label: {},
     summary: {},
     ordered: false,
-    public: false,
-    items: [],
-    parents: []
+    itemCount: 0,
+    items: []
   };
   console.log("collection", collection);
   let item = [];
@@ -34,6 +33,7 @@
     collection.items.push(item);
     console.log("Updated Collection Items:", collection.items);
   }
+  export let parents = [];
 </script>
 
 <style>
@@ -51,9 +51,7 @@
   }
 </style>
 
-<h1>
-  {#if initialSlug}Editing {initialSlug}{:else}Editing a new collection{/if}
-</h1>
+<h1>Editing {collection.slug || 'a new collection'}</h1>
 
 <div class="columns">
   <div>
@@ -74,16 +72,12 @@
     </div>
 
     <h2>Parent Collections</h2>
-    {#if collection.parents.length > 1}
+    {#if parents.length > 1}
       <table>
-        {#each collection.parents as parent}
+        {#each parents as parent}
           <tr>
             <td>
-              <a
-                rel="external"
-                href="/collection/{encodeURIComponent(parent.id)}">
-                {parent.slug}
-              </a>
+              <a href="/collection/{parent.id}">{parent.slug}</a>
             </td>
             <td>
               <TextDisplay data={parent.label} />
@@ -102,7 +96,7 @@
 
   <div>
     <h2>Items</h2>
-    {#if initialOrdered}
+    {#if collection.ordered}
       <ItemList bind:items={collection.items} />
 
       <p>TODO: implement adding a single item</p>
@@ -117,7 +111,7 @@
       <p>
         This collection has {collection.itemCount} items. You can add items
         (collections or manifests) to this collection below, and you can remove
-        items from it by accessing the editor for those items directly.
+        items from it by editing those items directly.
       </p>
     {/if}
     <p>TODO: implement adding items by batch</p>
