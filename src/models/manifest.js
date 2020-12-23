@@ -3,32 +3,40 @@ import { multiTextValueToSingle } from "../resources/iiif";
 import Slug from "./slug";
 
 async function fetch(id) {
-  // if (!isNoid(id)) {
-  //   throw new RequestError(`${id} is not a valid NOID.`);
-  // }
+  if (!isValidId(id)) {
+    return {
+      status: 400,
+      content: {},
+      message: `${id} is not a valid Manifest ID.`,
+    };
+  }
 
-  // let document;
-  // try {
-  //   document = await getDocument("manifest", id);
-  // } catch (error) {
-  //   throw error.status === 404
-  //     ? new NotFoundError(`Manifest ${id} not found.`)
-  //     : error;
-  // }
-
-  // let rv = {
-  //   id,
-  //   slug: document.slug,
-  //   label: multiTextValueToSingle(document.label),
-  //   type: document.type,
-  // };
-
-  // if (document.type === "multicanvas") {
-  //   rv.canvases = document.canvases;
-  // }
-
-  // return rv;
-  return {};
+  const response = await getDocument("manifest", id);
+  if (response.status === 200) {
+    const document = response.content;
+    const manifest = {
+      id,
+      slug: document.slug,
+      label: multiTextValueToSingle(document.label),
+      type: document.type,
+      public: document.public,
+    };
+    if (document.ordered) collection.items = await loadItems(document.items);
+    if (document.type === "multicanvas") {
+      manifest.canvases = document.canvases.map((canvas) => {
+        return { id: canvas.id, label: multiTextValueToSingle(canvas.label) };
+      });
+    }
+    return { status: 200, content: manifest };
+  } else if (response.status === 404) {
+    return { status: 404, content: {}, message: `Manifest ${id} not found.` };
+  } else {
+    return {
+      status: response.status,
+      content: {},
+      message: response.content.error,
+    };
+  }
 }
 
 async function lookup(ids) {
@@ -54,8 +62,8 @@ async function lookup(ids) {
   }
 }
 
-async function isNoid(noid) {
-  return noid.startsWith("69429/m");
+async function isValidId(id) {
+  return id.startsWith("69429/m");
 }
 
 async function resolveSlug(id) {
@@ -75,9 +83,9 @@ async function unpublish(id) {
 }
 
 export default {
-  // fetch,
+  fetch,
   lookup,
-  isNoid,
+  isValidId,
   resolveSlug,
   searchSlug,
 };
