@@ -2,7 +2,7 @@
   import { stores, goto } from "@sapper/app";
   import { onMount, afterUpdate, createEventDispatcher } from "svelte";
   import { getCollection } from "../../api/collection";
-    import SlugResolver from "../Slug/Resolver.svelte";
+  import SlugResolver from "../Slug/Resolver.svelte";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
@@ -24,14 +24,17 @@
 
   let initialSlug = collection.slug;
   let initialOrdered = collection.ordered;
-  let selectFlag = false;
+  let selectFlag,
+    updateCollection = false;
   async function selected(event) {
     selectFlag = "true";
+    updateCollection = false;
     item = event.detail;
   }
   function addItem(item) {
     collection.items.push(item);
-    console.log("Updated Collection Items:", collection.items);
+    updateCollection = true;
+    selectFlag = false;
   }
   export let parents = [];
 </script>
@@ -97,22 +100,30 @@
   <div>
     <h2>Items</h2>
     {#if collection.ordered}
-      <ItemList bind:items={collection.items} />
+      {#if !updateCollection}
+        <ItemList bind:items={collection.items} />
 
-      <p>TODO: implement adding a single item</p>
-      <div>
+        <p>TODO: implement adding a single item</p>
+
         <TypeAhead label="Slug:" on:selected={selected} />
         {#if selectFlag}
           <TextDisplay data={item.label} />
           <button class="add" on:click={addItem(item)}>Add To Item</button>
         {/if}
-      </div>
-    {:else}
-      <p>
-        This collection has {collection.itemCount} items. You can add items
-        (collections or manifests) to this collection below, and you can remove
-        items from it by editing those items directly.
-      </p>
+      {:else if updateCollection}
+        <ItemList bind:items={collection.items} />
+        <TypeAhead label="Slug:" on:selected={selected} />
+        {#if selectFlag}
+          <TextDisplay data={item.label} />
+          <button class="add" on:click={addItem(item)}>Add To Item</button>
+        {/if}
+      {:else}
+        <p>
+          This collection has {collection.itemCount} items. You can add items
+          (collections or manifests) to this collection below, and you can
+          remove items from it by editing those items directly.
+        </p>
+      {/if}
     {/if}
     <p>TODO: implement adding items by batch</p>
   </div>
