@@ -73,8 +73,6 @@
     {#if collection.ordered}
       <ItemList bind:items={collection.items} />
 
-      <p>TODO: implement adding a single item</p>
-
       <TypeAhead label="Slug:" on:selected={selected} />
       {#if addedItem}
         <TextDisplay data={addedItem.label} />
