@@ -19,9 +19,6 @@
   };
 
   export let parents = [];
-
-  let initialSlug = collection.slug;
-  let initialOrdered = collection.ordered;
 </script>
 
 <style>
@@ -39,7 +36,7 @@
   }
 </style>
 
-<h1>Editing {initialSlug || 'a new collection'}</h1>
+<h1>Editing {collection.slug || 'a new collection'}</h1>
 
 <div class="columns">
   <div>
@@ -84,14 +81,14 @@
 
   <div>
     <h2>Items</h2>
-    {#if initialOrdered}
+    {#if collection.ordered}
       <ItemList bind:items={collection.items} />
       <p>TODO: implement adding a single item</p>
     {:else}
       <p>
         This collection has {collection.itemCount} items. You can add items
         (collections or manifests) to this collection below, and you can remove
-        items from it by accessing the editor for those items directly.
+        items from it by editing those items directly.
       </p>
     {/if}
     <p>TODO: implement adding items by batch</p>
