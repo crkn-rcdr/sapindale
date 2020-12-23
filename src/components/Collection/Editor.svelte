@@ -1,7 +1,8 @@
 <script>
   import { stores } from "@sapper/app";
   import { onMount, afterUpdate } from "svelte";
-  import SlugResolver from "../Slug/Resolver.svelte";
+  import SlugResolver from "../Slug/Resolver";
+  import ParentsList from "./ParentsList";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
@@ -31,9 +32,6 @@
   .columns > *:not(:first-child) {
     margin-left: 2rem;
   }
-  table {
-    white-space: normal;
-  }
 </style>
 
 <h1>Editing {collection.slug || 'a new collection'}</h1>
@@ -56,27 +54,7 @@
         textarea={false} />
     </div>
 
-    <h2>Parent Collections</h2>
-    {#if parents.length > 1}
-      <table>
-        {#each parents as parent}
-          <tr>
-            <td>
-              <a href="/collection/{parent.id}">{parent.slug}</a>
-            </td>
-            <td>
-              <TextDisplay data={parent.label} />
-            </td>
-            <td>Remove (TODO)</td>
-          </tr>
-        {/each}
-      </table>
-    {/if}
-    <p>TODO: add an "Add to collection" interface</p>
-    <p>
-      TODO: add context-sensitive buttons for creating, updating, and/or
-      publishing the collection
-    </p>
+    <ParentsList {parents} />
   </div>
 
   <div>
