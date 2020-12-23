@@ -1,17 +1,19 @@
-const { viewResultFromKey, searchView } = require("../resources/couch");
+import { viewResultFromKey, searchView } from "../resources/couch";
+import { multiTextValueToSingle } from "../resources/iiif";
 
-async function info(dbName, id) {
-  const response = await viewResultFromKey(dbName, "access", "slug", id);
+async function info(dbName, slug) {
+  const response = await viewResultFromKey(dbName, "access", "slug", slug);
+  const content = response.content;
   if (response.status === 200) {
-    const slug = response.content;
     return {
       status: 200,
       content: {
-        id,
-        noid: slug.id,
-        label: slug.value.label,
-        isAlias: slug.value.isAlias,
-        aliasOf: slug.value.aliasOf,
+        id: content.id,
+        slug,
+        label: multiTextValueToSingle(content.value.label),
+        type: dbName,
+        isAlias: content.value.isAlias,
+        aliasOf: content.value.aliasOf,
       },
     };
   } else if (response.status === 404) {
@@ -20,7 +22,7 @@ async function info(dbName, id) {
     return {
       status: response.status,
       content: {},
-      message: response.content.error,
+      message: content.error,
     };
   }
 }
