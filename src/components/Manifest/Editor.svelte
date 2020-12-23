@@ -4,6 +4,7 @@
   import TextDisplay from "../IIIF/TextDisplay";
   import ParentsList from "../Collection/ParentsList";
 
+  import { onMount } from "svelte";
   // TODO: handle type="pdf", somehow
   export let id = undefined;
 
@@ -16,6 +17,9 @@
   };
 
   export let parents = [];
+
+  let currentSlug = manifest.slug;
+  let slugAvailable = true;
 </script>
 
 <style>
@@ -34,10 +38,13 @@
 
 <div class="columns">
   <div>
-    <div class="children-inline">
-      <label for="Slug">Slug:</label>
-      <input type="text" bind:value={manifest.slug} />
-    </div>
+    {#key manifest.slug}
+    <SlugResolver
+      inputLabel="Slug:"
+      bind:value={currentSlug}
+      bind:sameSlug={manifest.slug}
+      bind:available={slugAvailable} />
+    {/key}
     <!-- TODO: add type select here -->
     <div>
       <label for="TextLabel">Label:</label>

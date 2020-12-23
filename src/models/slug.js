@@ -1,6 +1,21 @@
 import { viewResultFromKey, searchView } from "../resources/couch";
 import { multiTextValueToSingle } from "../resources/iiif";
 
+async function available(slug) {
+  const [manifestResponse, collectionResponse] = await Promise.all([
+    info("manifest", slug),
+    info("collection", slug),
+  ]);
+  return {
+    status: 200,
+    content: Object.assign(
+      {},
+      manifestResponse.content,
+      collectionResponse.content
+    ),
+  };
+}
+
 async function info(dbName, slug) {
   const response = await viewResultFromKey(dbName, "access", "slug", slug);
   const content = response.content;
@@ -17,7 +32,11 @@ async function info(dbName, slug) {
       },
     };
   } else if (response.status === 404) {
-    return { status: 404, content: {}, message: `Slug ${id} not found.` };
+    return {
+      status: 404,
+      content: {},
+      message: `Slug ${slug} not found.`,
+    };
   } else {
     return {
       status: response.status,
@@ -31,4 +50,4 @@ async function search(dbName, prefix, limit = 10) {
   return await searchView(dbName, "access", "slug", prefix, limit);
 }
 
-export default { info, search };
+export default { available, info, search };
