@@ -2905,21 +2905,12 @@ svelte-dev-helper@^1.1.9:
   resolved "https://registry.yarnpkg.com/svelte-dev-helper/-/svelte-dev-helper-1.1.9.tgz#7d187db5c6cdbbd64d75a32f91b8998bde3273c3"
   integrity sha1-fRh9tcbNu9ZNdaMvkbiZi94yc8M=
 
-<<<<<<< HEAD
-svelte-dnd-action@^0.6.23:
-  version "0.6.23"
-  resolved "https://registry.yarnpkg.com/svelte-dnd-action/-/svelte-dnd-action-0.6.23.tgz#329e4686fa20999693333ed41888e303192d30a3"
-  integrity sha512-7G4HX2ylyGIGx8mpgx8BibXm4zaEKxnNnW8KeMyncEHnDQVZq0AAi9XXu4ApwfH2OEu8tMAjSxBHKN59TNEv0g==
-
-svelte-icons@^2.1.0:
-=======
 svelte-dnd-action@^0.6:
   version "0.6.25"
   resolved "https://registry.yarnpkg.com/svelte-dnd-action/-/svelte-dnd-action-0.6.25.tgz#45b9109da2e4646e80761644a033fd98c4de5204"
   integrity sha512-Kp/IP/hU6p3WGy9pX8xhzAx+SUPWBBmg6lTiZPbsUj4vhSo5iuo46eC0eIGknGzBPt+GKX7koTKtNcYxM8Uyxw==
 
 svelte-icons@^2.1:
->>>>>>> master
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/svelte-icons/-/svelte-icons-2.1.0.tgz#6f2ec72f1d5c8b2de1a4b8a822c95bcb2f701aca"
   integrity sha512-rHPQjweEc9fGSnvM0/4gA3pDHwyZyYsC5KhttCZRhSMJfLttJST5Uq0B16Czhw+HQ+HbSOk8kLigMlPs7gZtfg==
@@ -2932,11 +2923,7 @@ svelte-loader@^2.13:
     loader-utils "^1.1.0"
     svelte-dev-helper "^1.1.9"
 
-<<<<<<< HEAD
-svelte-spinner@^2.0.2:
-=======
 svelte-spinner@^2.0:
->>>>>>> master
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/svelte-spinner/-/svelte-spinner-2.0.2.tgz#ec090651dd7ef2ccdaa5ba972ee456a2e306ae2c"
   integrity sha512-tIsvy/udEdVxwf5HYg9zFvXVxGmS1O+zq2K1ush6ojNZy0DY+ZoW8lRYQEbvXMkU6ur2NfTECGV5ZSA4Rw6XRg==
