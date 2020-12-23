@@ -19,22 +19,16 @@
     itemCount: 0,
     items: []
   };
-  console.log("collection", collection);
-  let item = [];
 
-  let initialSlug = collection.slug;
-  let initialOrdered = collection.ordered;
-  let selectFlag,
-    updateCollection = false;
-  async function selected(event) {
-    selectFlag = "true";
-    updateCollection = false;
-    item = event.detail;
+  let addedItem = "";
+
+  function selected(event) {
+    addedItem = event.detail;
   }
   function addItem(item) {
     collection.items.push(item);
-    updateCollection = true;
-    selectFlag = false;
+
+    addedItem = "";
   }
   export let parents = [];
 </script>
@@ -77,30 +71,23 @@
   <div>
     <h2>Items</h2>
     {#if collection.ordered}
-      {#if !updateCollection}
+      {#if !addedItem}
         <ItemList bind:items={collection.items} />
 
         <p>TODO: implement adding a single item</p>
 
         <TypeAhead label="Slug:" on:selected={selected} />
-        {#if selectFlag}
-          <TextDisplay data={item.label} />
-          <button class="add" on:click={addItem(item)}>Add To Item</button>
-        {/if}
-      {:else if updateCollection}
+      {:else if addedItem}
+        <TextDisplay data={addedItem.label} />
+        <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
         <ItemList bind:items={collection.items} />
-        <TypeAhead label="Slug:" on:selected={selected} />
-        {#if selectFlag}
-          <TextDisplay data={item.label} />
-          <button class="add" on:click={addItem(item)}>Add To Item</button>
-        {/if}
-      {:else}
-        <p>
-          This collection has {collection.itemCount} items. You can add items
-          (collections or manifests) to this collection below, and you can
-          remove items from it by editing those items directly.
-        </p>
       {/if}
+    {:else}
+      <p>
+        This collection has {collection.itemCount} items. You can add items
+        (collections or manifests) to this collection below, and you can remove
+        items from it by editing those items directly.
+      </p>
     {/if}
     <p>TODO: implement adding items by batch</p>
   </div>
