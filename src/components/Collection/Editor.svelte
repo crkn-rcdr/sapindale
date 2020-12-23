@@ -1,11 +1,12 @@
 <script>
-  import { stores } from "@sapper/app";
-  import { onMount, afterUpdate } from "svelte";
+  import { stores, goto } from "@sapper/app";
+  import { onMount, afterUpdate, createEventDispatcher } from "svelte";
   import { getCollection } from "../../api/collection";
   import SlugResolver from "../Slug/Resolver.svelte";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
+  import TypeAhead from "../Slug/TypeAhead.svelte";
 
   export let id = undefined;
 
@@ -19,9 +20,20 @@
     items: [],
     parents: []
   };
+  console.log("collection", collection);
+  let item = [];
 
   let initialSlug = collection.slug;
   let initialOrdered = collection.ordered;
+  let selectFlag = false;
+  async function selected(event) {
+    selectFlag = "true";
+    item = event.detail;
+  }
+  function addItem(item) {
+    collection.items.push(item);
+    console.log("Updated Collection Items:", collection.items);
+  }
 </script>
 
 <style>
@@ -92,7 +104,15 @@
     <h2>Items</h2>
     {#if initialOrdered}
       <ItemList bind:items={collection.items} />
+
       <p>TODO: implement adding a single item</p>
+      <div>
+        <TypeAhead label="Slug:" on:selected={selected} />
+        {#if selectFlag}
+          <TextDisplay data={item.label} />
+          <button class="add" on:click={addItem(item)}>Add To Item</button>
+        {/if}
+      </div>
     {:else}
       <p>
         This collection has {collection.itemCount} items. You can add items
@@ -103,5 +123,3 @@
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>
-
-<pre>{JSON.stringify(collection, null, 2)}</pre>
