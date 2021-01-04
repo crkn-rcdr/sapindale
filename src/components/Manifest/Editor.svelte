@@ -13,7 +13,7 @@
     slug: "",
     label: {},
     type: "multicanvas",
-    canvases: []
+    canvases: [],
   };
 
   export let parents = [];
@@ -39,11 +39,11 @@
 <div class="columns">
   <div>
     {#key manifest.slug}
-    <SlugResolver
-      inputLabel="Slug:"
-      bind:value={currentSlug}
-      bind:sameSlug={manifest.slug}
-      bind:available={slugAvailable} />
+      <SlugResolver
+        inputLabel="Slug:"
+        bind:value={currentSlug}
+        bind:sameSlug={manifest.slug}
+        bind:available={slugAvailable} />
     {/key}
     <!-- TODO: add type select here -->
     <div>
@@ -59,6 +59,5 @@
 
   <div>
     <h2>Canvases</h2>
-
   </div>
 </div>
