@@ -6,6 +6,7 @@
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
+  import TypeAhead from "../Slug/TypeAhead.svelte";
 
   export let id = undefined;
 
@@ -19,6 +20,16 @@
     items: []
   };
 
+  let addedItem = "";
+
+  function selected(event) {
+    addedItem = event.detail;
+  }
+  function addItem(addedItem) {
+    collection.items[collection.items.length] = addedItem;
+
+    addedItem = "";
+  }
   export let parents = [];
 
   let currentSlug = collection.slug;
@@ -65,7 +76,12 @@
     <h2>Items</h2>
     {#if collection.ordered}
       <ItemList bind:items={collection.items} />
-      <p>TODO: implement adding a single item</p>
+
+      <TypeAhead label="Slug:" on:selected={selected} />
+      {#if addedItem}
+        <TextDisplay data={addedItem.label} />
+        <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
+      {/if}
     {:else}
       <p>
         This collection has {collection.itemCount} items. You can add items
