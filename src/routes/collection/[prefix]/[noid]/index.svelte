@@ -24,10 +24,16 @@
   import CollectionEditor from "../../../../components/Collection/Editor.svelte";
 
   export let id, collection, parents;
+  
+  // the key directive below, newly added to Svelte, causes the CollectionEditor
+  // component to reload when id changes, which is important because Sapper
+  // doesn't do that for you if you're staying on the same route
 </script>
 
 <svelte:head>
   <title>Canadiana Platform Administration — Editing {collection.slug}</title>
 </svelte:head>
 
+{#key id}
 <CollectionEditor {id} {collection} {parents} />
+{/key}

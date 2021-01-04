@@ -1,6 +1,6 @@
 <script>
   import { stores } from "@sapper/app";
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount } from "svelte";
   import SlugResolver from "../Slug/Resolver";
   import ParentsList from "./ParentsList";
   import ItemList from "./ItemList.svelte";
@@ -31,6 +31,9 @@
     addedItem = "";
   }
   export let parents = [];
+
+  let currentSlug = collection.slug;
+  let slugAvailable = true;
 </script>
 
 <style>
@@ -49,10 +52,11 @@
 
 <div class="columns">
   <div>
-    <div class="children-inline">
-      <label for="Slug">Slug:</label>
-      <input type="text" bind:value={collection.slug} />
-    </div>
+    <SlugResolver
+      inputLabel="Slug:"
+      bind:value={currentSlug}
+      bind:sameSlug={collection.slug}
+      bind:available={slugAvailable} />
     <div class="children-inline">
       <label for="Ordered">Ordered:</label>
       <input type="checkbox" bind:checked={collection.ordered} />

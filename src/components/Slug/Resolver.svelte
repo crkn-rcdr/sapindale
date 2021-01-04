@@ -1,60 +1,56 @@
 <script>
-  import { stores } from "@sapper/app";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { resolveSlug as resolveCollectionSlug } from "../../api/collection";
-  import { resolveSlug as resolveManifestSlug } from "../../api/manifest";
+  import { onMount } from "svelte";
   import Spinner from "svelte-spinner";
-  const { session } = stores();
-  let token = $session.token;
   export let value = "",
-    label = "Slug",
-    mode = "manifest",
-    state = "PENDING";
+    sameSlug = "",
+    inputLabel = "Slug:",
+    available;
+  let loading = false,
+    busted = false;
 
-  let slug;
-  let resolveMethod =
-    mode === "manifest" ? resolveManifestSlug : resolveCollectionSlug;
+  let slug = null;
+  $: available =
+    !loading && !busted && value.length > 0 && (value === sameSlug || !slug);
+
+  async function resolve() {
+    if (value.length > 0 && value !== sameSlug) {
+      loading = true;
+      busted = false;
+      const response = await fetch(`/manifest/slug/available/${value}.json`, {
+        method: "POST",
+        credentials: "same-origin"
+      });
+      if (response.status === 200) {
+        let json = await response.json();
+        if (json.id) {
+          slug = json;
+        } else {
+          slug = null;
+        }
+      } else {
+        busted = true;
+        slug = null;
+        value = sameSlug;
+      }
+      loading = false;
+    }
+  }
 
   onMount(async () => {
-    if (value !== "") {
-      lookUpSlug();
-    }
+    await resolve();
   });
-
-  async function lookUpSlug() {
-    try {
-      state = "PENDING";
-      slug = await resolveMethod(token, value);
-      // errors will come with a "message" field.
-      // In the future, API requests should provide more explicit distinction
-      if (slug.message) {
-        state = "NOTFOUND";
-      } else {
-        state = "FOUND";
-      }
-    } catch (ignore) {
-      state = "FAILED";
-    }
-  }
-  function noidClick(event) {
-    let noidValue = encodeURIComponent(slugList.noid);
-    let noidType = slugList.type;
-    dispatch("selected", { noidValue, noidType });
-  }
 </script>
 
-<span class="children-inline">
-  <label for="slug">{label}</label>
-  <input type="text" bind:value on:input={lookUpSlug} />
+<div class="children-inline">
+  <label for="slug">{inputLabel}</label>
+  <input type="text" bind:value on:input={resolve} />
 
-  {#if state === 'FOUND'}
-    ❌ :
-    <a href="/{slug.type}/{encodeURIComponent(slug.noid)}">Slug in use</a>
-  {:else if state === 'NOTFOUND'}
-    ✅ : Slug available
-  {:else if state === 'FAILED'}
-    Error searching for slugs.
-  {:else if value.length > 0}
+  {#if loading}
     <Spinner />
-  {/if}
-</span>
+  {:else if busted}
+    <span class="danger">Server error.</span>
+  {:else if slug}
+    ❌
+    <a href="/{slug.type}/{slug.id}">Slug in use</a>
+  {:else if available}✅ Slug available{/if}
+</div>
