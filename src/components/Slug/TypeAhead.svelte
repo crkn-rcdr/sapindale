@@ -1,17 +1,8 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  import { stores } from "@sapper/app";
-  import {
-    resolveSlug as resolveCollectionSlug,
-    searchSlug as searchCollectionSlug
-  } from "../../api/collection";
-  import {
-    resolveSlug as resolveManifestSlug,
-    searchSlug as searchManifestSlug
-  } from "../../api/manifest";
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
-  export let type;
+  export let type = "manifest";
   export let restrictType = false;
   if (!type) restrictType = false;
   export let label = "Please provide a label for this component.";
@@ -19,28 +10,32 @@
   let prefix = "";
   let lookupList = [];
   let error = "";
-  const { session } = stores();
-  let token = $session.token;
 
   async function lookupSlug() {
-    let searchMethod =
-      type === "manifest" ? searchManifestSlug : searchCollectionSlug;
-    try {
-      lookupList = await searchMethod(token, prefix);
-    } catch (e) {
-      error = e.message;
+    if (prefix) {
+      let response = await fetch(`/${type}/slug/search/${prefix}.json`, {
+        method: "POST",
+        credentials: "same-origin"
+      });
+      let json = await response.json();
+      if (response.status === 200) {
+        lookupList = json;
+      } else {
+        error = json.error;
+      }
     }
   }
 
   async function selectItem(event) {
     if (lookupList && lookupList.includes(prefix)) {
-      let resolveMethod =
-        type === "manifest" ? resolveManifestSlug : resolveCollectionSlug;
-      try {
-        let slug = await resolveMethod(token, prefix);
+      let response = await fetch(`/${type}/slug/${prefix}.json`, {
+        credentials: "same-origin"
+      });
+      let slug = await response.json();
+      if (response.status === 200) {
         dispatch("selected", slug);
-      } catch (e) {
-        error = e.message;
+      } else {
+        error = slug.error;
       }
     }
   }

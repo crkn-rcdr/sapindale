@@ -1,11 +1,12 @@
 <script>
   import { stores } from "@sapper/app";
-  import { onMount, afterUpdate } from "svelte";
-  import { getCollection } from "../../api/collection";
-  import SlugResolver from "../Slug/Resolver.svelte";
+  import { onMount } from "svelte";
+  import SlugResolver from "../Slug/Resolver";
+  import ParentsList from "./ParentsList";
   import ItemList from "./ItemList.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
+  import TypeAhead from "../Slug/TypeAhead.svelte";
 
   export let id = undefined;
 
@@ -15,13 +16,24 @@
     label: {},
     summary: {},
     ordered: false,
-    public: false,
-    items: [],
-    parents: []
+    itemCount: 0,
+    items: []
   };
 
-  let initialSlug = collection.slug;
-  let initialOrdered = collection.ordered;
+  let addedItem = "";
+
+  function selected(event) {
+    addedItem = event.detail;
+  }
+  function addItem(addedItem) {
+    collection.items[collection.items.length] = addedItem;
+
+    addedItem = "";
+  }
+  export let parents = [];
+
+  let currentSlug = collection.slug;
+  let slugAvailable = true;
 </script>
 
 <style>
@@ -34,21 +46,17 @@
   .columns > *:not(:first-child) {
     margin-left: 2rem;
   }
-  table {
-    white-space: normal;
-  }
 </style>
 
-<h1>
-  {#if initialSlug}Editing {initialSlug}{:else}Editing a new collection{/if}
-</h1>
+<h1>Editing {collection.slug || 'a new collection'}</h1>
 
 <div class="columns">
   <div>
-    <div class="children-inline">
-      <label for="Slug">Slug:</label>
-      <input type="text" bind:value={collection.slug} />
-    </div>
+    <SlugResolver
+      inputLabel="Slug:"
+      bind:value={currentSlug}
+      bind:sameSlug={collection.slug}
+      bind:available={slugAvailable} />
     <div class="children-inline">
       <label for="Ordered">Ordered:</label>
       <input type="checkbox" bind:checked={collection.ordered} />
@@ -61,47 +69,26 @@
         textarea={false} />
     </div>
 
-    <h2>Parent Collections</h2>
-    {#if collection.parents.length > 1}
-      <table>
-        {#each collection.parents as parent}
-          <tr>
-            <td>
-              <a
-                rel="external"
-                href="/collection/{encodeURIComponent(parent.id)}">
-                {parent.slug}
-              </a>
-            </td>
-            <td>
-              <TextDisplay data={parent.label} />
-            </td>
-            <td>Remove (TODO)</td>
-          </tr>
-        {/each}
-      </table>
-    {/if}
-    <p>TODO: add an "Add to collection" interface</p>
-    <p>
-      TODO: add context-sensitive buttons for creating, updating, and/or
-      publishing the collection
-    </p>
+    <ParentsList {parents} />
   </div>
 
   <div>
     <h2>Items</h2>
-    {#if initialOrdered}
+    {#if collection.ordered}
       <ItemList bind:items={collection.items} />
-      <p>TODO: implement adding a single item</p>
+
+      <TypeAhead label="Slug:" on:selected={selected} />
+      {#if addedItem}
+        <TextDisplay data={addedItem.label} />
+        <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
+      {/if}
     {:else}
       <p>
         This collection has {collection.itemCount} items. You can add items
         (collections or manifests) to this collection below, and you can remove
-        items from it by accessing the editor for those items directly.
+        items from it by editing those items directly.
       </p>
     {/if}
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>
-
-<pre>{JSON.stringify(collection, null, 2)}</pre>

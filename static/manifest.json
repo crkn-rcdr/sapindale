@@ -7,9 +7,9 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "canadiana-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "canadiana-logo.svg",
+      "sizes": "128x128",
+      "type": "image/svg"
     }
   ]
 }

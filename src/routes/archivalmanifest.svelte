@@ -679,8 +679,7 @@
               {#if selected[doc._id]}
                 <li class="slug">
                   <SlugResolver
-                    label="New slug:"
-                    mode="manifest"
+                    inputLabel="New slug:"
                     bind:value={slugs[doc._id]} />
                 </li>
               {/if}

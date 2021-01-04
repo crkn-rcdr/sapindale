@@ -1,8 +1,11 @@
 import { request } from "../api";
 
-async function getCollection(token, collection) {
-  /*  let prefix = encodeURIComponent("69429/"); */
-  return await request(token, "GET", ["collection", collection].join("/"));
+async function getCollection(token, id) {
+  return await request(
+    token,
+    "GET",
+    ["collection", `${encodeURIComponent(id)}`].join("/")
+  );
 }
 
 async function resolveSlug(token, slug) {
