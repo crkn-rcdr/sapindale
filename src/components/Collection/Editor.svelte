@@ -7,7 +7,8 @@
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
   import TypeAhead from "../Slug/TypeAhead.svelte";
-
+  import Modal from "./Modal.svelte";
+  import Content from "./Content.svelte";
   export let id = undefined;
 
   export let collection = {
@@ -89,6 +90,9 @@
         items from it by editing those items directly.
       </p>
     {/if}
+    <Modal>
+      <Content />
+    </Modal>
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>

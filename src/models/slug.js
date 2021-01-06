@@ -50,4 +50,6 @@ async function search(dbName, prefix, limit = 10) {
   return await searchView(dbName, "access", "slug", prefix, limit);
 }
 
+//async function BatchSearch(){}
+
 export default { available, info, search };
