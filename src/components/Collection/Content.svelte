@@ -9,9 +9,9 @@
   let closing = false;
   let closed = false;
 
-  const openDialog = () => {
-    open(BatchLookUp, { message: "Paste the Items to add" });
-  };
+  function openDialog(event) {
+    open(BatchLookUp, {});
+  }
 </script>
 
 <style>
@@ -19,20 +19,20 @@
     padding-top: 0.5em;
   }
 
-  #state {
+  /*  #state {
     position: absolute;
     top: 0;
     right: 0;
     opacity: 0.33;
     font-size: 0.8em;
-  }
+  } */
 </style>
 
 <section>
   <button on:click={openDialog}>Add Item</button>
   <br />
 
-  <div id="state">
+  <!-- <div id="state">
     {#if opening}
       <p>opening modal...</p>
     {:else if opened}
@@ -42,5 +42,5 @@
     {:else if closed}
       <p>closed modal!</p>
     {/if}
-  </div>
+  </div> -->
 </section>
