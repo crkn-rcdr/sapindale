@@ -6,13 +6,13 @@
   const dispatch = createEventDispatcher();
   let prefix = "";
   let slugList = [];
-  export let resultList = [];
+  let resultList = [];
   let type = "collection";
   let cancel = () => {
     close();
   };
+
   async function viewId() {
-    prefix.replace(/["]/g, "");
     var slugToFind = prefix.split(/[,|\s]/);
 
     for (var index in slugToFind) {
@@ -36,11 +36,19 @@
       if (response.status === 200) {
         resultList = json;
       } else {
-        error = json.error;
+        error = resultList.error;
       }
+      let inforesponse = await fetch(`/${type}/slug/${slugList[result]}.json`, {
+        credentials: "same-origin"
+      });
+      let slug = await inforesponse.json();
+      console.log("slug:", slug);
+      if (inforesponse.status === 200) {
+      } else {
+        error = slug.error;
+      }
+      onOkay(slug);
     }
-
-    onOkay(resultList);
 
     close();
   }
