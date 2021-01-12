@@ -1,9 +1,11 @@
 <script>
-  import { getContext, createEventDispatcher } from "svelte";
+  import { getContext } from "svelte";
+  import { depositors } from "../../depositor";
   /* export let message; */
   export let onOkay = () => {};
   const { close } = getContext("simple-modal");
-  const dispatch = createEventDispatcher();
+
+  let depositor = "";
   let prefix = "";
   let slugList = [];
   let resultList = [];
@@ -16,7 +18,12 @@
     var slugToFind = prefix.split(/[,|\s]/);
 
     for (var index in slugToFind) {
-      slugList.push(slugToFind[index]);
+      if (depositor !== "" && slugToFind[index].indexOf(".") === -1) {
+        var prefixedSlug = depositor + "." + slugToFind[index];
+      } else if (depositor == "" && slugToFind[index].indexOf(".") === -1) {
+        prefixedSlug = slugToFind[index];
+      }
+      slugList.push(prefixedSlug);
     }
 
     await lookupId();
@@ -42,7 +49,7 @@
         credentials: "same-origin"
       });
       let slug = await inforesponse.json();
-      console.log("slug:", slug);
+
       if (inforesponse.status === 200) {
       } else {
         error = slug.error;
@@ -65,6 +72,13 @@
   }
 </style>
 
+<select bind:value={depositor}>
+  <option value="" />
+  {#each depositors as selected}
+    <option value={selected.id}>{selected.name}</option>
+  {/each}
+</select>
+{#if depositor !== ''}({depositor}){/if}
 <textarea bind:value={prefix} />
 <div class="buttons">
   <button on:click={cancel}>Cancel</button>

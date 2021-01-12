@@ -7,7 +7,7 @@
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
   import TypeAhead from "../Slug/TypeAhead.svelte";
-  import Modal from "./Modal.svelte";
+  import Modal from "svelte-simple-modal";
   import Content from "./Content.svelte";
   export let id = undefined;
 
