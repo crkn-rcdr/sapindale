@@ -9,7 +9,7 @@
   let prefix = "";
   let slugList = [];
   let resultList = [];
-  let type = "collection";
+  let type = ["collection", "manifest"];
   let cancel = () => {
     close();
   };
@@ -31,29 +31,39 @@
   async function lookupId(event) {
     for (var result in slugList) {
       //Fetch call To Be: written in Slug to get items in batch
-      let response = await fetch(
-        `/${type}/slug/search/${slugList[result]}.json`,
-        {
+
+      let response = await type.map(types =>
+        fetch(`/${types}/slug/search/${slugList[result]}.json`, {
           method: "POST",
           credentials: "same-origin"
-        }
+        })
       );
-
-      let json = await response.json();
-      if (response.status === 200) {
-        resultList = json;
-      } else {
-        error = resultList.error;
-      }
-      let inforesponse = await fetch(`/${type}/slug/${slugList[result]}.json`, {
-        credentials: "same-origin"
+      Promise.all(response).then(responses => {
+        for (let test of responses) {
+          if (response.status === 200) {
+            resultList = json;
+          } else {
+            error = resultList.error;
+          }
+        }
       });
-      let slug = await inforesponse.json();
 
-      if (inforesponse.status === 200) {
-      } else {
-        error = slug.error;
-      }
+      let inforesponse = await type.map(types =>
+        fetch(`/${types}/slug/${slugList[result]}.json`, {
+          credentials: "same-origin"
+        })
+      );
+      Promise.all(response).then(responses => {
+        for (let test of responses) {
+          if (response.status === 200) {
+            let slug = json;
+          } else {
+            error = slug.error;
+          }
+        }
+      });
+      slug = await inforesponse.json();
+
       onOkay(slug);
     }
 
