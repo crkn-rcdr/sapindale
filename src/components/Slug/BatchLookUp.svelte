@@ -9,6 +9,8 @@
   let prefix = "";
   let slugList = [];
   let resultList = [];
+  let slug;
+  let error = "";
   let type = ["collection", "manifest"];
   let cancel = () => {
     close();
@@ -39,9 +41,9 @@
         })
       );
       Promise.all(response).then(responses => {
-        for (let test of responses) {
+        for (let response of responses) {
           if (response.status === 200) {
-            resultList = json;
+            resultList = response.json;
           } else {
             error = resultList.error;
           }
@@ -53,16 +55,16 @@
           credentials: "same-origin"
         })
       );
-      Promise.all(response).then(responses => {
-        for (let test of responses) {
-          if (response.status === 200) {
-            let slug = json;
+      /*  let slug = await inforesponse.json(); */
+      Promise.all(inforesponse).then(responses => {
+        for (let inforesponse of responses) {
+          if (inforesponse.status === 200) {
+            slug = inforesponse.json();
           } else {
             error = slug.error;
           }
         }
       });
-      slug = await inforesponse.json();
 
       onOkay(slug);
     }
