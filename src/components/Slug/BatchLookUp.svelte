@@ -40,10 +40,10 @@
           credentials: "same-origin"
         })
       );
-      Promise.all(response).then(responses => {
+      await Promise.all(response).then(responses => {
         for (let response of responses) {
           if (response.status === 200) {
-            resultList = response.json;
+            resultList = responses;
           } else {
             error = resultList.error;
           }
@@ -56,16 +56,15 @@
         })
       );
       /*  let slug = await inforesponse.json(); */
-      Promise.all(inforesponse).then(responses => {
-        for (let inforesponse of responses) {
-          if (inforesponse.status === 200) {
-            slug = inforesponse.json();
+      await Promise.all(inforesponse).then(responses => {
+        for (let test of responses) {
+          if (test.status === 200) {
+            slug = responses;
           } else {
             error = slug.error;
           }
         }
       });
-
       onOkay(slug);
     }
 
