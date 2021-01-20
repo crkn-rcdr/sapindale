@@ -41,13 +41,14 @@
         })
       );
       await Promise.all(response).then(responses => {
-        for (let response of responses) {
-          if (response.status === 200) {
+        for (let result of responses) {
+          if (result.status === 200) {
             resultList = responses;
           } else {
             error = resultList.error;
           }
         }
+        return responses;
       });
 
       let inforesponse = await type.map(types =>
@@ -55,16 +56,21 @@
           credentials: "same-origin"
         })
       );
+
       /*  let slug = await inforesponse.json(); */
-      await Promise.all(inforesponse).then(responses => {
-        for (let test of responses) {
-          if (test.status === 200) {
-            slug = responses;
-          } else {
-            error = slug.error;
+      await Promise.all(inforesponse)
+        .then(responses => {
+          for (let test of responses) {
+            if (test.status === 200) {
+              slug = responses;
+            } else {
+              error = slug.error;
+            }
           }
-        }
-      });
+          return responses;
+        })
+        .then(responses => Promise.all(responses.map(r => r.json())));
+
       onOkay(slug);
     }
 
