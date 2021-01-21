@@ -9,7 +9,7 @@
   let prefix = "";
   let slugList = [];
   let resultList = [];
-  let slug;
+  /* let slug; */
   let error = "";
   let type = ["collection", "manifest"];
   let cancel = () => {
@@ -40,37 +40,19 @@
           credentials: "same-origin"
         })
       );
-      await Promise.all(response).then(responses => {
-        for (let result of responses) {
-          if (result.status === 200) {
-            resultList = responses;
-          } else {
-            error = resultList.error;
-          }
-        }
-        return responses;
-      });
+      const responses = await Promise.all(response);
+      let json = await responses.map(res => res.json());
+      console.log("JSON", json);
 
-      let inforesponse = await type.map(types =>
+      let inforesponse = type.map(types =>
         fetch(`/${types}/slug/${slugList[result]}.json`, {
           credentials: "same-origin"
         })
       );
 
-      /*  let slug = await inforesponse.json(); */
-      await Promise.all(inforesponse)
-        .then(responses => {
-          for (let test of responses) {
-            if (test.status === 200) {
-              slug = responses;
-            } else {
-              error = slug.error;
-            }
-          }
-          return responses;
-        })
-        .then(responses => Promise.all(responses.map(r => r.json())));
-
+      const slugResponse = await Promise.all(inforesponse);
+      let slug = await slugResponse.map(res => res.json());
+      console.log("slug", slug);
       onOkay(slug);
     }
 
