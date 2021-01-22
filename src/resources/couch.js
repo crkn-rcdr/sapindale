@@ -50,6 +50,7 @@ async function viewResultFromKey(db, ddoc, view, key, includeDocs = false) {
   let response = await _request(_buildViewPath(db, ddoc, view), {
     key: JSON.stringify(key),
     include_docs: includeDocs,
+    stale: "ok",
   });
   if (response.status === 200) {
     const rows = response.content.rows;
@@ -64,9 +65,14 @@ async function viewResultFromKey(db, ddoc, view, key, includeDocs = false) {
 }
 
 async function viewResultsFromKeys(db, ddoc, view, keys) {
-  let response = await _request(_buildViewPath(db, ddoc, view), {}, "POST", {
-    keys,
-  });
+  let response = await _request(
+    _buildViewPath(db, ddoc, view),
+    { stale: "ok" },
+    "POST",
+    {
+      keys,
+    }
+  );
   if (response.status === 200) {
     return { status: 200, content: response.content.rows };
   } else {
@@ -81,6 +87,7 @@ async function searchView(db, ddoc, view, prefix, limit) {
       start_key: JSON.stringify(prefix),
       end_key: JSON.stringify(`${prefix}\ufff0`),
       limit,
+      stale: "ok",
     },
     "GET"
   );
