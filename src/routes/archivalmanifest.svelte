@@ -6,11 +6,11 @@
     smeltstatusview,
     manifestdateview,
     smeltqview,
-    updatebasic
+    updatebasic,
   } from "../couch/dipstaging.js";
   import TypeAhead from "../components/Couch/TypeAhead";
   import SlugResolver from "../components/Slug/Resolver";
-  import { depositors } from "../commonvars";
+  import PrefixSelector from "../components/util/PrefixSelector.svelte";
   const { session } = stores();
   let token = $session.token;
 
@@ -59,7 +59,7 @@
             group_level: parseInt(statuslevel),
             startkey: start,
             endkey: end,
-            descending: true
+            descending: true,
           });
         } catch (ignore) {
           return;
@@ -79,7 +79,7 @@
             group_level: mdatekey.length + 1,
             descending: true,
             startkey: start,
-            endkey: end
+            endkey: end,
           });
         } catch (ignore) {
           return;
@@ -99,7 +99,7 @@
             group_level: sdatekey.length + 1,
             descending: true,
             startkey: start,
-            endkey: end
+            endkey: end,
           });
         } catch (ignore) {
           return;
@@ -123,7 +123,7 @@
         include_docs: true,
         startkey: JSON.stringify(key),
         endkey: JSON.stringify(endkey),
-        limit: statuslimit
+        limit: statuslimit,
       })
     );
   }
@@ -138,7 +138,7 @@
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
-        endkey: JSON.stringify(endkey)
+        endkey: JSON.stringify(endkey),
       })
     );
   }
@@ -153,7 +153,7 @@
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
-        endkey: JSON.stringify(endkey)
+        endkey: JSON.stringify(endkey),
       })
     );
   }
@@ -188,7 +188,7 @@
     selected = {};
     slugs = {};
 
-    mydocs.forEach(function(doc) {
+    mydocs.forEach(function (doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = false;
         if ("slug" in doc.doc) {
@@ -207,7 +207,7 @@
   }
 
   function selectAll() {
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       selected[key] = true;
     });
     updateSelectedIDs();
@@ -215,7 +215,7 @@
   }
 
   function unselectAll() {
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       selected[key] = false;
     });
     updateSelectedIDs();
@@ -224,7 +224,7 @@
 
   function updateSelectedIDs() {
     var tempids = [];
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       if (selected[key] === true) {
         tempids.push(key);
       }
@@ -241,12 +241,12 @@
     for (const id of selectedIDs) {
       if (type === "clear") {
         updates[id] = {
-          smelt: "{}"
+          smelt: "{}",
         };
       } else {
         updates[id] = {
           dosmelt: true,
-          slug: slugs[id]
+          slug: slugs[id],
         };
       }
     }
@@ -254,7 +254,7 @@
     processindication = {
       start: true,
       type: type,
-      aips: selectedIDs.length
+      aips: selectedIDs.length,
     };
 
     await updatebasic(token, selectedIDs, updates);
@@ -262,12 +262,12 @@
     processindication = {
       start: false,
       type: type,
-      aips: selectedIDs.length
+      aips: selectedIDs.length,
     };
   }
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   function findaddselect(event) {
@@ -275,12 +275,6 @@
     findidentifiers = findidentifiers.concat("\n", findaddid);
   }
 </script>
-
-<style>
-  li.slug {
-    display: inline-list-item;
-  }
-</style>
 
 <svelte:head>
   <title>Archival Manifests</title>
@@ -310,22 +304,17 @@
     </select>
   </legend>
   {#if !hidegroup}
-    {#if whichgroup === 'find'}
+    {#if whichgroup === "find"}
       Select depositor:
-      <select bind:value={depositor}>
-        <option value="" />
-        {#each depositors as thisdepositor}
-          <option value={thisdepositor.id}>{thisdepositor.name}</option>
-        {/each}
-      </select>
-      {#if depositor !== ''}({depositor}){/if}
+      <PrefixSelector bind:prefix={depositor} />
 
       <div class="label">
         <TypeAhead
           db={dipstagingdatabase}
           id="findadd"
           label="Input an AIP ID to add to find box:"
-          on:selected={findaddselect} />
+          on:selected={findaddselect}
+        />
       </div>
       Or past ID's directly into box:
       <textarea id="identifiers" bind:value={findidentifiers} />
@@ -334,10 +323,8 @@
         type="submit"
         on:click={() => {
           viewFind();
-        }}>
-        Find
-      </button>
-    {:else if whichgroup == 'status'}
+        }}> Find </button>
+    {:else if whichgroup == "status"}
       <p class="children-inline">
         Show
         <select id="statustype" bind:value={statustype} on:blur={loadgroup}>
@@ -407,7 +394,7 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == 'date'}
+    {:else if whichgroup == "date"}
       {#if Array.isArray(mdate)}
         <table border="1" id="typeTable">
           <tr>
@@ -416,9 +403,7 @@
                 on:click={() => {
                   mdatekey = [];
                   loadgroup();
-                }}>
-                Year
-              </button>
+                }}> Year </button>
             </th>
             {#if mdatekey.length > 0}
               <th>Month</th>
@@ -481,7 +466,7 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == 'smelt'}
+    {:else if whichgroup == "smelt"}
       {#if Array.isArray(sdate)}
         <table border="1" id="typeTable">
           <tr>
@@ -490,9 +475,7 @@
                 on:click={() => {
                   sdatekey = [];
                   loadgroup();
-                }}>
-                Year
-              </button>
+                }}> Year </button>
             </th>
             {#if sdatekey.length > 0}
               <th>Month</th>
@@ -580,7 +563,7 @@
 {/if}
 
 {#if docs.length > 0}
-  {#if what === 'l'}
+  {#if what === "l"}
     <pre>
       {#each docs as doc}
         {doc._id}
@@ -605,17 +588,13 @@
                 type="submit"
                 on:click={() => {
                   selectAll();
-                }}>
-                Select
-              </button>
+                }}> Select </button>
               /
               <button
                 type="submit"
                 on:click={() => {
                   unselectAll();
-                }}>
-                unselect
-              </button>
+                }}> unselect </button>
               all
             </td>
 
@@ -634,17 +613,13 @@
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction('creation of archival manifests');
-                    }}>
-                    Initiate
-                  </button>
+                      doAction("creation of archival manifests");
+                    }}> Initiate </button>
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction('clear');
-                    }}>
-                    Clear
-                  </button>
+                      doAction("clear");
+                    }}> Clear </button>
                 {/if}
               </td>
             {/if}
@@ -669,10 +644,11 @@
                   <input
                     type="checkbox"
                     bind:checked={selected[doc._id]}
-                    on:change={updateSelectedIDs} />
+                    on:change={updateSelectedIDs}
+                  />
                   {doc._id}
                 </label>
-                {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
+                {#if "slug" in doc}(Slug='{doc.slug}'){/if}
               </span>
             </dt>
             <dd>
@@ -680,11 +656,12 @@
                 <li class="slug">
                   <SlugResolver
                     inputLabel="New slug:"
-                    bind:value={slugs[doc._id]} />
+                    bind:value={slugs[doc._id]}
+                  />
                 </li>
               {/if}
               {#if showdetails}
-                {#if 'repos' in doc && Array.isArray(doc.repos)}
+                {#if "repos" in doc && Array.isArray(doc.repos)}
                   <li>
                     date={doc.reposManifestDate} Repos=
                     {#each doc.repos as thisrepo, index}
@@ -693,16 +670,16 @@
                     {/each}
                   </li>
                 {/if}
-                {#if 'smelt' in doc}
+                {#if "smelt" in doc}
                   <li>Process Request date={doc.smelt.requestDate}</li>
-                  {#if 'processDate' in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
+                  {#if "processDate" in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
                     <li>
                       Process
                       {#if doc.smelt.succeeded}sucessful{:else}failed{/if}
                       on {doc.smelt.processDate}
                     </li>
 
-                    {#if showmessage && 'message' in doc.smelt && doc.smelt.message !== ''}
+                    {#if showmessage && "message" in doc.smelt && doc.smelt.message !== ""}
                       <textarea disabled="true">{doc.smelt.message}</textarea>
                     {/if}
                   {:else}
@@ -717,3 +694,9 @@
     </fieldset>
   {/if}
 {/if}
+
+<style>
+  li.slug {
+    display: inline-list-item;
+  }
+</style>
