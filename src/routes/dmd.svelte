@@ -1,5 +1,5 @@
 <script>
-  import Dmd from "../components/DMD.svelte";
+  import Dmd from "../components/DMD/Editor.svelte";
 </script>
 
 <svelte:head>

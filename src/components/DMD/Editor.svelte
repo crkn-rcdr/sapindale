@@ -1,56 +1,18 @@
 <script>
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
-  import { newid, updatedoc, getdoc, uploadAttach } from "../couch/dmdtask.js";
+  import {
+    newid,
+    updatedoc,
+    getdoc,
+    uploadAttach,
+  } from "../../couch/dmdtask.js";
+  import PrefixSelector from "../util/PrefixSelector.svelte";
 
   const { session } = stores();
   let token = $session.token;
 
   export let id = undefined;
-
-  // This should eventually be in a common place
-  let depositors = [
-    {
-      id: "ams",
-      name: "Shortgrass Public Library System"
-    },
-    {
-      id: "omcn",
-      name: "Mississauga Library System"
-    },
-    {
-      id: "oocihm",
-      name: "Canadiana.org"
-    },
-    {
-      id: "ooe",
-      name: "Department of Foreign Affairs Trade and Development"
-    },
-    {
-      id: "oop",
-      name: "Library of Parliament"
-    },
-    {
-      id: "carl",
-      name: "Canadian Association of Research Libraries"
-    },
-    {
-      id: "numeris",
-      name: "Numeris - broadcast measurement and consumer behaviour data"
-    },
-    {
-      id: "osmsdga",
-      name: "South Mountain"
-    },
-    {
-      id: "ooga",
-      name: "Canadian Hazards Information Service"
-    },
-    {
-      id: "qmma",
-      name: "McGill University Archives"
-    }
-  ];
 
   let depositor = undefined,
     mdtype = undefined,
@@ -110,7 +72,7 @@
       }
       mdname = metadatafile.name;
       await updatedoc(token, id, {
-        mdname: mdname
+        mdname: mdname,
       });
       await updateLocalFromDoc(); // Again to get the updates just made
     } else {
@@ -122,7 +84,7 @@
   async function updateDepositor() {
     await checkSetId();
     await updatedoc(token, id, {
-      depositor: depositor
+      depositor: depositor,
     });
     await updateLocalFromDoc();
   }
@@ -130,7 +92,7 @@
   async function updateMdtype() {
     await checkSetId();
     await updatedoc(token, id, {
-      mdtype: mdtype
+      mdtype: mdtype,
     });
     await updateLocalFromDoc();
   }
@@ -138,29 +100,18 @@
   async function doSplit() {
     await checkSetId();
     await updatedoc(token, id, {
-      split: true
+      split: true,
     });
     await updateLocalFromDoc();
   }
 </script>
-
-<style>
-  td.message {
-    word-wrap: break-word;
-  }
-</style>
 
 <fieldset>
   <legend>Metadata file</legend>
 
   <legend>
     Select depositor:
-    <select bind:value={depositor} on:blur={updateDepositor}>
-      <option value="" />
-      {#each depositors as thisdepositor}
-        <option value={thisdepositor.id}>{thisdepositor.name}</option>
-      {/each}
-    </select>
+    <PrefixSelector bind:prefix={depositor} />
   </legend>
 
   <legend>
@@ -200,42 +151,39 @@
       type="submit"
       on:click={() => {
         doSplit();
-      }}>
-      Initiate Split
-    </button>
+      }}> Initiate Split </button>
   </p>
 </fieldset>
 
 <br />
-{#if mydoc && 'split' in mydoc}
+{#if mydoc && "split" in mydoc}
   <fieldset>
     <legend>Split task</legend>
     <table>
-      {#if 'requestDate' in mydoc.split}
+      {#if "requestDate" in mydoc.split}
         <tr>
           <td>Request Date</td>
           <td>{mydoc.split.requestDate}</td>
         </tr>
       {/if}
-      {#if 'succeeded' in mydoc.split}
+      {#if "succeeded" in mydoc.split}
         <tr>
           <td>Success?</td>
-          <td>{mydoc.split.succeeded ? 'Yes' : 'No'}</td>
+          <td>{mydoc.split.succeeded ? "Yes" : "No"}</td>
         </tr>
       {/if}
-      {#if mydoc.split.message !== ''}
+      {#if mydoc.split.message !== ""}
         <tr>
           <td>Message</td>
           <td class="message">{mydoc.split.message}</td>
         </tr>
       {/if}
-      {#if 'processDate' in mydoc.split}
+      {#if "processDate" in mydoc.split}
         <tr>
           <td>Process Date</td>
           <td>{mydoc.split.processDate}</td>
         </tr>
       {/if}
-
     </table>
   </fieldset>
 {/if}
@@ -247,15 +195,17 @@
     <table>
       {#each myitems as item}
         <tr>
-          <td>{item.id ? item.id : '[not found]'}</td>
-          <td>{item.accessidfound ? item.accessidfound : '[not found]'}</td>
+          <td>{item.id ? item.id : "[not found]"}</td>
+          <td>{item.accessidfound ? item.accessidfound : "[not found]"}</td>
           <td>
-            {item.preservationidfound ? item.preservationidfound : '[not found]'}
+            {item.preservationidfound
+              ? item.preservationidfound
+              : "[not found]"}
           </td>
-          <td>{item.validated ? 'Yes' : 'No'}</td>
-          <td>{item.message ? item.message : ''}</td>
-          <td>{item.pubmin ? item.pubmin : ''}</td>
-          <td>{item.pubmax ? item.pubmax : ''}</td>
+          <td>{item.validated ? "Yes" : "No"}</td>
+          <td>{item.message ? item.message : ""}</td>
+          <td>{item.pubmin ? item.pubmin : ""}</td>
+          <td>{item.pubmax ? item.pubmax : ""}</td>
           <td>Copy2access</td>
           <td>copy2preservation</td>
         </tr>
@@ -283,3 +233,9 @@
     </tr>
   {/if}
 </table>
+
+<style>
+  td.message {
+    word-wrap: break-word;
+  }
+</style>

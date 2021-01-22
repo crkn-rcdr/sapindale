@@ -6,7 +6,7 @@
 </script>
 
 <script>
-  import Dmd from "../../components/DMD.svelte";
+  import Dmd from "../../components/DMD/Editor.svelte";
   export let id;
 </script>
 
