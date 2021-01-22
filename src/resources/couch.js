@@ -50,6 +50,7 @@ async function viewResultFromKey(db, ddoc, view, key, includeDocs = false) {
   let response = await _request(_buildViewPath(db, ddoc, view), {
     key: JSON.stringify(key),
     include_docs: includeDocs,
+    stale: "ok",
   });
   if (response.status === 200) {
     const rows = response.content.rows;
