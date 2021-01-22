@@ -19,4 +19,12 @@ async function request(token, method, path, options, payload) {
   return await response.json();
 }
 
-export { request };
+function removeNoidPrefix(noid) {
+  if (noid.substring(0, 6) === "69429/") {
+    return noid.substring(6);
+  } else {
+    return noid;
+  }
+}
+
+export { request, removeNoidPrefix };

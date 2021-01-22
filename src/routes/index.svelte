@@ -1,7 +1,8 @@
 <script>
-  import { stores } from "@sapper/app";
-  const { session } = stores();
-  let legacy = false;
+  // import { stores } from "@sapper/app";
+  // const { session } = stores();
+  // let legacy = false;
+  import SlugSelector from "../components/Index/SlugSelector.svelte";
 </script>
 
 <style>
@@ -52,6 +53,8 @@
         <a href="/archivalmanifest">Archival Manifest</a>
       </li>
     </ul>
+    <h3>Edit content</h3>
+    <SlugSelector />
   </aside>
 
   <aside>

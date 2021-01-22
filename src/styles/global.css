@@ -292,6 +292,13 @@ button {
   color: var(--color-bg);
 }
 
+button.not-styled {
+  border-radius: 0;
+  background-color: unset;
+  color: unset;
+  border: none;
+}
+
 a em,
 a i {
   border: 2px solid var(--color);
