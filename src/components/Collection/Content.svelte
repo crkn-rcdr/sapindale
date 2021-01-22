@@ -8,7 +8,6 @@
   let resultList = [];
   const onOkay = text => {
     resultList = text;
-    console.log("result", resultList);
   };
   function openDialog(event) {
     open(BatchLookUp, { onOkay });
@@ -24,9 +23,11 @@
 <section>
   <button on:click={openDialog}>Add Item</button>
   <br />
-  <p>{resultList.id}</p>
-  {#each resultList as item}
-    <TextDisplay data={item.label} />
+  {#each resultList as result}
+    <p>{resultList.id}</p>
   {/each}
+  <!--  {#each resultList as item}
+    <TextDisplay data={item.label} />
+  {/each} -->
 
 </section>

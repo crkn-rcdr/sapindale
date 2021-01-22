@@ -34,7 +34,7 @@
     for (var result in slugList) {
       //Fetch call To Be: written in Slug to get items in batch
 
-      let response = await type.map(types =>
+      /*  let response = await type.map(types =>
         fetch(`/${types}/slug/search/${slugList[result]}.json`, {
           method: "POST",
           credentials: "same-origin"
@@ -52,8 +52,24 @@
 
       const slugResponse = await Promise.all(inforesponse);
       let slug = await slugResponse.map(res => res.json());
-      console.log("slug", slug);
-      onOkay(slug);
+      console.log("slug", slug); */
+      const slug = await Promise.all(
+        type.map(async types => {
+          const response = await fetch(
+            `/${types}/slug/${slugList[result]}.json`,
+            {
+              credentials: "same-origin"
+            }
+          );
+          return await response.json();
+        })
+      );
+      console.log("slug value", slug);
+      const display = Object.keys(slug)
+        .sort()
+        .map(key => slug[key]);
+      console.log("slug ", display);
+      onOkay(display);
     }
 
     close();
