@@ -65,11 +65,10 @@
         })
       );
       console.log("slug value", slug);
-      const display = Object.keys(slug)
-        .sort()
-        .map(key => slug[key]);
+
+      const display = Object.values(slug);
       console.log("slug ", display);
-      onOkay(display);
+      onOkay(slug);
     }
 
     close();
