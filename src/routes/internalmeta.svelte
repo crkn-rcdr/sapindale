@@ -2,58 +2,17 @@
   import {
     internalmetadocs,
     internalmetarequests,
-    capcollectiondocs
+    capcollectiondocs,
   } from "../couch/internalmeta";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 
+  import PrefixSelector from "../components/util/PrefixSelector.svelte";
+
   const { session } = stores();
   let token = $session.token;
 
-  // This should eventually be in a common place
-  export let depositors = [
-      {
-        id: "ams",
-        name: "Shortgrass Public Library System"
-      },
-      {
-        id: "omcn",
-        name: "Mississauga Library System"
-      },
-      {
-        id: "oocihm",
-        name: "Canadiana.org"
-      },
-      {
-        id: "ooe",
-        name: "Department of Foreign Affairs Trade and Development"
-      },
-      {
-        id: "oop",
-        name: "Library of Parliament"
-      },
-      {
-        id: "carl",
-        name: "Canadian Association of Research Libraries"
-      },
-      {
-        id: "numeris",
-        name: "Numeris - broadcast measurement and consumer behaviour data"
-      },
-      {
-        id: "osmsdga",
-        name: "South Mountain"
-      },
-      {
-        id: "ooga",
-        name: "Canadian Hazards Information Service"
-      },
-      {
-        id: "qmma",
-        name: "McGill University Archives"
-      }
-    ],
-    depositor = "",
+  export let depositor = "",
     hidefinder = false,
     findidentifiers = "",
     IDlist = [],
@@ -74,11 +33,11 @@
   onMount(async () => {
     try {
       var capcols = await capcollectiondocs(token, {
-        include_docs: true
+        include_docs: true,
       });
       if (Array.isArray(capcols)) {
         var tempcollections = [];
-        capcols.forEach(function(acol) {
+        capcols.forEach(function (acol) {
           tempcollections.push(acol.doc);
         });
         capcollections = tempcollections;
@@ -123,7 +82,7 @@
     var tempdocs = [];
     var tempids = [];
     var tempnotfound = [];
-    mydocs.forEach(function(doc) {
+    mydocs.forEach(function (doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = true;
         tempdocs.push(doc.doc);
@@ -137,7 +96,7 @@
   }
 
   function selectAll() {
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       selected[key] = true;
     });
     updateSelectedIDs();
@@ -145,7 +104,7 @@
   }
 
   function unselectAll() {
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       selected[key] = false;
     });
     updateSelectedIDs();
@@ -154,7 +113,7 @@
 
   function updateSelectedIDs() {
     var tempids = [];
-    Object.keys(selected).forEach(function(key) {
+    Object.keys(selected).forEach(function (key) {
       if (selected[key] === true) {
         tempids.push(key);
       }
@@ -191,7 +150,7 @@
   }
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 </script>
 
@@ -226,7 +185,6 @@
             <td>{collection.summary.en[0]}</td>
           </tr>
         {/each}
-
       </table>
     {/if}
   </fieldset>
@@ -240,14 +198,7 @@
       Hide?
     </label>
     ) Select depositor:
-    <select bind:value={depositor}>
-      <option value="" />
-      {#each depositors as thisdepositor}
-        <option value={thisdepositor.id}>{thisdepositor.name}</option>
-      {/each}
-    </select>
-    {#if depositor !== ''}({depositor}){/if}
-
+    <PrefixSelector bind:prefix={depositor} />
   </legend>
   {#if !hidefinder}
     <textarea id="identifiers" bind:value={findidentifiers} />
@@ -256,9 +207,7 @@
       type="submit"
       on:click={() => {
         viewFind();
-      }}>
-      Find
-    </button>
+      }}> Find </button>
   {/if}
 </fieldset>
 
@@ -320,12 +269,9 @@
             type="submit"
             on:click={() => {
               doAction();
-            }}>
-            Do it
-          </button>
+            }}> Do it </button>
         </span>
       {/if}
-
     </fieldset>
   {/if}
 
@@ -346,17 +292,13 @@
               type="submit"
               on:click={() => {
                 selectAll();
-              }}>
-              Select
-            </button>
+              }}> Select </button>
             /
             <button
               type="submit"
               on:click={() => {
                 unselectAll();
-              }}>
-              unselect
-            </button>
+              }}> unselect </button>
             all
           </th>
           <th>ID</th>
@@ -370,7 +312,8 @@
               <input
                 type="checkbox"
                 bind:checked={selected[doc._id]}
-                on:change={updateSelectedIDs} />
+                on:change={updateSelectedIDs}
+              />
             </td>
             <td>{doc._id}</td>
             <td>
@@ -381,7 +324,7 @@
             </td>
             <td>
               {#if Array.isArray(doc.collections)}
-                {doc.collections.join(',')}
+                {doc.collections.join(",")}
               {/if}
             </td>
           </tr>

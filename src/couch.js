@@ -20,6 +20,34 @@ async function _request(token, path, options, method, payload) {
   return await response.json();
 }
 
+/*
+
+  Helper for access which needs a bit more control and access to headers, such as for uploading attachments.
+  Inspired by _request()
+
+*/
+async function _fetch(token,path,headers,options, method, body) {
+  let url = [upholsteryUrl, path].join("/");
+  if (options) url = `${url}?${qs.stringify(options)}`;
+
+  let fetchOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+  if (headers) {
+    for (const header of Object.keys(headers)) {
+      fetchOptions.headers[header]=headers[header];
+    }
+  }
+  if (method) fetchOptions.method = method;
+  if (body) fetchOptions.body = body;
+
+  return await fetch(url, fetchOptions);
+}
+
 async function documents(token, db, options) {
   let result = await _request(token, [db, "_all_docs"].join("/"), options);
   return result.rows.filter((row) => !row.key.startsWith("_design"));
@@ -66,4 +94,4 @@ async function view(token, db, ddoc, view, options) {
   return result.rows;
 }
 
-export { _request, idLookup, documents, design_doc_views, view };
+export { _request, _fetch, idLookup, documents, design_doc_views, view };
