@@ -24,18 +24,20 @@
   let addedItem,
     addValue = "";
 
-  function selected(event) {
+  /*  function selected(event) {
     addedItem = event.detail;
+  } */
+  function addedValue(event) {
+    addValue = event.detail;
   }
-  function addItem(addedItem, test, event) {
-    collection.items[collection.items.length] = addedItem;
+  function addItem(addValue, event) {
+    /*  collection.items[collection.items.length] = addedItem; */
+    collection.items[collection.items.length] = addValue;
 
     addedItem = "";
     addValue = "";
   }
-  function addedValue(event) {
-    addValue = event.detail;
-  }
+
   export let parents = [];
 
   let currentSlug = collection.slug;
