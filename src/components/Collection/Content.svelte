@@ -1,34 +1,30 @@
 <script>
-  import { getContext } from "svelte";
+  import { getContext, createEventDispatcher } from "svelte";
   import { fly } from "svelte/transition";
   import BatchLookUp from "../Slug/BatchLookUp.svelte";
   import TextDisplay from "../IIIF/TextDisplay";
   const { open } = getContext("simple-modal");
+  const dispatch = createEventDispatcher();
 
   let resultList = [];
-  const onOkay = text => {
-    resultList = Object.values(text).map(key => key.id);
-    console.log("resultlist", resultList);
+  const onOkay = (text, event) => {
+    resultList = text;
+    dispatch("message", resultList);
   };
+
   function openDialog(event) {
     open(BatchLookUp, { onOkay });
   }
 </script>
 
 <style>
-  section {
+  div {
     padding-top: 0.5em;
   }
 </style>
 
-<section>
-  <button on:click={openDialog}>Add Item</button>
-  <br />
-  {#each resultList as result}
-    <p>{resultList}</p>
-  {/each}
-  <!--  {#each resultList as item}
-    <TextDisplay data={item.label} />
-  {/each} -->
+<div>
 
-</section>
+  <button on:click={openDialog}>Add Items</button>
+
+</div>

@@ -21,15 +21,20 @@
     items: []
   };
 
-  let addedItem = "";
+  let addedItem,
+    addValue = "";
 
   function selected(event) {
     addedItem = event.detail;
   }
-  function addItem(addedItem) {
+  function addItem(addedItem, test, event) {
     collection.items[collection.items.length] = addedItem;
 
     addedItem = "";
+    addValue = "";
+  }
+  function addedValue(event) {
+    addValue = event.detail;
   }
   export let parents = [];
 
@@ -78,10 +83,25 @@
     {#if collection.ordered}
       <ItemList bind:items={collection.items} />
 
-      <TypeAhead label="Slug:" on:selected={selected} />
-      {#if addedItem}
+      <!-- <TypeAhead label="Slug:" on:selected={selected} /> -->
+      <!-- {#if addedItem}
         <TextDisplay data={addedItem.label} />
         <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
+      {/if} -->
+      <Modal>
+        <Content on:message={addedValue} />
+      </Modal>
+      {#if addValue}
+        <ul>
+          {#each addValue as result, i}
+            <li>
+              <TextDisplay data={result.label} />
+              <button class="add" on:click={addItem(addValue[i])}>
+                Add To Item
+              </button>
+            </li>
+          {/each}
+        </ul>
       {/if}
     {:else}
       <p>
@@ -90,9 +110,7 @@
         items from it by editing those items directly.
       </p>
     {/if}
-    <Modal>
-      <Content />
-    </Modal>
+
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>
