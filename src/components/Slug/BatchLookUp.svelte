@@ -31,8 +31,6 @@
   }
   async function lookupId(event) {
     for (var result in slugList) {
-      //Fetch call To Be: written in Slug to get items in batch
-
       const slug = await Promise.all(
         type.map(async types => {
           const response = await fetch(

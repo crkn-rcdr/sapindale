@@ -24,7 +24,7 @@
 </style>
 
 <div>
-
-  <button on:click={openDialog}>Add Items</button>
-
+  {#if resultList.length == 0}
+    <button on:click={openDialog}>Add Items</button>
+  {/if}
 </div>
