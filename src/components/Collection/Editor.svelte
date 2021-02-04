@@ -9,6 +9,7 @@
   import TypeAhead from "../Slug/TypeAhead.svelte";
   import Modal from "svelte-simple-modal";
   import Content from "./Content.svelte";
+  import FaCheck from "svelte-icons/fa/FaCheck.svelte";
   export let id = undefined;
 
   export let collection = {
@@ -21,20 +22,16 @@
     items: []
   };
 
-  let addedItem,
-    addValue = "";
+  let addValue = "";
 
-  /*  function selected(event) {
-    addedItem = event.detail;
-  } */
   function addedValue(event) {
     addValue = event.detail;
   }
-  function addItem(addValue, event) {
-    /*  collection.items[collection.items.length] = addedItem; */
-    collection.items[collection.items.length] = addValue;
+  function addItem(addValue) {
+    addValue.forEach(element => {
+      collection.items[collection.items.length] = element;
+    });
 
-    addedItem = "";
     addValue = "";
   }
 
@@ -85,11 +82,6 @@
     {#if collection.ordered}
       <ItemList bind:items={collection.items} />
 
-      <!-- <TypeAhead label="Slug:" on:selected={selected} /> -->
-      <!-- {#if addedItem}
-        <TextDisplay data={addedItem.label} />
-        <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
-      {/if} -->
       <Modal>
         <Content on:message={addedValue} />
       </Modal>
@@ -98,11 +90,11 @@
           {#each addValue as result, i}
             <li>
               <TextDisplay data={result.label} />
-              <button class="add" on:click={addItem(addValue[i])}>
-                Add To Item
-              </button>
             </li>
           {/each}
+          <button class="add" on:click={addItem(addValue)}>
+            Add to the list
+          </button>
         </ul>
       {/if}
     {:else}
