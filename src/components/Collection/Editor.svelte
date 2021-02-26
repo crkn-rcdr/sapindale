@@ -7,6 +7,9 @@
   import TextDisplay from "../IIIF/TextDisplay";
   import TextEditor from "../IIIF/TextEditor";
   import TypeAhead from "../Slug/TypeAhead.svelte";
+  import Modal from "svelte-simple-modal";
+  import Content from "./Content.svelte";
+  import FaCheck from "svelte-icons/fa/FaCheck.svelte";
 
   export let id = undefined;
 
@@ -20,16 +23,19 @@
     items: []
   };
 
-  let addedItem = "";
+  let addValue = "";
 
-  function selected(event) {
-    addedItem = event.detail;
+  function addedValue(event) {
+    addValue = event.detail;
   }
-  function addItem(addedItem) {
-    collection.items[collection.items.length] = addedItem;
+  function addItem(addValue) {
+    addValue.forEach(element => {
+      collection.items[collection.items.length] = element;
+    });
 
-    addedItem = "";
+    addValue = "";
   }
+
   export let parents = [];
 
   let currentSlug = collection.slug;
@@ -77,10 +83,20 @@
     {#if collection.ordered}
       <ItemList bind:items={collection.items} />
 
-      <TypeAhead label="Slug:" on:selected={selected} />
-      {#if addedItem}
-        <TextDisplay data={addedItem.label} />
-        <button class="add" on:click={addItem(addedItem)}>Add To Item</button>
+      <Modal>
+        <Content on:message={addedValue} />
+      </Modal>
+      {#if addValue}
+        <ul>
+          {#each addValue as result, i}
+            <li>
+              <TextDisplay data={result.label} />
+            </li>
+          {/each}
+          <button class="add" on:click={addItem(addValue)}>
+            Add to the list
+          </button>
+        </ul>
       {/if}
     {:else}
       <p>
@@ -89,6 +105,7 @@
         items from it by editing those items directly.
       </p>
     {/if}
+
     <p>TODO: implement adding items by batch</p>
   </div>
 </div>
