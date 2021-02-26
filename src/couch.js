@@ -82,26 +82,23 @@ async function idLookup(token, db, idList) {
   return result;
 }
 async function design_doc_views(token) {
-  /*  let dbs = await _request(token, "_all_dbs"); */
   let views = {};
   await Promise.all(
-    dbs
-      /* .filter((db) => db[0] !== "_" && db !== "bin") */
-      .map(async (db) => {
-        let ddocs = (
-          await _request(token, [db, "_all_docs"].join("/"), {
-            startkey: JSON.stringify("_design"),
-            endkey: JSON.stringify("_design\uFFEF"),
-            include_docs: true,
-          })
-        ).rows;
-        ddocs.map((ddoc) => {
-          if (ddoc.doc.views) {
-            views[db] = views[db] || {};
-            views[db][ddoc.id.substring(8)] = Object.keys(ddoc.doc.views);
-          }
-        });
-      })
+    dbs.map(async (db) => {
+      let ddocs = (
+        await _request(token, [db, "_all_docs"].join("/"), {
+          startkey: JSON.stringify("_design"),
+          endkey: JSON.stringify("_design\uFFEF"),
+          include_docs: true,
+        })
+      ).rows;
+      ddocs.map((ddoc) => {
+        if (ddoc.doc.views) {
+          views[db] = views[db] || {};
+          views[db][ddoc.id.substring(8)] = Object.keys(ddoc.doc.views);
+        }
+      });
+    })
   );
   return views;
 }
