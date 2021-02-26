@@ -5,12 +5,12 @@ WORKDIR /sapindale
 RUN chown -R node:node .
 USER node
 
-COPY --chown=node:node package.json yarn.lock webpack.config.js ./
-RUN yarn install --production=false
+COPY --chown=node:node package.json package-lock.json webpack.config.js ./
+RUN npm ci
 
 COPY --chown=node:node static ./static/
 COPY --chown=node:node src ./src/
 
 EXPOSE 8080
 
-CMD yarn run build && node __sapper__/build
+CMD npm run build && node __sapper__/build

@@ -1,7 +1,29 @@
 import qs from "query-string";
 
 const upholsteryUrl = process.env.UPHOLSTERY;
-
+let dbs = [
+  "canvas",
+  "cap_collections",
+  "cap_logfile_registry",
+  "cap_usage_stats",
+  "collection",
+  "copresentation",
+  "copresentation2",
+  "cosearch",
+  "cosearch2",
+  "dipstaging",
+  "dmdtask",
+  "externalmeta",
+  "extrameta",
+  "internalmeta",
+  "internalmeta2",
+  "manifest",
+  "parl_session",
+  "repoanalysis",
+  "repoanalysisf",
+  "tdrepo",
+  "wipmeta",
+];
 async function _request(token, path, options, method, payload) {
   let url = [upholsteryUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
@@ -26,7 +48,7 @@ async function _request(token, path, options, method, payload) {
   Inspired by _request()
 
 */
-async function _fetch(token,path,headers,options, method, body) {
+async function _fetch(token, path, headers, options, method, body) {
   let url = [upholsteryUrl, path].join("/");
   if (options) url = `${url}?${qs.stringify(options)}`;
 
@@ -39,7 +61,7 @@ async function _fetch(token,path,headers,options, method, body) {
   };
   if (headers) {
     for (const header of Object.keys(headers)) {
-      fetchOptions.headers[header]=headers[header];
+      fetchOptions.headers[header] = headers[header];
     }
   }
   if (method) fetchOptions.method = method;
@@ -60,26 +82,23 @@ async function idLookup(token, db, idList) {
   return result;
 }
 async function design_doc_views(token) {
-  let dbs = await _request(token, "_all_dbs");
   let views = {};
   await Promise.all(
-    dbs
-      .filter((db) => db[0] !== "_" && db !== "bin")
-      .map(async (db) => {
-        let ddocs = (
-          await _request(token, [db, "_all_docs"].join("/"), {
-            startkey: JSON.stringify("_design"),
-            endkey: JSON.stringify("_design\uFFEF"),
-            include_docs: true,
-          })
-        ).rows;
-        ddocs.map((ddoc) => {
-          if (ddoc.doc.views) {
-            views[db] = views[db] || {};
-            views[db][ddoc.id.substring(8)] = Object.keys(ddoc.doc.views);
-          }
-        });
-      })
+    dbs.map(async (db) => {
+      let ddocs = (
+        await _request(token, [db, "_all_docs"].join("/"), {
+          startkey: JSON.stringify("_design"),
+          endkey: JSON.stringify("_design\uFFEF"),
+          include_docs: true,
+        })
+      ).rows;
+      ddocs.map((ddoc) => {
+        if (ddoc.doc.views) {
+          views[db] = views[db] || {};
+          views[db][ddoc.id.substring(8)] = Object.keys(ddoc.doc.views);
+        }
+      });
+    })
   );
   return views;
 }
