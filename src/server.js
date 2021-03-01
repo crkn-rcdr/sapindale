@@ -14,13 +14,10 @@ import "./styles/global.css";
 import nodeFetch from "node-fetch";
 global.fetch = nodeFetch;
 
-const { NODE_ENV, PORT } = process.env;
-const dev = NODE_ENV === "development";
-
 const { handler } = polka().use(
   cookieParser(),
   compression({ threshold: 0 }),
-  sirv("static", { dev }),
+  sirv("static", { dev: process.dev }),
   authenticate,
   (req, res, next) => {
     if (req.path.substring(req.path.length - 5) === ".json") {
@@ -48,4 +45,4 @@ const { handler } = polka().use(
   })
 );
 
-http(handler).listen(PORT);
+http(handler).listen(process.env.PORT);

@@ -12,17 +12,9 @@ Svelte/Sapper setup for access platform administration tools. Based on [the webp
 
 - `NODE_ENV`: set to `development` or `production` depending on what mode you'd like the code to run in
 - `PORT`: port that the Sapindale server runs on. Defaults to 8080.
-- `CANTALOUPE`: URL for accessing [a Cantaloupe installation](https://github.com/crkn-rcdr/cihm-cantaloupe)
 - `COUCH`: URL for accessing the Couch installation running on the same server as Sapindale
 - `AUTH`: URL for accessing [amsa](https://github.com/crkn-rcdr/amsa)
 - `JWT_SECRET`: Secret for signing Canadiana JWTs, as provided in the `auth_token` cookie by amsa
-
-### Deprecated
-
-These variables will no longer be required in future updates.
-
-- `UPHOLSTERY`: URL for accessing [upholstery](https://github.com/crkn-rcdr/upholstery)
-- `API`: URL for accessing the [Canadiana platform API](https://github.com/crkn-rcdr/lapin). Make sure to include the version number.
 
 ## Development
 
