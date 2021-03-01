@@ -6,11 +6,12 @@ RUN chown -R node:node .
 USER node
 
 COPY --chown=node:node package.json package-lock.json webpack.config.js ./
-RUN npm ci
+RUN npm ci --also=dev
 
 COPY --chown=node:node static ./static/
 COPY --chown=node:node src ./src/
 
 EXPOSE 8080
 
-CMD npm run build && node __sapper__/build
+RUN npm run build
+CMD node __sapper__/build
