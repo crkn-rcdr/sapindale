@@ -1,6 +1,6 @@
 import qs from "query-string";
 
-const upholsteryUrl = process.env.UPHOLSTERY;
+const upholsteryUrl = "https://upholstery.canadiana.ca/";
 let dbs = [
   "canvas",
   "cap_collections",
