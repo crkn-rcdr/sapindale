@@ -2,6 +2,7 @@ import qs from "query-string";
 import fetch from "cross-fetch";
 
 const couchUrl = process.env.COUCH;
+const repositorydatabase = "tdrepo";
 
 async function _request(path, options, method, payload) {
   let url = [couchUrl, path].join("/");
@@ -104,5 +105,57 @@ async function searchView(db, ddoc, view, prefix, limit) {
 async function update(db, ddoc, update, id) {
   // TODO: build update URL and request it
 }
+async function repositoryfilesize(options) {
+  let result = await _request(
+    [repositorydatabase, "_design/tdr/_view/repofilesize"].join("/"),
+    options
+  );
+  if (result.status === 200) {
+    return {
+      status: 200,
+      content: result.rows,
+    };
+  } else {
+    return _defaultError(response, []);
+  }
+}
 
-export { getDocument, viewResultFromKey, viewResultsFromKeys, searchView };
+async function repositoryverified(options) {
+  let result = await _request(
+    [repositorydatabase, "_design/tdr/_view/repoverified"].join("/"),
+    options
+  );
+  if (result.status === 200) {
+    return {
+      status: 200,
+      content: result.rows,
+    };
+  } else {
+    return _defaultError(response, []);
+  }
+}
+
+async function repositoryreplicate(options) {
+  let result = await _request(
+    [repositorydatabase, "_design/tdr/_view/replicate"].join("/"),
+    options
+  );
+  if (result.status === 200) {
+    return {
+      status: 200,
+      content: result.rows,
+    };
+  } else {
+    return _defaultError(response, []);
+  }
+}
+
+export {
+  getDocument,
+  viewResultFromKey,
+  viewResultsFromKeys,
+  searchView,
+  repositoryfilesize,
+  repositoryverified,
+  repositoryreplicate,
+};

@@ -1,5 +1,21 @@
+<script context="module">
+  export async function preload(page, session) {
+    const repoManage = page.params;
+    const response = await this.fetch(`/repository`);
+    const reporesponse = await response.json();
+    if (response.status === 200) {
+      return {
+        repoManage,
+        reporesponse
+      };
+    } else {
+      this.error(response.status), repoManage.error;
+    }
+  }
+</script>
+
 <script>
-  import {
+  /* import {
     repositoryfilesize,
     repositoryverified,
     repositoryreplicate
@@ -78,6 +94,7 @@
   }
 
   function calculate_human() {
+    console.log("repo", repostats);
     Object.keys(repostats).forEach(function(repository = "") {
       if (
         "earliest" in verified[repository] &&
@@ -104,14 +121,14 @@
           " second(s)";
       }
     });
-  }
+  } */
 </script>
 
 <svelte:head>
   <title>Repository</title>
 </svelte:head>
 
-{#if repostats}
+<!-- {#if repostats}
   <button
     on:click={() => {
       refreshValues();
@@ -189,3 +206,4 @@
 
   </table>
 {:else}Loading repository statistics...{/if}
+ -->
