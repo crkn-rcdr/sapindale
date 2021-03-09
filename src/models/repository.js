@@ -98,18 +98,10 @@ async function refreshValues() {
       ...verified,
     };
     console.log("Merged", merged);
-    if (merged.status === 200) {
-      return {
-        status: 200,
-        content: { merged },
-      };
-    } else {
-      return {
-        status: 404,
-        content: {},
-        message: "This repo doesn't render",
-      };
-    }
+    return {
+      status: 200,
+      content: { merged },
+    };
   }
 }
 

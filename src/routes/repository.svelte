@@ -1,7 +1,7 @@
 <script context="module">
   export async function preload(page, session) {
     const repoManage = page.params;
-    const response = await this.fetch(`/repository`);
+    const response = await this.fetch(`/repository/repository.json`);
     const reporesponse = await response.json();
     if (response.status === 200) {
       return {
@@ -9,7 +9,7 @@
         reporesponse
       };
     } else {
-      this.error(response.status), repoManage.error;
+      this.error(response.status, repoManage.error);
     }
   }
 </script>
