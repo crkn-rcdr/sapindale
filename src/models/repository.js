@@ -41,7 +41,7 @@ export { repositoryfilesize, repositoryverified, repositoryreplicate };
 async function refreshValues() {
   var reposize = undefined;
   try {
-    var reposize = await repositoryfilesize(token, {
+    var reposize = await repositoryfilesize({
       group_level: 1,
     });
   } catch (ignore) {}
@@ -55,7 +55,7 @@ async function refreshValues() {
 
     Object.keys(repostats).forEach(function (repository = "") {
       verified[repository] = {};
-      repositoryverified(token, {
+      repositoryverified({
         limit: 1,
         reduce: false,
         startkey: JSON.stringify([repository]),
@@ -67,7 +67,7 @@ async function refreshValues() {
         }
       });
 
-      repositoryverified(token, {
+      repositoryverified({
         limit: 1,
         reduce: false,
         descending: true,
@@ -81,7 +81,7 @@ async function refreshValues() {
       });
     });
 
-    repositoryreplicate(token, {
+    repositoryreplicate({
       group_level: 1,
     }).then(function (rows) {
       if (Array.isArray(rows) && rows.length > 0) {
@@ -95,7 +95,7 @@ async function refreshValues() {
 
     merged = {
       ...repostats,
-      ...verified,
+      ...verified[repository],
     };
     console.log("Merged", merged);
     return {

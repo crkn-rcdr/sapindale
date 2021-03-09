@@ -1,6 +1,6 @@
 <script context="module">
   export async function preload(page, session) {
-    const repoManage = page.params;
+    const repoManage = page.path;
     const response = await this.fetch(`/repository/repository.json`);
     const reporesponse = await response.json();
     if (response.status === 200) {
@@ -9,7 +9,7 @@
         reporesponse
       };
     } else {
-      this.error(response.status, repoManage.error);
+      this.error(response.status, reporesponse.error);
     }
   }
 </script>
@@ -122,12 +122,13 @@
       }
     });
   } */
+  export let reporesponse, repoManage;
 </script>
 
 <svelte:head>
   <title>Repository</title>
 </svelte:head>
-
+<p>{repoManage}{reporesponse}</p>
 <!-- {#if repostats}
   <button
     on:click={() => {
