@@ -5,7 +5,6 @@ import {
 } from "../resources/couch";
 let repostats = undefined,
   verified,
-  merged = {},
   replicate = undefined;
 /* const repositorydatabase = "tdrepo";
 
@@ -38,7 +37,7 @@ async function repositoryreplicate(token, options) {
 
 export { repositoryfilesize, repositoryverified, repositoryreplicate };
  */
-async function refreshValues() {
+async function repoLoad(merged) {
   var reposize = undefined;
   try {
     var reposize = await repositoryfilesize({
@@ -52,50 +51,55 @@ async function refreshValues() {
       sizetemp[arepo.key[0]] = arepo.value;
     });
     repostats = sizetemp;
-
-    Object.keys(repostats).forEach(function (repository = "") {
+    let repovar = Object.keys(repostats);
+    repovar.map(async function (repository = "") {
       verified[repository] = {};
-      repositoryverified({
+      await repositoryverified({
         limit: 1,
         reduce: false,
         startkey: JSON.stringify([repository]),
         endkey: JSON.stringify([repository, {}]),
-      }).then(function (rows) {
+      }).then(async function (rows) {
         if (Array.isArray(rows) && rows.length === 1) {
           verified[repository].earliest = new Date(rows[0].key[1]);
           calculate_human();
         }
+        return verified[repository].earliest;
       });
 
-      repositoryverified({
+      await repositoryverified({
         limit: 1,
         reduce: false,
         descending: true,
         endkey: JSON.stringify([repository]),
         startkey: JSON.stringify([repository, {}]),
-      }).then(function (rows) {
+      }).then(async function (rows) {
         if (Array.isArray(rows) && rows.length === 1) {
           verified[repository].latest = new Date(rows[0].key[1]);
           calculate_human();
         }
+        return verified[repository].latest;
+      });
+
+      await repositoryreplicate({
+        group_level: 1,
+      }).then(async function (rows) {
+        if (Array.isArray(rows) && rows.length > 0) {
+          var temp = {};
+          rows.forEach(function (row = {}) {
+            temp[row.key[0]] = row.value;
+          });
+          replicate = temp;
+        }
+        return replicate;
       });
     });
-
-    repositoryreplicate({
-      group_level: 1,
-    }).then(function (rows) {
-      if (Array.isArray(rows) && rows.length > 0) {
-        var temp = {};
-        rows.forEach(function (row = {}) {
-          temp[row.key[0]] = row.value;
-        });
-        replicate = temp;
-      }
-    });
-
+    /* Promise.all(repovar).then(function (response) {
+      console.log("Inside Promise", response);
+    }); */
     merged = {
       ...repostats,
-      ...verified[repository],
+      ...verified,
     };
     console.log("Merged", merged);
     return {
@@ -133,4 +137,4 @@ function calculate_human() {
     }
   });
 }
-export default { refreshValues, calculate_human };
+export default { repoLoad, calculate_human };

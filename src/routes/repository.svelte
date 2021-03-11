@@ -1,6 +1,6 @@
 <script context="module">
   export async function preload(page, session) {
-    const repoManage = page.path;
+    const repoManage = page.params.merged;
     const response = await this.fetch(`/repository/repository.json`);
     const reporesponse = await response.json();
     if (response.status === 200) {
@@ -19,7 +19,7 @@
     repositoryfilesize,
     repositoryverified,
     repositoryreplicate
-  } from "../couch/repository";
+  } from "../resources/couch";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 
@@ -39,7 +39,7 @@
   async function refreshValues() {
     var reposize = undefined;
     try {
-      var reposize = await repositoryfilesize(token, {
+      var reposize = await repositoryfilesize({
         group_level: 1
       });
     } catch (ignore) {}
@@ -50,46 +50,61 @@
         sizetemp[arepo.key[0]] = arepo.value;
       });
       repostats = sizetemp;
-
-      Object.keys(repostats).forEach(function(repository = "") {
+      let repovar = Object.keys(repostats);
+      repovar.map(async function(repository = "") {
         verified[repository] = {};
-        repositoryverified(token, {
+        await repositoryverified({
           limit: 1,
           reduce: false,
           startkey: JSON.stringify([repository]),
           endkey: JSON.stringify([repository, {}])
-        }).then(function(rows) {
+        }).then(async function(rows) {
           if (Array.isArray(rows) && rows.length === 1) {
             verified[repository].earliest = new Date(rows[0].key[1]);
             calculate_human();
           }
+          return verified[repository].earliest;
         });
 
-        repositoryverified(token, {
+        await repositoryverified({
           limit: 1,
           reduce: false,
           descending: true,
           endkey: JSON.stringify([repository]),
           startkey: JSON.stringify([repository, {}])
-        }).then(function(rows) {
+        }).then(async function(rows) {
           if (Array.isArray(rows) && rows.length === 1) {
             verified[repository].latest = new Date(rows[0].key[1]);
             calculate_human();
           }
+          return verified[repository].latest;
+        });
+
+        await repositoryreplicate({
+          group_level: 1
+        }).then(async function(rows) {
+          if (Array.isArray(rows) && rows.length > 0) {
+            var temp = {};
+            rows.forEach(function(row = {}) {
+              temp[row.key[0]] = row.value;
+            });
+            replicate = temp;
+          }
+          return replicate;
         });
       });
-
-      repositoryreplicate(token, {
-        group_level: 1
-      }).then(function(rows) {
-        if (Array.isArray(rows) && rows.length > 0) {
-          var temp = {};
-          rows.forEach(function(row = {}) {
-            temp[row.key[0]] = row.value;
-          });
-          replicate = temp;
-        }
-      });
+      Promise.all(repovar).then(function (response) {
+      console.log("Inside Promise", response);
+    }); 
+      merged = {
+        ...repostats,
+        ...verified
+      };
+      console.log("Merged", merged);
+      return {
+        status: 200,
+        content: { merged }
+      };
     }
   }
 
