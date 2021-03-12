@@ -105,7 +105,7 @@ async function searchView(db, ddoc, view, prefix, limit) {
 async function update(db, ddoc, update, id) {
   // TODO: build update URL and request it
 }
-/* async function repositoryfilesize(options) {
+async function repositoryfilesize(options) {
   let result = await _request(
     [repositorydatabase, "_design/tdr/_view/repofilesize"].join("/"),
     options
@@ -148,59 +148,8 @@ async function repositoryreplicate(options) {
   } else {
     return _defaultError(response, []);
   }
-} */
-async function repositoryfilesize(options) {
-  let result = await _request(
-    _buildViewPath((db = { repositorydatabase }), view, "repofilesize"),
-    { options },
-
-    "GET"
-  );
-  if (result.status === 200) {
-    return {
-      status: 200,
-      content: result.rows,
-    };
-  } else {
-    return _defaultError(response, []);
-  }
 }
 
-async function repositoryverified(options) {
-  let result = await _request(
-    _buildViewPath((db = { repositorydatabase }), view, "repoverified"),
-    {
-      options,
-    },
-    "GET"
-  );
-  if (result.status === 200) {
-    return {
-      status: 200,
-      content: result.rows,
-    };
-  } else {
-    return _defaultError(response, []);
-  }
-}
-
-async function repositoryreplicate(options) {
-  let result = await _request(
-    _buildViewPath((db = { repositorydatabase }), view, "reporeplicate"),
-    {
-      options,
-    },
-    "GET"
-  );
-  if (result.status === 200) {
-    return {
-      status: 200,
-      content: result.rows,
-    };
-  } else {
-    return _defaultError(response, []);
-  }
-}
 export {
   getDocument,
   viewResultFromKey,
