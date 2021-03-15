@@ -105,10 +105,13 @@ async function searchView(db, ddoc, view, prefix, limit) {
 async function update(db, ddoc, update, id) {
   // TODO: build update URL and request it
 }
+
 async function repositoryfilesize(options) {
   let result = await _request(
-    [repositorydatabase, "_design/tdr/_view/repofilesize"].join("/"),
-    options
+    _buildViewPath((db = { repositorydatabase }), view, "repofilesize"),
+    { options },
+
+    "GET"
   );
   if (result.status === 200) {
     return {
@@ -122,8 +125,11 @@ async function repositoryfilesize(options) {
 
 async function repositoryverified(options) {
   let result = await _request(
-    [repositorydatabase, "_design/tdr/_view/repoverified"].join("/"),
-    options
+    _buildViewPath((db = { repositorydatabase }), view, "repoverified"),
+    {
+      options,
+    },
+    "GET"
   );
   if (result.status === 200) {
     return {
@@ -137,8 +143,11 @@ async function repositoryverified(options) {
 
 async function repositoryreplicate(options) {
   let result = await _request(
-    [repositorydatabase, "_design/tdr/_view/replicate"].join("/"),
-    options
+    _buildViewPath((db = { repositorydatabase }), view, "reporeplicate"),
+    {
+      options,
+    },
+    "GET"
   );
   if (result.status === 200) {
     return {
