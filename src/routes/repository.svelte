@@ -1,8 +1,4 @@
-<script>
-  export let reporesponse, repoManage;
-</script>
-
-<!-- <script context="module">
+<script context="module">
   export async function preload(page, session) {
     const repoManage = page.params.merged;
     const response = await this.fetch(`/repository/repository.json`);
@@ -16,7 +12,13 @@
       this.error(response.status, reporesponse.error);
     }
   }
-</script> -->
+</script>
+
+<script>
+  export let reporesponse, repoManage;
+</script>
+
+
 <svelte:head>
   <title>Repository</title>
 </svelte:head>
