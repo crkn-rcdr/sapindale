@@ -17,14 +17,14 @@ async function repoLoad(merged) {
 
   if (Array.isArray(reposize)) {
     var sizetemp = {};
-    reposize.forEach(function (arepo) {
+    reposize.map(async function (arepo) {
       sizetemp[arepo.key[0]] = arepo.value;
     });
     repostats = sizetemp;
     let repovar = Object.keys(repostats);
     repovar.map(async function (repository = "") {
       verified[repository] = {};
-      await repositoryverified({
+      rows = await repositoryverified({
         limit: 1,
         reduce: false,
         startkey: JSON.stringify([repository]),
@@ -69,7 +69,6 @@ async function repoLoad(merged) {
     }); */
     merged = {
       ...repostats,
-      ...verified,
     };
     console.log("Merged", merged);
     return {

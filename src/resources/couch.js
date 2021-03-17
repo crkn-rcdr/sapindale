@@ -113,6 +113,7 @@ async function repositoryfilesize(options) {
 
     "GET"
   );
+  console.log("---in couch", result);
   if (result.status === 200) {
     return {
       status: 200,
