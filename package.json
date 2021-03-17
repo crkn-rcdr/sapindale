@@ -1,8 +1,23 @@
 {
   "name": "sapindale",
   "description": "Canadiana platform administration",
-  "version": "0.0.1",
-  "license": "MIT",
+  "private": true,
+  "version": "0.0.0",
+  "license": "Unlicense",
+  "contributors": [
+    {
+      "name": "Sascha Adler",
+      "email": "sadler@crkn.ca"
+    },
+    {
+      "name": "Divya Krishnan",
+      "email": "dkrishnan@crkn.ca"
+    },
+    {
+      "name": "Russell McOrmond",
+      "email": "rmcormond@crkn.ca"
+    }
+  ],
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build -p $PORT",
@@ -18,6 +33,7 @@
     "njwt": "^1.0",
     "node-fetch": "^2.6",
     "polka": "^0.5",
+    "pretty-ms": "^7.0.1",
     "query-string": "^6.8",
     "sirv": "^0.4"
   },
