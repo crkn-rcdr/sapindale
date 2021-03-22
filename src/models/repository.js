@@ -6,12 +6,46 @@ const ddoc = "tdr";
 
 const getVerified = async (repo, latest = false) => {
   // TODO: implement this
-  return new Date();
+  let verifiedDate;
+  if (!latest) {
+    var start_key = [repo];
+    var end_key = [repo, {}];
+  } else {
+    latest = true;
+    start_key = [repo, {}];
+    end_key = [repo];
+  }
+  const response = await getView(db, ddoc, "repoverified", {
+    limit: 1,
+    reduce: false,
+    descending: latest,
+    startkey: JSON.stringify(start_key),
+    endkey: JSON.stringify(end_key),
+  });
+  /* console.log("response", response.content.rows); */
+  if (response.status === 200) {
+    response.content.rows.map(async (row) => {
+      verifiedDate = new Date(row.key[1]);
+      //console.log("!!--!!", verifiedDate);
+    });
+  }
+
+  return Date.parse(verifiedDate);
 };
 
 const getReplicate = async (repo) => {
-  // TODO: implement this
-  return 0;
+  const replicate = await getView(db, ddoc, "reporeplicate", {
+    group_level: 1,
+  });
+  if (replicate.status === 200) {
+    console.log("replicate:", replicate);
+    replicate.content.rows.map(async (row) => {
+      [row.key[0]] = row.value;
+    });
+  } else {
+    replicate.message = "Nothing to replicate";
+  }
+  return replicate;
 };
 
 const load = async () => {

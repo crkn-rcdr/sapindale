@@ -32,9 +32,7 @@
         <a href="/packaging">Packaging (combined tool)</a>
       </li>
       <li>
-        <a href="../components/Index/repository.svelte">
-          Repository statistics
-        </a>
+        <a href="/repository">Repository statistics</a>
       </li>
     </ul>
   </aside>
