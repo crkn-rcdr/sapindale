@@ -1,6 +1,5 @@
 <script context="module">
   export async function preload(page, session) {
-    /*  const repoManage = page.params.merged; */
     const response = await this.fetch(`/repository.json`);
     const reporesponse = await response.json();
     if (response.status === 200) {
@@ -43,17 +42,17 @@
   <tr>
     <th>Earliest validated</th>
     {#each reporesponse as repository}
-      <td>{repository.earliest}</td>
+      <td>{new Date(repository.earliest.toString())}</td>
     {/each}
   </tr>
   <tr>
     <th>Latest validated</th>
     {#each reporesponse as repository}
-      <td>{repository.latest}</td>
+      <td>{new Date(repository.latest.toString())}</td>
     {/each}
   </tr>
   <tr>
-    <th>Differance (human readable)</th>
+    <th>Difference</th>
     {#each reporesponse as repository}
       <td>{repository.difference}</td>
     {/each}
