@@ -23,50 +23,24 @@
 <table>
   <tr>
     <th>Repository</th>
-    {#each reporesponse as repository}
-      <th>{repository.repo}</th>
-    {/each}
-  </tr>
-  <tr>
-    <th>AIP count</th>
-    {#each reporesponse as repository}
-      <td>{repository.aipCount}</td>
-    {/each}
-  </tr>
-  <tr>
-    <th>Total disk used</th>
-    {#each reporesponse as repository}
-      <td>{repository.diskUsed}({filesize(repository.diskUsed)})</td>
-    {/each}
-  </tr>
-  <tr>
-    <th>Earliest validated</th>
-    {#each reporesponse as repository}
-      <td>{new Date(repository.earliest.toString())}</td>
-    {/each}
-  </tr>
-  <tr>
-    <th>Latest validated</th>
-    {#each reporesponse as repository}
-      <td>{new Date(repository.latest.toString())}</td>
-    {/each}
-  </tr>
-  <tr>
+    <th>AIP Count</th>
+    <th>Total Disk Used</th>
+    <th>Earliest Verified</th>
+    <th>Latest Verified</th>
     <th>Difference</th>
-    {#each reporesponse as repository}
+    <th>Replication</th>
+  </tr>
+  {#each reporesponse as repository}
+    <tr>
+      <td>{repository.repo}</td>
+      <td>{repository.aipCount}</td>
+      <td>{repository.diskUsed}({filesize(repository.diskUsed)})</td>
+      <td>{new Date(repository.earliest.toString())}</td>
+      <td>{new Date(repository.latest.toString())}</td>
       <td>{repository.difference}</td>
-    {/each}
-  </tr>
-
-  <tr>
-    <th>Replication queue length</th>
-    {#each Object.values(reporesponse) as repository}
       <td>
-        {#if repository.replicate.content != null}
-          {repository.replicate.content}
-        {:else}{repository.replicate.message}{/if}
+        {#if repository.replicate != null}{repository.replicate}{/if}
       </td>
-    {/each}
-  </tr>
-
+    </tr>
+  {/each}
 </table>

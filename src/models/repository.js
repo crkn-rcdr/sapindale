@@ -5,44 +5,40 @@ const db = "tdrepo";
 const ddoc = "tdr";
 
 const getVerified = async (repo, latest = false) => {
-  // TODO: implement this
-  let verifiedDate, displayDate;
-  if (!latest) {
-    var start_key = [repo];
-    var end_key = [repo, {}];
-  } else {
-    latest = true;
-    start_key = [repo, {}];
-    end_key = [repo];
-  }
+  let verifiedDate;
+  const firstkey = [repo];
+  const lastkey = [repo, {}];
   const response = await getView(db, ddoc, "repoverified", {
     limit: 1,
     reduce: false,
     descending: latest,
-    startkey: JSON.stringify(start_key),
-    endkey: JSON.stringify(end_key),
+    startkey: JSON.stringify(latest ? lastkey : firstkey),
+    endkey: JSON.stringify(latest ? firstkey : lastkey),
   });
   if (response.status === 200) {
-    response.content.rows.map(async (row) => {
-      verifiedDate = new Date(row.key[1]);
-    });
+    verifiedDate = new Date(response.content.rows[0].key[1]);
   }
 
   return verifiedDate;
 };
 
 const getReplicate = async (repo) => {
-  const replicate = await getView(db, ddoc, "reporeplicate", {
+  let replicate;
+
+  const response = await getView(db, ddoc, "replicate", {
+    reduce: true,
     group_level: 1,
   });
-  if (replicate.status === 200) {
-    console.log("replicate:", replicate);
-    replicate.content.rows.map(async (row) => {
-      [row.key[0]] = row.value;
-    });
-  } else {
-    replicate.message = "No replication";
+  console.log("response", response.content.rows);
+  if (response.status === 200) {
+    console.log("repo", repo);
+    if (repo.key === response.content.rows[0].key[1]) {
+      replicate = response.content.rows[0].value;
+
+      console.log("rep", replicate);
+    }
   }
+
   return replicate;
 };
 
@@ -50,15 +46,14 @@ const load = async () => {
   const response = await getView(db, ddoc, "repofilesize", {
     group_level: 1,
   });
-
   if (response.status === 200) {
+    const replicate = await getReplicate(response.content.rows);
     const stats = await Promise.all(
       response.content.rows.map(async (row) => {
         const repo = row.key[0];
         const earliest = await getVerified(repo, false);
         const latest = await getVerified(repo, true);
         const difference = timespan(latest - earliest, { compact: false });
-        const replicate = await getReplicate(repo);
 
         return {
           repo,
