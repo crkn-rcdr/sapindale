@@ -12,12 +12,28 @@
 
   normalizeOptions();
 
-  const { session } = stores();
+  const { page, session } = stores();
   let token = $session.token;
+  let pageparams = $page.params;
+  let pagequery = $page.query;
 
   let onlyIDs = false;
 
   onMount(async () => {
+     if (typeof pageparams === "object") {
+      if ("db" in pageparams) {
+        db = pageparams.db;
+      }
+      if ("ddoc" in pageparams && "v" in pageparams) {
+        view = pageparams.ddoc + "/" + pageparams.v;
+      }
+    }
+    if (typeof pagequery === "object") {
+      options = pagequery;
+      options.reduce = options.reduce === "true";
+      options.range = options.range === "true";
+    }
+ 
     try {
       views = await getViews(token);
     } catch (ignore) {}
