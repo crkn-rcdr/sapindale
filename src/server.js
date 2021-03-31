@@ -1,6 +1,7 @@
 import url from "url";
 import polka from "polka";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import compression from "compression";
 import sirv from "sirv";
 import { authenticate } from "./resources/auth";
@@ -15,6 +16,7 @@ import nodeFetch from "node-fetch";
 global.fetch = nodeFetch;
 
 const { handler } = polka().use(
+  bodyParser.json(),
   cookieParser(),
   compression({ threshold: 0 }),
   sirv("static", { dev: process.dev }),
