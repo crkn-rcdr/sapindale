@@ -1,6 +1,5 @@
 <script>
   import { stores } from "@sapper/app";
-  import { onMount } from "svelte";
   import {
     dipstagingdatabase,
     dipstagingdocs,
@@ -29,6 +28,7 @@
     hidedocs = false,
     selected = {},
     slugs = {},
+    slugsmany = {},
     smeltstatus = undefined,
     statustype = "f",
     statuslevel = "3",
@@ -113,11 +113,12 @@
     }
   }
 
-  async function slugsLookup(slugs = []) {
+  async function slugsLookup(slugtemp = {}) {
+    let slugkeys = Object.keys(slugtemp);
     const response = await fetch(`/slug/many.json`, {
       method: "POST",
       credentials: "same-origin",
-      body: JSON.stringify({ slugs: slugs }),
+      body: JSON.stringify({ slugs: slugkeys }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -125,11 +126,17 @@
     });
     if (response.status === 200) {
       let json = await response.json();
-
-      console.log("SlugMany", json);
+      if (json) {
+        let slugreturn = Object.keys(json).reduce(function(newobj, thiskey) {
+          newobj[thiskey].sameSlug = json[thiskey] !== false ? thiskey : "";
+          return newobj;
+        }, slugtemp);
+        return slugreturn;
+      }
     } else {
-      console.log("SlugManyError", response.status);
+      console.log("/slug/many.json Error", response.status);
     }
+    return slugtemp;
   }
 
   async function viewStatus(key = []) {
@@ -137,7 +144,7 @@
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
+    await acceptDocs(
       await smeltstatusview(token, {
         reduce: false,
         include_docs: true,
@@ -153,7 +160,7 @@
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
+    await acceptDocs(
       await manifestdateview(token, {
         reduce: false,
         include_docs: true,
@@ -168,7 +175,7 @@
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
+    await acceptDocs(
       await smeltqview(token, {
         reduce: false,
         include_docs: true,
@@ -193,10 +200,12 @@
       }
     }
 
-    acceptDocs(await dipstagingdocs(token, IDlist, { include_docs: true }));
+    await acceptDocs(
+      await dipstagingdocs(token, IDlist, { include_docs: true })
+    );
   }
 
-  function acceptDocs(mydocs = []) {
+  async function acceptDocs(mydocs = []) {
     if (!Array.isArray(mydocs)) {
       // TODO: Do something better for this error condition
       return;
@@ -206,15 +215,16 @@
 
     // reset to defaults
     selected = {};
-    slugs = {};
+
+    let slugstemp = {};
 
     mydocs.forEach(function(doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = false;
         if ("slug" in doc.doc) {
-          slugs[doc.doc._id] = doc.doc.slug;
+          slugstemp[doc.doc._id] = { value: doc.doc.slug };
         } else {
-          slugs[doc.doc._id] = doc.doc._id;
+          slugstemp[doc.doc._id] = { value: doc.doc._id };
         }
         tempdocs.push(doc.doc);
       } else {
@@ -223,7 +233,7 @@
     });
     findnotfound = tempnotfound;
     docs = tempdocs;
-    slugsLookup(Object.keys(slugs));
+    slugs = await slugsLookup(slugstemp);
     updateSelectedIDs();
   }
 
@@ -255,8 +265,6 @@
   }
 
   async function doAction(type = "") {
-    console.log("doAction");
-
     var updates = {};
 
     for (const id of selectedIDs) {
@@ -691,11 +699,12 @@
               </span>
             </dt>
             <dd>
-              {#if selected[doc._id]}
+              {#if doc._id in slugs}
                 <li class="slug">
                   <SlugResolver
-                    inputLabel="New slug:"
-                    bind:value={slugs[doc._id]} />
+                    inputLabel={'New slug: '}
+                    bind:sameSlug={slugs[doc._id].sameSlug}
+                    bind:value={slugs[doc._id].value} />
                 </li>
               {/if}
               {#if showdetails}
