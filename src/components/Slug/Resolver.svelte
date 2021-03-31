@@ -13,26 +13,34 @@
     !loading && !busted && value.length > 0 && (value === sameSlug || !slug);
 
   async function resolve() {
-    if (value.length > 0 && value !== sameSlug) {
-      loading = true;
-      busted = false;
-      const response = await fetch(`/manifest/slug/available/${value}.json`, {
-        method: "POST",
-        credentials: "same-origin"
-      });
-      if (response.status === 200) {
-        let json = await response.json();
-        if (json.id) {
-          slug = json;
-        } else {
-          slug = null;
-        }
+    if (value.length > 0) {
+      if (value === sameSlug) {
+        // Passed in both values, being the same means that it was found already.
+        slug = { id: value, type: "none" };
       } else {
-        busted = true;
-        slug = null;
-        value = sameSlug;
+        loading = true;
+        busted = false;
+        const response = await fetch(`/manifest/slug/available/${value}.json`, {
+          method: "POST",
+          credentials: "same-origin"
+        });
+        if (response.status === 200) {
+          let json = await response.json();
+          if (json.id) {
+            slug = json;
+          } else {
+            slug = null;
+          }
+        } else {
+          busted = true;
+          slug = null;
+          value = sameSlug;
+        }
+        loading = false;
       }
-      loading = false;
+    } else if (sameSlug.length > 0) {
+      // sameSlug was set to a value
+      slug = { id: value, type: "none" };
     }
   }
 
