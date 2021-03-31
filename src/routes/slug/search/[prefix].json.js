@@ -1,7 +1,7 @@
-import Slug from "../../../../models/slug";
+import Slug from "../../../models/slug";
 
 export async function post(req, res) {
   const prefix = req.params.prefix;
-  const response = await Slug.search("collection", prefix);
+  const response = await Slug.search("access", prefix);
   res.finalizeJSON(response);
 }

@@ -16,7 +16,7 @@
     if (value.length > 0 && value !== sameSlug) {
       loading = true;
       busted = false;
-      const response = await fetch(`/manifest/slug/available/${value}.json`, {
+      const response = await fetch(`/slug/available/${value}.json`, {
         method: "POST",
         credentials: "same-origin"
       });

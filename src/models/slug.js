@@ -2,22 +2,25 @@ import { viewResultFromKey, searchView } from "../resources/couch";
 import { multiTextValueToSingle } from "../resources/iiif";
 
 async function available(slug) {
-  const [manifestResponse, collectionResponse] = await Promise.all([
-    info("manifest", slug),
-    info("collection", slug),
-  ]);
+  const [accessresponse] = await info(["access", slug]);
   return {
     status: 200,
     content: Object.assign(
       {},
-      manifestResponse.content,
-      collectionResponse.content
+
+      accessresponse.content
     ),
   };
 }
 
-async function info(dbName, slug) {
-  const response = await viewResultFromKey(dbName, "access", "slug", slug);
+async function info(access, slug) {
+  const response = await viewResultFromKey(
+    access,
+    "access",
+    "slug",
+    slug,
+    false
+  );
   const content = response.content;
   if (response.status === 200) {
     return {
@@ -25,10 +28,10 @@ async function info(dbName, slug) {
       content: {
         id: content.id,
         slug,
-        label: multiTextValueToSingle(content.value.label),
-        type: dbName,
-        isAlias: content.value.isAlias,
-        aliasOf: content.value.aliasOf,
+        //label: multiTextValueToSingle(content.value.label),
+        //type: dbName,
+        // isAlias: content.value.isAlias,
+        // aliasOf: content.value.aliasOf,
       },
     };
   } else if (response.status === 404) {
@@ -46,8 +49,8 @@ async function info(dbName, slug) {
   }
 }
 
-async function search(dbName, prefix, limit = 10) {
-  return await searchView(dbName, "access", "slug", prefix, limit);
+async function search(access, prefix, limit = 10) {
+  return await searchView(access, "access", "slug", prefix, limit);
 }
 
 export default { available, info, search };
