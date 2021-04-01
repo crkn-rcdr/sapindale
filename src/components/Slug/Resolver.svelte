@@ -1,56 +1,85 @@
 <script>
   import { onMount } from "svelte";
   import Spinner from "svelte-spinner";
-  export let value = "",
-    sameSlug = "",
-    inputLabel = "Slug:",
-    available;
-  let loading = false,
-    busted = false;
 
-  let slug = null;
-  $: available =
-    !loading && !busted && value.length > 0 && (value === sameSlug || !slug);
+  /**
+   * @type {string} Slug being resolved.
+   */
+  export let slug = "";
+  /**
+   * @type {string | null} Noid that the slug resolves to, or null if it doesn't.
+   * If this is provided, the resolver will trust that it's correct.
+   */
+  export let noid = null;
+  /**
+   * @type {boolean} Whether to hide the display when the current slug is the
+   * same as the initial slug provided.
+   */
+  export let hideInitial = false;
+  /** @type {string} Label for the slug text input. */
+  export let inputLabel = "Slug:";
+  /** @type {string} Response for when a slug is in use. */
+  export let inUseLabel = "⚠️ Slug in use";
+  /** @type {string} Response for when a slug is not in use. */
+  export let availableLabel = "✅ Slug available";
+
+  // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
+  const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
+
+  const initial = { slug, noid };
+  $: shouldQuery = !!slug && !(slug === initial.slug && initial.noid);
+
+  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
+  let status = initial.noid ? "READY" : "LOADING";
 
   async function resolve() {
-    if (value.length > 0 && value !== sameSlug) {
-      loading = true;
-      busted = false;
-      const response = await fetch(`/slug/available/${value}.json`, {
-        method: "POST",
-        credentials: "same-origin"
-      });
-      if (response.status === 200) {
-        let json = await response.json();
-        if (json.id) {
-          slug = json;
+    if (shouldQuery) {
+      if (regex.test(slug)) {
+        console.log("query");
+        status = "LOADING";
+        const response = await fetch(`/slug/${slug}.json`, {
+          method: "GET",
+          credentials: "same-origin",
+        });
+        if (response.status === 200) {
+          noid = await response.json();
+          status = "READY";
         } else {
-          slug = null;
+          noid = null;
+          status = "ERROR";
         }
       } else {
-        busted = true;
-        slug = null;
-        value = sameSlug;
+        noid = null;
+        status = "MALFORMED";
       }
-      loading = false;
+    } else if (slug === initial.slug) {
+      noid = initial.noid;
     }
   }
 
   onMount(async () => {
     await resolve();
+    initial.noid = noid;
   });
 </script>
 
 <div class="children-inline">
   <label for="slug">{inputLabel}</label>
-  <input type="text" bind:value on:input={resolve} />
+  <input type="text" bind:value={slug} on:input={resolve} />
 
-  {#if loading}
-    <Spinner />
-  {:else if busted}
-    <span class="danger">Server error.</span>
-  {:else if slug}
-    ❌
-    <a href="/{slug.type}/{slug.id}">Slug in use</a>
-  {:else if available}✅ Slug available{/if}
+  {#if !(hideInitial && slug === initial.slug)}
+    {#if status === "LOADING"}
+      <Spinner />
+    {:else if status === "ERROR"}
+      <span class="danger">Slug resolver unavailable.</span>
+    {:else if status === "MALFORMED"}
+      Slugs can only contain letters, numbers, and the following symbols: <code
+        >_ - .</code
+      >
+    {:else if noid}
+      <a href="/access/{noid}">{inUseLabel}</a>
+    {:else}
+      {availableLabel}
+    {/if}
+  {/if}
 </div>
