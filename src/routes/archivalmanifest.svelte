@@ -28,7 +28,6 @@
     hidedocs = false,
     selected = {},
     slugs = {},
-    slugsmany = {},
     smeltstatus = undefined,
     statustype = "f",
     statuslevel = "3",
@@ -239,6 +238,7 @@
 
   function selectAll() {
     Object.keys(selected).forEach(function(key) {
+      console.log("select", key,slugs[key]);
       selected[key] = true;
     });
     updateSelectedIDs();
@@ -275,7 +275,7 @@
       } else {
         updates[id] = {
           dosmelt: true,
-          slug: slugs[id]
+          slug: slugs[id].value
         };
       }
     }
@@ -701,10 +701,13 @@
             <dd>
               {#if doc._id in slugs}
                 <li class="slug">
-                  <SlugResolver
-                    inputLabel={'New slug: '}
-                    bind:sameSlug={slugs[doc._id].sameSlug}
-                    bind:value={slugs[doc._id].value} />
+                  <span class="children-inline">
+                    <SlugResolver
+                      inputLabel={'New slug: '}
+                      bind:sameSlug={slugs[doc._id].sameSlug}
+                      bind:available={slugs[doc._id].available}
+                      bind:value={slugs[doc._id].value} />
+                  </span>
                 </li>
               {/if}
               {#if showdetails}
