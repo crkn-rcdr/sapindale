@@ -2,9 +2,7 @@
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
-  export let type = "manifest";
-  export let restrictType = false;
-  if (!type) restrictType = false;
+
   export let label = "Please provide a label for this component.";
 
   let prefix = "";
@@ -13,7 +11,7 @@
 
   async function lookupSlug() {
     if (prefix) {
-      let response = await fetch(`/${type}/slug/search/${prefix}.json`, {
+      let response = await fetch(`/slug/search/${prefix}.json`, {
         method: "POST",
         credentials: "same-origin"
       });
@@ -28,7 +26,7 @@
 
   async function selectItem(event) {
     if (lookupList && lookupList.includes(prefix)) {
-      let response = await fetch(`/${type}/slug/${prefix}.json`, {
+      let response = await fetch(`/slug/${prefix}.json`, {
         credentials: "same-origin"
       });
       let slug = await response.json();
@@ -40,26 +38,6 @@
     }
   }
 </script>
-
-{#if !restrictType}
-  <div class="typeSelect">
-    <input
-      type="radio"
-      id="manifestRadio"
-      bind:group={type}
-      on:change={lookupSlug}
-      value="manifest" />
-    <label for="manifestRadio">Manifest</label>
-
-    <input
-      type="radio"
-      id="collectionRadio"
-      bind:group={type}
-      on:change={lookupSlug}
-      value="collection" />
-    <label for="collectionRadio">Collection</label>
-  </div>
-{/if}
 
 <label for="slugInput">{label}</label>
 <input
