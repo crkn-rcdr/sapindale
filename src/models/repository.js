@@ -22,21 +22,15 @@ const getVerified = async (repo, latest = false) => {
   return verifiedDate;
 };
 
-const getReplicate = async (repo) => {
+const getReplicate = async () => {
   let replicate;
 
   const response = await getView(db, ddoc, "replicate", {
     reduce: true,
     group_level: 1,
   });
-  console.log("response", response.content.rows);
   if (response.status === 200) {
-    console.log("repo", repo);
-    if (repo.key === response.content.rows[0].key[1]) {
-      replicate = response.content.rows[0].value;
-
-      console.log("rep", replicate);
-    }
+    replicate = response.content.rows;
   }
 
   return replicate;
@@ -47,7 +41,7 @@ const load = async () => {
     group_level: 1,
   });
   if (response.status === 200) {
-    const replicate = await getReplicate(response.content.rows);
+    const replicate = await getReplicate();
     const stats = await Promise.all(
       response.content.rows.map(async (row) => {
         const repo = row.key[0];
