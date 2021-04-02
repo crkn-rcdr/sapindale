@@ -127,7 +127,7 @@
       let json = await response.json();
       if (json) {
         let slugreturn = Object.keys(json).reduce(function(newobj, thiskey) {
-          newobj[thiskey].sameSlug = json[thiskey] !== false ? thiskey : "";
+          newobj[thiskey].noid = json[thiskey] !== false ? json[thiskey] : null;
           return newobj;
         }, slugtemp);
         return slugreturn;
@@ -238,8 +238,9 @@
 
   function selectAll() {
     Object.keys(selected).forEach(function(key) {
-      console.log("select", key,slugs[key]);
-      selected[key] = true;
+      // Only select if the slug doesn't already exist.
+      selected[key] =
+        !("noid" in slugs[key]) || typeof slugs[key].noid !== "string";
     });
     updateSelectedIDs();
     docs = docs;
@@ -703,10 +704,8 @@
                 <li class="slug">
                   <span class="children-inline">
                     <SlugResolver
-                      inputLabel={'New slug: '}
-                      bind:sameSlug={slugs[doc._id].sameSlug}
-                      bind:available={slugs[doc._id].available}
-                      bind:value={slugs[doc._id].value} />
+                      bind:noid={slugs[doc._id].noid}
+                      bind:slug={slugs[doc._id].value} />
                   </span>
                 </li>
               {/if}
