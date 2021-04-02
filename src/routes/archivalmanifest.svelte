@@ -239,8 +239,7 @@
   function selectAll() {
     Object.keys(selected).forEach(function(key) {
       // Only select if the slug doesn't already exist.
-      selected[key] =
-        !("noid" in slugs[key]) || typeof slugs[key].noid !== "string";
+      selected[key] = !(key in slugs) || typeof slugs[key].noid !== "string";
     });
     updateSelectedIDs();
     docs = docs;
