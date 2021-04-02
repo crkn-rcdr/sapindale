@@ -38,12 +38,7 @@
       <td>{new Date(repository.earliest.toString())}</td>
       <td>{new Date(repository.latest.toString())}</td>
       <td>{repository.difference}</td>
-      <td>
-
-        {#each repository.replicate as replicate}
-          {#if repository.repo == replicate.key}{replicate.value}{/if}
-        {/each}
-      </td>
+      <td>{repository.replicate}</td>
     </tr>
   {/each}
 </table>

@@ -21,18 +21,18 @@ const getVerified = async (repo, latest = false) => {
 
   return verifiedDate;
 };
-
+const replicate = {};
 const getReplicate = async () => {
-  let replicate;
 
   const response = await getView(db, ddoc, "replicate", {
     reduce: true,
     group_level: 1,
   });
   if (response.status === 200) {
-    replicate = response.content.rows;
+    for (const row of response.content.rows) {
+      replicate[row.key] = row.value;
+    }
   }
-
   return replicate;
 };
 
@@ -56,7 +56,7 @@ const load = async () => {
           earliest,
           latest,
           difference,
-          replicate,
+          replicate: replicate[repo] || 0,
         };
       })
     );
