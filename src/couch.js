@@ -2,11 +2,11 @@ import qs from "query-string";
 
 const upholsteryUrl = "https://upholstery.canadiana.ca/";
 let dbs = [
+  "access",
   "canvas",
   "cap_collections",
   "cap_logfile_registry",
   "cap_usage_stats",
-  "collection",
   "copresentation",
   "copresentation2",
   "cosearch",
@@ -17,7 +17,6 @@ let dbs = [
   "extrameta",
   "internalmeta",
   "internalmeta2",
-  "manifest",
   "parl_session",
   "repoanalysis",
   "repoanalysisf",
