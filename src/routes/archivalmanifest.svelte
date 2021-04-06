@@ -1,18 +1,19 @@
 <script>
   import { stores } from "@sapper/app";
   import {
-    dipstagingdatabase,
     dipstagingdocs,
     smeltstatusview,
     manifestdateview,
-    smeltqview,
-    updatebasic
+    smeltqview
   } from "../couch/dipstaging.js";
   import TypeAhead from "../components/Couch/TypeAhead";
   import SlugResolver from "../components/Slug/Resolver";
   import PrefixSelector from "../components/util/PrefixSelector.svelte";
   const { session } = stores();
   let token = $session.token;
+
+  // Hard coded at top as config seems fine. Part of review
+  const dipstagingdatabase = "dipstaging";
 
   const statuslimit = 1000;
 
@@ -270,11 +271,11 @@
     for (const id of selectedIDs) {
       if (type === "clear") {
         updates[id] = {
-          smelt: "{}"
+          clear: true
         };
       } else {
         updates[id] = {
-          dosmelt: true,
+          smelt: true,
           slug: slugs[id].value
         };
       }
@@ -286,7 +287,21 @@
       aips: selectedIDs.length
     };
 
-    await updatebasic(token, selectedIDs, updates);
+    // Send to server....
+    const response = await fetch("/dipstaging/updates.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify(updates),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      // We've not generated per-ID errors, only sent action and let operator figure it out.  Do we care?
+    } else {
+      console.log("/dipstaging/updates.json  Error", response.status);
+    }
 
     processindication = {
       start: false,
@@ -657,7 +672,7 @@
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction('creation of archival manifests');
+                      doAction('smelt');
                     }}>
                     Initiate
                   </button>
