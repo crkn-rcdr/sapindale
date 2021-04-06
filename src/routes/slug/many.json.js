@@ -12,7 +12,7 @@ export async function post(req, res) {
     );
     if (response.status === 200 && Array.isArray(response.content)) {
       req.body.slugs.forEach(function (slug) {
-        jsonreturn[slug] = false;
+        jsonreturn[slug] = null;
       });
       response.content.forEach(function (row) {
         jsonreturn[row.key] = row.id;

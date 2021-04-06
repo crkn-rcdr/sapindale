@@ -128,7 +128,7 @@
       let json = await response.json();
       if (json) {
         let slugreturn = Object.keys(json).reduce(function(newobj, thiskey) {
-          newobj[thiskey].noid = json[thiskey] !== false ? json[thiskey] : null;
+          newobj[thiskey].noid = json[thiskey];
           return newobj;
         }, slugtemp);
         return slugreturn;
