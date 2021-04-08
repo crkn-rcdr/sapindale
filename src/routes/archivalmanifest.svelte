@@ -1,16 +1,8 @@
 <script>
   import { stores } from "@sapper/app";
-  import {
-    dipstagingdocs,
-    smeltstatusview,
-    manifestdateview,
-    smeltqview
-  } from "../couch/dipstaging.js";
   import TypeAhead from "../components/Couch/TypeAhead";
   import SlugResolver from "../components/Slug/Resolver";
   import PrefixSelector from "../components/util/PrefixSelector.svelte";
-  const { session } = stores();
-  let token = $session.token;
 
   // Hard coded at top as config seems fine. Part of review
   const dipstagingdatabase = "dipstaging";
@@ -56,7 +48,7 @@
           end = JSON.stringify([truthiness]);
         }
         try {
-          smeltstatus = await smeltstatusview(token, {
+          smeltstatus = await getView("smelts", {
             group_level: parseInt(statuslevel),
             startkey: start,
             endkey: end,
@@ -76,7 +68,7 @@
           start = JSON.stringify(startdate);
         }
         try {
-          mdate = await manifestdateview(token, {
+          mdate = await getView("manifestdate", {
             group_level: mdatekey.length + 1,
             descending: true,
             startkey: start,
@@ -96,7 +88,7 @@
           start = JSON.stringify(startdate);
         }
         try {
-          sdate = await smeltqview(token, {
+          sdate = await getView("smeltq", {
             group_level: sdatekey.length + 1,
             descending: true,
             startkey: start,
@@ -145,7 +137,7 @@
     endkey.push({});
 
     await acceptDocs(
-      await smeltstatusview(token, {
+      await getView("smelts", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
@@ -161,7 +153,7 @@
     endkey.push({});
 
     await acceptDocs(
-      await manifestdateview(token, {
+      await getView("manifestdate", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
@@ -176,7 +168,7 @@
     endkey.push({});
 
     await acceptDocs(
-      await smeltqview(token, {
+      await getView("smeltq", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
@@ -200,9 +192,51 @@
       }
     }
 
-    await acceptDocs(
-      await dipstagingdocs(token, IDlist, { include_docs: true })
-    );
+    await acceptDocs(await dipstagingdocs(IDlist, { include_docs: true }));
+  }
+
+  async function dipstagingdocs(IDList = [], options = {}) {
+    // Send to server....
+    const response = await fetch("/dipstaging/many.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({ keys: IDList, options: options }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      if (Array.isArray(content.rows)) {
+        return content.rows;
+      }
+    } else {
+      console.log("/dipstaging/manys.json  Error", response.status);
+    }
+    return [];
+  }
+
+  async function getView(view = "", options = {}) {
+    // Send to server....
+    const response = await fetch("/dipstaging/view.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({ view: view, options: options }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      if (Array.isArray(content.rows)) {
+        return content.rows;
+      }
+    } else {
+      console.log("/dipstaging/view.json  Error", response.status);
+    }
+    return [];
   }
 
   async function acceptDocs(mydocs = []) {
@@ -269,16 +303,10 @@
     var updates = {};
 
     for (const id of selectedIDs) {
-      if (type === "clear") {
-        updates[id] = {
-          clear: true
-        };
-      } else {
-        updates[id] = {
-          smelt: true,
-          slug: slugs[id].value
-        };
-      }
+      updates[id] = {
+        action: type,
+        slug: slugs[id].value
+      };
     }
 
     processindication = {
