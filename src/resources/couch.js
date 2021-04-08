@@ -89,6 +89,16 @@ async function getView(db, ddoc, view, options) {
   }
 }
 
+async function postView(db, ddoc, view, options, payload) {
+  const path = _buildViewPath(db, ddoc, view);
+  const response = await _request(path, options, "POST",payload);
+  if (response.status < 400) {
+    return response;
+  } else {
+    return _defaultError(response);
+  }
+}
+
 async function viewResultFromKey(db, ddoc, view, key, includeDocs = false) {
   let response = await _request(_buildViewPath(db, ddoc, view), {
     key: JSON.stringify(key),
@@ -151,6 +161,7 @@ async function update(db, ddoc, update, id) {
 export {
   getDocument,
   getView,
+  postView,
   viewResultFromKey,
   viewResultsFromKeys,
   searchView,
