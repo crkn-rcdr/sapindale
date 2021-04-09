@@ -52,12 +52,16 @@ function _buildViewPath(db, ddoc, view) {
   }
 }
 
+function _buildUpdatePath(db, ddoc, view, id) {
+  return [db, "_design", ddoc, "_update", view, id].join("/");
+}
 /**
  * Returns a default error response for a request that has failed on the
  * CouchDB endpoint.
  * @param {SapindaleResponse} response The CouchDB response, wrapped in a SapindaleResponse object.
  * @returns {SapindaleResponse} The response to return to the user.
  */
+// TODO: What if `response.content` is null?
 function _defaultError(response) {
   return {
     status: response.status,
@@ -91,7 +95,7 @@ async function getView(db, ddoc, view, options) {
 
 async function postView(db, ddoc, view, options, payload) {
   const path = _buildViewPath(db, ddoc, view);
-  const response = await _request(path, options, "POST",payload);
+  const response = await _request(path, options, "POST", payload);
   if (response.status < 400) {
     return response;
   } else {
@@ -154,8 +158,18 @@ async function searchView(db, ddoc, view, prefix, limit) {
   }
 }
 
-async function update(db, ddoc, update, id) {
-  // TODO: build update URL and request it
+async function updateCouch(db, ddoc, update, id, payload = {}) {
+  let response = await _request(
+    _buildUpdatePath(db, ddoc, update, id),
+    {},
+    "POST",
+    payload
+  );
+  if (response.status === 200) {
+    return { status: 200, content: response.content };
+  } else {
+    return _defaultError(response, []);
+  }
 }
 
 export {
@@ -165,4 +179,5 @@ export {
   viewResultFromKey,
   viewResultsFromKeys,
   searchView,
+  updateCouch
 };
