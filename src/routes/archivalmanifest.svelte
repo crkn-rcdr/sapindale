@@ -1,18 +1,11 @@
 <script>
   import { stores } from "@sapper/app";
-  import {
-    dipstagingdatabase,
-    dipstagingdocs,
-    smeltstatusview,
-    manifestdateview,
-    smeltqview,
-    updatebasic,
-  } from "../couch/dipstaging.js";
   import TypeAhead from "../components/Couch/TypeAhead";
   import SlugResolver from "../components/Slug/Resolver";
   import PrefixSelector from "../components/util/PrefixSelector.svelte";
-  const { session } = stores();
-  let token = $session.token;
+
+  // Hard coded at top as config seems fine. Part of review
+  const dipstagingdatabase = "dipstaging";
 
   const statuslimit = 1000;
 
@@ -55,11 +48,11 @@
           end = JSON.stringify([truthiness]);
         }
         try {
-          smeltstatus = await smeltstatusview(token, {
+          smeltstatus = await getView("smelts", {
             group_level: parseInt(statuslevel),
             startkey: start,
             endkey: end,
-            descending: true,
+            descending: true
           });
         } catch (ignore) {
           return;
@@ -75,11 +68,11 @@
           start = JSON.stringify(startdate);
         }
         try {
-          mdate = await manifestdateview(token, {
+          mdate = await getView("manifestdate", {
             group_level: mdatekey.length + 1,
             descending: true,
             startkey: start,
-            endkey: end,
+            endkey: end
           });
         } catch (ignore) {
           return;
@@ -95,11 +88,11 @@
           start = JSON.stringify(startdate);
         }
         try {
-          sdate = await smeltqview(token, {
+          sdate = await getView("smeltq", {
             group_level: sdatekey.length + 1,
             descending: true,
             startkey: start,
-            endkey: end,
+            endkey: end
           });
         } catch (ignore) {
           return;
@@ -112,18 +105,44 @@
     }
   }
 
+  async function slugsLookup(slugtemp = {}) {
+    let slugkeys = Object.keys(slugtemp);
+    const response = await fetch(`/slug/many.json`, {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({ slugs: slugkeys }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      let json = await response.json();
+      if (json) {
+        let slugreturn = Object.keys(json).reduce(function(newobj, thiskey) {
+          newobj[thiskey].noid = json[thiskey];
+          return newobj;
+        }, slugtemp);
+        return slugreturn;
+      }
+    } else {
+      console.log("/slug/many.json Error", response.status);
+    }
+    return slugtemp;
+  }
+
   async function viewStatus(key = []) {
     // I haven't yet found a better way to copy the array...
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
-      await smeltstatusview(token, {
+    await acceptDocs(
+      await getView("smelts", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
         endkey: JSON.stringify(endkey),
-        limit: statuslimit,
+        limit: statuslimit
       })
     );
   }
@@ -133,12 +152,12 @@
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
-      await manifestdateview(token, {
+    await acceptDocs(
+      await getView("manifestdate", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
-        endkey: JSON.stringify(endkey),
+        endkey: JSON.stringify(endkey)
       })
     );
   }
@@ -148,12 +167,12 @@
     var endkey = JSON.parse(JSON.stringify(key));
     endkey.push({});
 
-    acceptDocs(
-      await smeltqview(token, {
+    await acceptDocs(
+      await getView("smeltq", {
         reduce: false,
         include_docs: true,
         startkey: JSON.stringify(key),
-        endkey: JSON.stringify(endkey),
+        endkey: JSON.stringify(endkey)
       })
     );
   }
@@ -173,10 +192,54 @@
       }
     }
 
-    acceptDocs(await dipstagingdocs(token, IDlist, { include_docs: true }));
+    await acceptDocs(await dipstagingdocs(IDlist, { include_docs: true }));
   }
 
-  function acceptDocs(mydocs = []) {
+  async function dipstagingdocs(IDList = [], options = {}) {
+    // Send to server....
+    const response = await fetch("/dipstaging/many.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({ keys: IDList, options: options }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      if (Array.isArray(content.rows)) {
+        return content.rows;
+      }
+    } else {
+      console.log("/dipstaging/manys.json  Error", response.status);
+    }
+    return [];
+  }
+
+  async function getView(view = "", options = {}) {
+    // Send to server....
+    const response = await fetch("/dipstaging/view.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({ view: view, options: options }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      if (Array.isArray(content.rows)) {
+        return content.rows;
+      }
+    } else {
+      console.log("/dipstaging/view.json  Error", response.status);
+    }
+    return [];
+  }
+
+  async function acceptDocs(mydocs = []) {
     if (!Array.isArray(mydocs)) {
       // TODO: Do something better for this error condition
       return;
@@ -186,15 +249,16 @@
 
     // reset to defaults
     selected = {};
-    slugs = {};
 
-    mydocs.forEach(function (doc) {
+    let slugstemp = {};
+
+    mydocs.forEach(function(doc) {
       if ("doc" in doc) {
         selected[doc.doc._id] = false;
         if ("slug" in doc.doc) {
-          slugs[doc.doc._id] = doc.doc.slug;
+          slugstemp[doc.doc._id] = { value: doc.doc.slug };
         } else {
-          slugs[doc.doc._id] = doc.doc._id;
+          slugstemp[doc.doc._id] = { value: doc.doc._id };
         }
         tempdocs.push(doc.doc);
       } else {
@@ -203,19 +267,21 @@
     });
     findnotfound = tempnotfound;
     docs = tempdocs;
+    slugs = await slugsLookup(slugstemp);
     updateSelectedIDs();
   }
 
   function selectAll() {
-    Object.keys(selected).forEach(function (key) {
-      selected[key] = true;
+    Object.keys(selected).forEach(function(key) {
+      // Only select if the slug doesn't already exist.
+      selected[key] = !(key in slugs) || typeof slugs[key].noid !== "string";
     });
     updateSelectedIDs();
     docs = docs;
   }
 
   function unselectAll() {
-    Object.keys(selected).forEach(function (key) {
+    Object.keys(selected).forEach(function(key) {
       selected[key] = false;
     });
     updateSelectedIDs();
@@ -224,7 +290,7 @@
 
   function updateSelectedIDs() {
     var tempids = [];
-    Object.keys(selected).forEach(function (key) {
+    Object.keys(selected).forEach(function(key) {
       if (selected[key] === true) {
         tempids.push(key);
       }
@@ -234,40 +300,46 @@
   }
 
   async function doAction(type = "") {
-    console.log("doAction");
-
     var updates = {};
 
     for (const id of selectedIDs) {
-      if (type === "clear") {
-        updates[id] = {
-          smelt: "{}",
-        };
-      } else {
-        updates[id] = {
-          dosmelt: true,
-          slug: slugs[id],
-        };
-      }
+      updates[id] = {
+        action: type,
+        slug: slugs[id].value
+      };
     }
 
     processindication = {
       start: true,
       type: type,
-      aips: selectedIDs.length,
+      aips: selectedIDs.length
     };
 
-    await updatebasic(token, selectedIDs, updates);
+    // Send to server....
+    const response = await fetch("/dipstaging/updates.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify(updates),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.status === 200) {
+      // We've not generated per-ID errors, only sent action and let operator figure it out.  Do we care?
+    } else {
+      console.log("/dipstaging/updates.json  Error", response.status);
+    }
 
     processindication = {
       start: false,
       type: type,
-      aips: selectedIDs.length,
+      aips: selectedIDs.length
     };
   }
 
   function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   function findaddselect(event) {
@@ -275,6 +347,12 @@
     findidentifiers = findidentifiers.concat("\n", findaddid);
   }
 </script>
+
+<style>
+  li.slug {
+    display: inline-list-item;
+  }
+</style>
 
 <svelte:head>
   <title>Archival Manifests</title>
@@ -304,7 +382,7 @@
     </select>
   </legend>
   {#if !hidegroup}
-    {#if whichgroup === "find"}
+    {#if whichgroup === 'find'}
       Select depositor:
       <PrefixSelector bind:prefix={depositor} />
 
@@ -313,8 +391,7 @@
           db={dipstagingdatabase}
           id="findadd"
           label="Input an AIP ID to add to find box:"
-          on:selected={findaddselect}
-        />
+          on:selected={findaddselect} />
       </div>
       Or past ID's directly into box:
       <textarea id="identifiers" bind:value={findidentifiers} />
@@ -323,8 +400,10 @@
         type="submit"
         on:click={() => {
           viewFind();
-        }}> Find </button>
-    {:else if whichgroup == "status"}
+        }}>
+        Find
+      </button>
+    {:else if whichgroup == 'status'}
       <p class="children-inline">
         Show
         <select id="statustype" bind:value={statustype} on:blur={loadgroup}>
@@ -394,7 +473,7 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == "date"}
+    {:else if whichgroup == 'date'}
       {#if Array.isArray(mdate)}
         <table border="1" id="typeTable">
           <tr>
@@ -403,7 +482,9 @@
                 on:click={() => {
                   mdatekey = [];
                   loadgroup();
-                }}> Year </button>
+                }}>
+                Year
+              </button>
             </th>
             {#if mdatekey.length > 0}
               <th>Month</th>
@@ -466,7 +547,7 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == "smelt"}
+    {:else if whichgroup == 'smelt'}
       {#if Array.isArray(sdate)}
         <table border="1" id="typeTable">
           <tr>
@@ -475,7 +556,9 @@
                 on:click={() => {
                   sdatekey = [];
                   loadgroup();
-                }}> Year </button>
+                }}>
+                Year
+              </button>
             </th>
             {#if sdatekey.length > 0}
               <th>Month</th>
@@ -563,7 +646,7 @@
 {/if}
 
 {#if docs.length > 0}
-  {#if what === "l"}
+  {#if what === 'l'}
     <pre>
       {#each docs as doc}
         {doc._id}
@@ -588,13 +671,17 @@
                 type="submit"
                 on:click={() => {
                   selectAll();
-                }}> Select </button>
+                }}>
+                Select
+              </button>
               /
               <button
                 type="submit"
                 on:click={() => {
                   unselectAll();
-                }}> unselect </button>
+                }}>
+                unselect
+              </button>
               all
             </td>
 
@@ -613,13 +700,17 @@
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction("creation of archival manifests");
-                    }}> Initiate </button>
+                      doAction('smelt');
+                    }}>
+                    Initiate
+                  </button>
                   <button
                     type="submit"
                     on:click={() => {
-                      doAction("clear");
-                    }}> Clear </button>
+                      doAction('clear');
+                    }}>
+                    Clear
+                  </button>
                 {/if}
               </td>
             {/if}
@@ -644,24 +735,24 @@
                   <input
                     type="checkbox"
                     bind:checked={selected[doc._id]}
-                    on:change={updateSelectedIDs}
-                  />
+                    on:change={updateSelectedIDs} />
                   {doc._id}
                 </label>
-                {#if "slug" in doc}(Slug='{doc.slug}'){/if}
+                {#if 'slug' in doc}(Slug='{doc.slug}'){/if}
               </span>
             </dt>
             <dd>
-              {#if selected[doc._id]}
+              {#if doc._id in slugs}
                 <li class="slug">
-                  <SlugResolver
-                    inputLabel="New slug:"
-                    bind:value={slugs[doc._id]}
-                  />
+                  <span class="children-inline">
+                    <SlugResolver
+                      bind:noid={slugs[doc._id].noid}
+                      bind:slug={slugs[doc._id].value} />
+                  </span>
                 </li>
               {/if}
               {#if showdetails}
-                {#if "repos" in doc && Array.isArray(doc.repos)}
+                {#if 'repos' in doc && Array.isArray(doc.repos)}
                   <li>
                     date={doc.reposManifestDate} Repos=
                     {#each doc.repos as thisrepo, index}
@@ -670,16 +761,16 @@
                     {/each}
                   </li>
                 {/if}
-                {#if "smelt" in doc}
+                {#if 'smelt' in doc}
                   <li>Process Request date={doc.smelt.requestDate}</li>
-                  {#if "processDate" in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
+                  {#if 'processDate' in doc.smelt && doc.smelt.processDate >= doc.smelt.requestDate}
                     <li>
                       Process
                       {#if doc.smelt.succeeded}sucessful{:else}failed{/if}
                       on {doc.smelt.processDate}
                     </li>
 
-                    {#if showmessage && "message" in doc.smelt && doc.smelt.message !== ""}
+                    {#if showmessage && 'message' in doc.smelt && doc.smelt.message !== ''}
                       <textarea disabled="true">{doc.smelt.message}</textarea>
                     {/if}
                   {:else}
@@ -694,9 +785,3 @@
     </fieldset>
   {/if}
 {/if}
-
-<style>
-  li.slug {
-    display: inline-list-item;
-  }
-</style>
