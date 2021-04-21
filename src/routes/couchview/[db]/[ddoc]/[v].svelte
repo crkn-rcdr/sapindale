@@ -1,3 +1,7 @@
+<script context="module">
+
+</script>
+
 <script>
   import CouchView from "../../../../components/Couch/View.svelte";
 </script>

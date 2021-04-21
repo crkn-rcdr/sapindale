@@ -2,6 +2,7 @@
   import qs from "query-string";
   import { onMount } from "svelte";
   import { goto } from "@sapper/app";
+  import { getView } from "../../resources/couch";
   import { design_doc_views as getViews, view as fetchView } from "../../couch";
   import { stores } from "@sapper/app";
 
@@ -20,7 +21,7 @@
   let onlyIDs = false;
 
   onMount(async () => {
-     if (typeof pageparams === "object") {
+    if (typeof pageparams === "object") {
       if ("db" in pageparams) {
         db = pageparams.db;
       }
@@ -33,7 +34,7 @@
       options.reduce = options.reduce === "true";
       options.range = options.range === "true";
     }
- 
+
     try {
       views = await getViews(token);
     } catch (ignore) {}
@@ -129,8 +130,25 @@
         ...view.split("/"),
         couchOptions
       );
+      /*   let checkView = await getView(db, "", "", {
+        couchOptions
+      });
+      console.log("checkview****", checkView); */
+      //const response = await viewRes();
     }
   }
+  /* async function viewRes() {
+    const response = await fetch(`/couchview/couchview.js`, {
+      methd: "GET",
+      credentials: "same-origin",
+      body: JSON.stringify({}),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    console.log("response-+-", response);
+  } */
 
   async function update() {
     normalizeOptions();
