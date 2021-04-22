@@ -1,5 +1,5 @@
 <script>
-  import qs from "query-string";
+  /* import qs from "query-string";
   import { onMount } from "svelte";
   import { goto } from "@sapper/app";
   import { getView } from "../../resources/couch";
@@ -130,27 +130,24 @@
         ...view.split("/"),
         couchOptions
       );
-      /*   let checkView = await getView(db, "", "", {
-        couchOptions
-      });
-      console.log("checkview****", checkView); */
-      //const response = await viewRes();
+
+      const response = await viewRes();
     }
-  }
-  /* async function viewRes() {
-    const response = await fetch(`/couchview/couchview.js`, {
-      methd: "GET",
+  } */
+  async function viewRes(view = "", options = "") {
+    const response = await fetch(`/couchview.json`, {
+      methd: "POST",
       credentials: "same-origin",
-      body: JSON.stringify({}),
+      body: JSON.stringify({ view: view, options: options }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       }
     });
-    console.log("response-+-", response);
-  } */
+    console.log("response-+- in client", response);
+  }
 
-  async function update() {
+  /*  async function update() {
     normalizeOptions();
     onlyIDs = false;
 
@@ -194,17 +191,15 @@
     }
     options.reduce = false;
     await update();
-  }
+  }*/
 </script>
 
-<style>
+<!-- <style>
   .controls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
   }
-</style>
-
-<h1>Couch view display</h1>
+</style><h1>Couch view display</h1>
 
 <h2>Controls</h2>
 <div class="controls">
@@ -355,3 +350,4 @@
     </tbody>
   </table>
 {/if}
+ -->
