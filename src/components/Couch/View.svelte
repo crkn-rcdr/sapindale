@@ -2,7 +2,6 @@
   import qs from "query-string";
   import { onMount } from "svelte";
   import { goto } from "@sapper/app";
-  import { design_doc_views as getViews, view as fetchView } from "../../couch";
   import { stores } from "@sapper/app";
 
   export let db = undefined,
@@ -13,14 +12,13 @@
   normalizeOptions();
 
   const { page, session } = stores();
-  let token = $session.token;
   let pageparams = $page.params;
   let pagequery = $page.query;
 
   let onlyIDs = false;
 
   onMount(async () => {
-     if (typeof pageparams === "object") {
+    if (typeof pageparams === "object") {
       if ("db" in pageparams) {
         db = pageparams.db;
       }
@@ -33,9 +31,9 @@
       options.reduce = options.reduce === "true";
       options.range = options.range === "true";
     }
- 
+
     try {
-      views = await getViews(token);
+      views = await serverrequest("getviews");
     } catch (ignore) {}
 
     if (db && view) {
@@ -47,6 +45,33 @@
 
     window.onpopstate = loadView;
   });
+
+  async function serverrequest(action, db, ddoc, view, options) {
+    const response = await fetch("/couchview.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: action,
+        db: db,
+        ddoc: ddoc,
+        view: view,
+        options: options,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 200) {
+      let json = await response.json();
+      if (json) {
+        return json;
+      }
+    } else {
+      console.log("/couchview.json Error", response.status);
+    }
+    return [];
+  }
 
   function normalizeOptions() {
     if (!options.reduce) {
@@ -119,12 +144,12 @@
       key: options.key ? JSON.stringify(parsedKey(options.key)) : undefined,
       reduce: options.reduce,
       group_level: options.reduce ? options.group : undefined,
-      limit: options.limit
+      limit: options.limit,
     };
 
     if (db && view) {
-      viewContents = await fetchView(
-        token,
+      viewContents = await serverrequest(
+        "fetchview",
         db,
         ...view.split("/"),
         couchOptions
@@ -179,13 +204,6 @@
   }
 </script>
 
-<style>
-  .controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-</style>
-
 <h1>Couch view display</h1>
 
 <h2>Controls</h2>
@@ -196,7 +214,8 @@
       class="data-list border"
       id="db.select"
       bind:value={db}
-      on:blur={reselectView}>
+      on:blur={reselectView}
+    >
       {#each Object.keys(views) as database}
         <option selected={database === db}>{database}</option>
       {/each}
@@ -207,7 +226,8 @@
       class="data-list border"
       id="view.select"
       bind:value={view}
-      disabled={!db}>
+      disabled={!db}
+    >
       {#if db && views[db]}
         {#each Object.keys(views[db]) as ddoc (ddoc)}
           <optgroup label={ddoc}>
@@ -241,28 +261,32 @@
         type="text"
         class="data-list border"
         id="startkeyInput"
-        bind:value={options.startkey} />
+        bind:value={options.startkey}
+      />
       <br />
       <label for="endkeyInput">End key</label>
       <input
         type="text"
         class="data-list border"
         id="endkeyInput"
-        bind:value={options.endkey} />
+        bind:value={options.endkey}
+      />
       <br />
       <label for="inclusiveCheck">Make end key inclusive?</label>
       <input
         type="checkbox"
         class="data-list border"
         id="inclusiveCheck"
-        bind:checked={options.inclusive} />
+        bind:checked={options.inclusive}
+      />
     {:else}
       <label for="keyInput">Key</label>
       <input
         type="text"
         class="data-list border"
         id="keyInput"
-        bind:value={options.key} />
+        bind:value={options.key}
+      />
       <br />
     {/if}
   </div>
@@ -278,7 +302,8 @@
         min="0"
         max="9"
         id="groupInput"
-        bind:value={options.group} />
+        bind:value={options.group}
+      />
       <br />
     {/if}
     <label for="limitInput">Limit</label>
@@ -289,7 +314,8 @@
       max="500"
       step="100"
       id="limitInput"
-      bind:value={options.limit} />
+      bind:value={options.limit}
+    />
   </div>
 </div>
 
@@ -320,7 +346,8 @@
                 <button
                   on:click={() => {
                     viewKey(row.key);
-                  }}>
+                  }}
+                >
                   {JSON.stringify(row.key)}
                 </button>
               </td>
@@ -337,3 +364,10 @@
     </tbody>
   </table>
 {/if}
+
+<style>
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+</style>
