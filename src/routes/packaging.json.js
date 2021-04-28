@@ -3,6 +3,14 @@ import { updateCouch, getView, postView } from "../resources/couch";
 // Hard coded at top as config seems fine. Part of review
 const packagingdatabase = "wipmeta";
 
+// These actions are based on the CouchDB requests previously made via Upholstery.
+
+// If this was designed in the context of having server-side logic, an appropriate
+// abstraction should be used so that the visual interface doesn't need to be concerned
+// with what database the data for its requests are coming from.
+
+//  Hopefully the old preservation platform will go away before anyone thinks about doing a refactor.
+
 export async function post(req, res) {
   let jsonreturn = {};
 
@@ -12,7 +20,6 @@ export async function post(req, res) {
 
   switch (req.body.action) {
     case "filesystem":
-      console.log("filesystem");
       {
         const response = await getView(
           packagingdatabase,
@@ -27,7 +34,6 @@ export async function post(req, res) {
       break;
 
     case "status":
-      console.log("status");
       {
         const response = await getView(
           packagingdatabase,
@@ -42,7 +48,6 @@ export async function post(req, res) {
       break;
 
     case "configs":
-      console.log("configs");
       {
         const response = await getView(
           packagingdatabase,
@@ -57,7 +62,6 @@ export async function post(req, res) {
       break;
 
     case "docs":
-      console.log("docs");
       if ("docs" in req.body && Array.isArray(req.body.docs)) {
         const response = await postView(
           packagingdatabase,
@@ -73,7 +77,16 @@ export async function post(req, res) {
       break;
 
     case "requests":
-      console.log("requests");
+      console.log("requests", req.body);
+      for (const aip of req.body.aiplist) {
+        await updateCouch(
+          packagingdatabase,
+          "tdr",
+          "basic",
+          aip,
+          req.body.reqs
+        );
+      }
       break;
 
     default:

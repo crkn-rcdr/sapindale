@@ -202,7 +202,25 @@
     return [];
   }
 
-  async function packagingrequests(aiplist, reqs) {}
+  async function packagingrequests(aiplist, reqs) {
+    const response = await fetch("/packaging.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: "requests",
+        aiplist: aiplist,
+        reqs: reqs,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    // Currently nothing is done with a response, and only the fact of returning is displayed.
+    if (response.status !== 200) {
+      console.log("/packaging.json Error", response.status);
+    }
+  }
 
   async function viewStatus(key = []) {
     resetVariables();
