@@ -24,6 +24,9 @@ let dbs = [
   "wipmeta",
 ];
 
+
+// CouchView is very tied to CouchDB, and may not be kept long-term, so no abstraction of the interface was done.
+
 export async function post(req, res) {
   let jsonreturn = {};
 
