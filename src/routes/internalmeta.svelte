@@ -1,9 +1,4 @@
 <script>
-  import {
-    internalmetadocs,
-    internalmetarequests,
-    capcollectiondocs,
-  } from "../couch/internalmeta";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 
@@ -30,11 +25,57 @@
     actiontext = undefined,
     hidelegend = true;
 
+  async function internalmetaget(action, docs) {
+    const response = await fetch("/internalmeta.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: action,
+        docs: docs,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 200) {
+      let json = await response.json();
+      if (json) {
+        return json;
+      }
+    } else {
+      console.log("/internalmeta.json Error", response.status);
+    }
+    return [];
+  }
+
+
+
+  async function internalmetarequests(aiplist, req) {
+    const response = await fetch("/internalmeta.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: "requests",
+        aiplist: aiplist,
+        req: req,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    // Currently nothing is done with a response, and only the fact of returning causes an update.
+    if (response.status !== 200) {
+      console.log("/internalmeta.json Error", response.status);
+    }
+  }
+
+
+
   onMount(async () => {
     try {
-      var capcols = await capcollectiondocs(token, {
-        include_docs: true,
-      });
+      var capcols = await internalmetaget("collections");
       if (Array.isArray(capcols)) {
         var tempcollections = [];
         capcols.forEach(function (acol) {
@@ -74,7 +115,7 @@
       (collectionssub = []),
       (actiontext = undefined);
 
-    var mydocs = await internalmetadocs(token, IDlist, { include_docs: true });
+    var mydocs = await internalmetaget("docs", IDlist);
     if (!Array.isArray(mydocs)) {
       // TODO: Do something better for this error condition
       return;
@@ -144,7 +185,7 @@
         text.join(" and ") +
         ". Please wait....";
 
-      await internalmetarequests(token, selectedIDs, req);
+      await internalmetarequests(selectedIDs, req);
       await viewIDlist();
     }
   }
@@ -207,7 +248,10 @@
       type="submit"
       on:click={() => {
         viewFind();
-      }}> Find </button>
+      }}
+    >
+      Find
+    </button>
   {/if}
 </fieldset>
 
@@ -269,7 +313,10 @@
             type="submit"
             on:click={() => {
               doAction();
-            }}> Do it </button>
+            }}
+          >
+            Do it
+          </button>
         </span>
       {/if}
     </fieldset>
@@ -292,13 +339,19 @@
               type="submit"
               on:click={() => {
                 selectAll();
-              }}> Select </button>
+              }}
+            >
+              Select
+            </button>
             /
             <button
               type="submit"
               on:click={() => {
                 unselectAll();
-              }}> unselect </button>
+              }}
+            >
+              unselect
+            </button>
             all
           </th>
           <th>ID</th>
