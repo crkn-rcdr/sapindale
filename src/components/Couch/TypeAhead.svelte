@@ -1,11 +1,7 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import { stores } from "@sapper/app";
-  import { documents } from "../../couch";
   const dispatch = createEventDispatcher();
 
-  const { session } = stores();
-  let token = $session.token;
   let value = "";
 
   export let id, db;
@@ -21,13 +17,24 @@
   });
 
   async function lookupIds(event) {
-    try {
-      datalist = (await documents(token, db, {
-        startkey: JSON.stringify(value),
-        endkey: JSON.stringify(`${value}\uFFEF`),
-        limit: 12
-      })).map(row => row.id);
-    } catch (ignore) {}
+    const response = await fetch("/typeahead.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        db: db,
+        value: value,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 200) {
+      let json = await response.json();
+      if (json) {
+        datalist = json;
+      }
+    }
   }
 
   function selectItem(event) {
@@ -40,14 +47,6 @@
   }
 </script>
 
-<style>
-  label {
-    display: inline-block;
-    width: 140px;
-    text-align: left;
-  }
-</style>
-
 <label for={`${id}.input`}>{label}</label>
 
 <input
@@ -58,9 +57,18 @@
   bind:value
   on:input={lookupIds}
   on:change={selectItem}
-  on:blur={resetItem} />
+  on:blur={resetItem}
+/>
 <datalist id={`${id}.datalist`}>
   {#each datalist as item}
     <option>{item}</option>
   {/each}
 </datalist>
+
+<style>
+  label {
+    display: inline-block;
+    width: 140px;
+    text-align: left;
+  }
+</style>
