@@ -14,10 +14,6 @@ const packagingdatabase = "wipmeta";
 export async function post(req, res) {
   let jsonreturn = {};
 
-  function updateBasic(aip = "", update = {}) {
-    return updateCouch(packagingdatabase, "sync", "basic", aip, update);
-  }
-
   switch (req.body.action) {
     case "filesystem":
       {
@@ -77,7 +73,6 @@ export async function post(req, res) {
       break;
 
     case "requests":
-      console.log("requests", req.body);
       for (const aip of req.body.aiplist) {
         await updateCouch(
           packagingdatabase,
