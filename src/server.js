@@ -18,7 +18,7 @@ global.fetch = nodeFetch;
 const { handler } = polka().use(
   bodyParser.json(),
   bodyParser.raw({
-    type: ["text/csv", "application/octet-stream"],
+    type: ["application/octet-stream"],
     limit: "50mb",
   }),
   cookieParser(),

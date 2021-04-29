@@ -115,6 +115,8 @@
 
   async function uploadFile() {
     if (this.files.length) {
+      // TODO: the server has a maximum file size, which should be checked in client and user alerted rather than generating error.
+
       await checkSetId();
       await updateLocalFromDoc(); // Need to get latest _rev
       // Object of type File, which can be used as body: in fetch()
@@ -125,12 +127,6 @@
         alert("Missing information for upload");
         return;
       }
-      let filetype = metadatafile.type;
-      if (!filetype || filetype === "") {
-        filetype = "application/octet-stream";
-      }
-      console.log("Uploading", filetype, metadatafile.name);
-
       const response = await fetch("/dmd.json", {
         method: "PUT",
         credentials: "same-origin",
@@ -138,15 +134,20 @@
         headers: {
           Accept: "application/json",
           "If-Match": mydoc._rev,
-          "Content-Type": filetype,
+          "Content-Type": "application/octet-stream",
           "X-Sapindale-ID": id,
           "X-Sapindale-Name": metadatafile.name,
         },
       });
-      if (response.status !== 201) {
+      if (response.status !== 200) {
         alert("Problem uploading attachment for " + id);
         return;
       }
+      let json = await response.json();
+      if (!json) {
+        return;
+      }
+      console.log("upload response", json);
       mdname = metadatafile.name;
       await updatedoc({
         mdname: mdname,
@@ -158,26 +159,12 @@
     }
   }
 
-  async function updateDepositor() {
-    await checkSetId();
-    await updatedoc({
-      depositor: depositor,
-    });
-    await updateLocalFromDoc();
-  }
-
-  async function updateMdtype() {
-    await checkSetId();
-    await updatedoc({
-      mdtype: mdtype,
-    });
-    await updateLocalFromDoc();
-  }
-
   async function doSplit() {
     await checkSetId();
     await updatedoc({
       split: true,
+      mdtype: mdtype,
+      depositor: depositor,
     });
     await updateLocalFromDoc();
   }
@@ -193,7 +180,7 @@
 
   <legend>
     Select type:
-    <select bind:value={mdtype} on:blur={updateMdtype}>
+    <select bind:value={mdtype}>
       <option value="" />
       <option value="issueinfocsv">Issueinfo CSV</option>
       <option value="dccsv">Dublin Core CSV</option>
