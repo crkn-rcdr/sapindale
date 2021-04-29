@@ -74,6 +74,14 @@ async function getDocument(db, id) {
   return await _request([db, encodeURIComponent(id)].join("/"));
 }
 
+// Returns an array of UUIDs or 
+async function getUUID(count=1) {
+  const response = await _request("_uuids", {count: count});
+  if (response.status === 200) {
+    return response.content.uuids;
+  }
+}
+
 /**
  * Returns the results of a view request.
  * @param {string} db The database being queried.
@@ -179,5 +187,6 @@ export {
   viewResultFromKey,
   viewResultsFromKeys,
   searchView,
-  updateCouch
+  updateCouch,
+  getUUID
 };

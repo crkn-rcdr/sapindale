@@ -1,12 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
-  import {
-    newid,
-    updatedoc,
-    getdoc,
-    uploadAttach,
-  } from "../../couch/dmdtask.js";
   import PrefixSelector from "../util/PrefixSelector.svelte";
 
   const { session } = stores();
@@ -31,14 +25,50 @@
     }
   });
 
+  // `update` is a hash with commands to change the document.
+  async function updatedoc(update = {}) {
+    const response = await fetch("/dmd.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: "updatedoc",
+        id: id,
+        update: update,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    // Currently nothing is done with a response, and only the fact of returning is displayed.
+    if (response.status !== 200) {
+      console.log("/dmd.json Error", response.status);
+    }
+  }
+
   async function updateLocalFromDoc() {
     if (id) {
-      let thisdoc = {};
-      try {
-        thisdoc = await getdoc(token, id);
-      } catch (ignore) {}
-
-      mydoc = thisdoc;
+      const response = await fetch("/dmd.json", {
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify({
+          action: "getdoc",
+          id: id,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status !== 200) {
+        console.log("/dmd.json Error getting doc", response.status);
+        return;
+      }
+      let json = await response.json();
+      if (!json) {
+        return;
+      }
+      mydoc = json;
       console.log(mydoc);
       myattachment =
         "_attachments" in mydoc && mdname in mydoc._attachments
@@ -54,7 +84,30 @@
 
   async function checkSetId() {
     if (!id) {
-      id = await newid(token);
+      const response = await fetch("/dmd.json", {
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify({
+          action: "newid",
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status !== 200) {
+        console.log("/dmd.json Error getting newid", response.status);
+        return;
+      }
+      let json = await response.json();
+      if (!json) {
+        return;
+      }
+      if (!"newid" in json) {
+        console.log("No new ID?", json);
+        return;
+      }
+      id = json.newid;
 
       history.pushState({ id: history.state.id + 1 }, "", `/dmd/${id}`);
     }
@@ -66,12 +119,36 @@
       await updateLocalFromDoc(); // Need to get latest _rev
       // Object of type File, which can be used as body: in fetch()
       metadatafile = this.files[0];
-      if (!(await uploadAttach(token, id, mydoc._rev, metadatafile))) {
-        alert("Error uploading attachment");
+
+      // Upload to server
+      if (!id || !mydoc._rev || !metadatafile) {
+        alert("Missing information for upload");
+        return;
+      }
+      let filetype = metadatafile.type;
+      if (!filetype || filetype === "") {
+        filetype = "application/octet-stream";
+      }
+      console.log("Uploading", filetype, metadatafile.name);
+
+      const response = await fetch("/dmd.json", {
+        method: "PUT",
+        credentials: "same-origin",
+        body: metadatafile,
+        headers: {
+          Accept: "application/json",
+          "If-Match": mydoc._rev,
+          "Content-Type": filetype,
+          "X-Sapindale-ID": id,
+          "X-Sapindale-Name": metadatafile.name,
+        },
+      });
+      if (response.status !== 201) {
+        alert("Problem uploading attachment for " + id);
         return;
       }
       mdname = metadatafile.name;
-      await updatedoc(token, id, {
+      await updatedoc({
         mdname: mdname,
       });
       await updateLocalFromDoc(); // Again to get the updates just made
@@ -83,7 +160,7 @@
 
   async function updateDepositor() {
     await checkSetId();
-    await updatedoc(token, id, {
+    await updatedoc({
       depositor: depositor,
     });
     await updateLocalFromDoc();
@@ -91,7 +168,7 @@
 
   async function updateMdtype() {
     await checkSetId();
-    await updatedoc(token, id, {
+    await updatedoc({
       mdtype: mdtype,
     });
     await updateLocalFromDoc();
@@ -99,7 +176,7 @@
 
   async function doSplit() {
     await checkSetId();
-    await updatedoc(token, id, {
+    await updatedoc({
       split: true,
     });
     await updateLocalFromDoc();
@@ -151,7 +228,10 @@
       type="submit"
       on:click={() => {
         doSplit();
-      }}> Initiate Split </button>
+      }}
+    >
+      Initiate Split
+    </button>
   </p>
 </fieldset>
 
