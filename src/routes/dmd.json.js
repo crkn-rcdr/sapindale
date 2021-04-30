@@ -1,4 +1,10 @@
-import { updateCouch, getUUID, postView } from "../resources/couch";
+import {
+  updateCouch,
+  getUUID,
+  postView,
+  headDocument,
+  uploadAttach
+} from "../resources/couch";
 
 // Hard coded at top as config seems fine. Part of review
 const database = "dmdtask";
@@ -7,7 +13,21 @@ const database = "dmdtask";
 export async function put(req, res) {
   let jsonreturn = {};
 
+  // Successfully received metadata attachment
   if (Buffer.isBuffer(req.body)) {
+    if ("x-sapindale-id" in req.headers) {
+      let uuid = req.headers["x-sapindale-id"];
+      const response = await headDocument(database, uuid);
+      if (response.status === 200) {
+        const uploadresponse = await uploadAttach(database,uuid,"metadata",req.body, {"If-Match": response.headers.etag, "Content-Type": "application/octet-stream"});
+        console.log(uploadresponse);
+      } else {
+        jsonreturn.error =
+          "HEAD of document returned error: " + response.status;
+      }
+    } else {
+      jsonreturn.error = "Missing x-sapindale-id header!";
+    }
     console.log(req.headers);
   } else {
     console.log(
@@ -73,6 +93,6 @@ export async function post(req, res) {
       console.log("action not recognized");
   }
 
-  // We don't currently return anything to indicate success or failure to user, only {} 
+  // We don't currently return anything to indicate success or failure to user, only {}
   res.finalizeJSON(jsonreturn);
 }

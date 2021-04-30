@@ -108,7 +108,7 @@
         return;
       }
       id = json.newid;
-
+      await updateLocalFromDoc(); // load copy of freshy created document.
       history.pushState({ id: history.state.id + 1 }, "", `/dmd/${id}`);
     }
   }
@@ -118,12 +118,11 @@
       // TODO: the server has a maximum file size, which should be checked in client and user alerted rather than generating error.
 
       await checkSetId();
-      await updateLocalFromDoc(); // Need to get latest _rev
       // Object of type File, which can be used as body: in fetch()
       metadatafile = this.files[0];
 
       // Upload to server
-      if (!id || !mydoc._rev || !metadatafile) {
+      if (!id || !metadatafile) {
         alert("Missing information for upload");
         return;
       }
@@ -133,10 +132,8 @@
         body: metadatafile,
         headers: {
           Accept: "application/json",
-          "If-Match": mydoc._rev,
           "Content-Type": "application/octet-stream",
           "X-Sapindale-ID": id,
-          "X-Sapindale-Name": metadatafile.name,
         },
       });
       if (response.status !== 200) {
@@ -148,11 +145,7 @@
         return;
       }
       console.log("upload response", json);
-      mdname = metadatafile.name;
-      await updatedoc({
-        mdname: mdname,
-      });
-      await updateLocalFromDoc(); // Again to get the updates just made
+      await updateLocalFromDoc(); // Updates from changes just made
     } else {
       metadatafile = undefined;
       mdname = undefined;
