@@ -7,7 +7,8 @@ const couchUrl = process.env.COUCH;
  * @typedef {{
  *   status: number,
  *   content: any,
- *   message?: string
+ *   message?: string,
+ *   headers?: string
  * }} SapindaleResponse
  */
 
@@ -34,10 +35,14 @@ async function _request(path, options, method = "GET", payload) {
 
   const response = await fetch(url, fetchOptions);
 
-  const rv = { status: response.status };
+  const rv = { status: response.status, content: null };
   if (response.status >= 500) {
-    rv.content = null;
     rv.message = "server_error";
+  } else if (method === "HEAD") {
+    rv.headers = {};
+    for (var pair of response.headers.entries()) {
+      rv.headers[pair[0]] = pair[1];
+    }
   } else {
     rv.content = await response.json();
   }
@@ -72,6 +77,57 @@ function _defaultError(response) {
 
 async function getDocument(db, id) {
   return await _request([db, encodeURIComponent(id)].join("/"));
+}
+
+/**
+ *
+ * @param {string} db The database being queried.
+ * @param {string} id ID of the CouchDB document.
+ * @returns {SapindaleResponse}
+ */
+async function headDocument(db, id) {
+  return await _request([db, encodeURIComponent(id)].join("/"), null, "HEAD");
+}
+
+// Returns an array of UUIDs or undefined
+async function getUUID(count = 1) {
+  const response = await _request("_uuids", { count: count });
+  if (response.status === 200) {
+    return response.content.uuids;
+  }
+}
+
+
+async function uploadAttach(db,id, name, body, headers) {
+  let url = [couchUrl, db, id, name].join("/");
+  const fetchOptions = {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PUT",
+    body: body
+  };
+  if (headers) {
+    for (const [key, value] of Object.entries(headers)) {
+      fetchOptions.headers[key]=value;
+    }
+  }
+
+  console.log ("fetchOptions.headers",fetchOptions.headers);
+
+  const response = await fetch(url, fetchOptions);
+
+  const rv = { status: response.status, content: null };
+  if (response.status >= 500) {
+    rv.message = "server_error";
+  } else {
+    rv.headers = {};
+    for (var pair of response.headers.entries()) {
+      rv.headers[pair[0]] = pair[1];
+    }
+  }
+  return rv;
 }
 
 /**
@@ -174,10 +230,13 @@ async function updateCouch(db, ddoc, update, id, payload = {}) {
 
 export {
   getDocument,
+  headDocument,
   getView,
   postView,
   viewResultFromKey,
   viewResultsFromKeys,
   searchView,
-  updateCouch
+  updateCouch,
+  getUUID,
+  uploadAttach
 };

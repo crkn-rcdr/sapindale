@@ -1,11 +1,4 @@
 <script>
-  import {
-    packagingfilesystem,
-    packagingstatus,
-    packagingrequests,
-    packagingconfigs,
-    packagingdocs
-  } from "../couch/packaging";
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
 
@@ -50,7 +43,7 @@
       manipmd: true,
       i: true,
       cs: true,
-      post: true
+      post: true,
     },
     ilabel = true,
     idmd = true,
@@ -68,7 +61,7 @@
     "Rejected",
     "OCR",
     "Ready",
-    "Proofed"
+    "Proofed",
   ];
 
   onMount(() => {
@@ -85,13 +78,13 @@
 
   async function loadpackageconfigs() {
     try {
-      var configtemp = await packagingconfigs(token, {
+      var configtemp = await packagingget("configs", {
         reduce: false,
-        include_docs: true
+        include_docs: true,
       });
       if (Array.isArray(configtemp)) {
         configs = {};
-        configtemp.forEach(function(aconfig) {
+        configtemp.forEach(function (aconfig) {
           configs[aconfig.id] = aconfig.doc;
         });
       }
@@ -112,7 +105,7 @@
       manipmd: true,
       i: true,
       cs: true,
-      post: true
+      post: true,
     };
     ilabel = true;
     idmd = true;
@@ -123,9 +116,13 @@
   async function loadwipwalk() {
     var mywipwalk;
     try {
-      var mywipwalk = await packagingdocs(token, ["wipwalk.wipwalk"], {
-        include_docs: true
-      });
+      var mywipwalk = await packagingget(
+        "docs",
+        {
+          include_docs: true,
+        },
+        ["wipwalk.wipwalk"]
+      );
     } catch (ignore) {}
     if (!Array.isArray(mywipwalk) || mywipwalk.length !== 1) {
       // TODO: Do something better for this error condition
@@ -142,7 +139,7 @@
     switch (whichgroup) {
       case "fs":
         try {
-          filesystem = await packagingfilesystem(token, { group_level: 2 });
+          filesystem = await packagingget("filesystem", { group_level: 2 });
         } catch (ignore) {
           filesystem = undefined;
           return;
@@ -158,10 +155,10 @@
           end = JSON.stringify([truthiness, {}]);
         }
         try {
-          packagestatus = await packagingstatus(token, {
+          packagestatus = await packagingget("status", {
             group_level: parseInt(statuslevel),
             startkey: start,
-            endkey: end
+            endkey: end,
           });
         } catch (ignore) {
           packagestatus = undefined;
@@ -180,6 +177,51 @@
     }
   }
 
+  async function packagingget(action, options, docs) {
+    const response = await fetch("/packaging.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: action,
+        options: options,
+        docs: docs,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 200) {
+      let json = await response.json();
+      if (json) {
+        return json;
+      }
+    } else {
+      console.log("/packaging.json Error", response.status);
+    }
+    return [];
+  }
+
+  async function packagingrequests(aiplist, reqs) {
+    const response = await fetch("/packaging.json", {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        action: "requests",
+        aiplist: aiplist,
+        reqs: reqs,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    // Currently nothing is done with a response, and only the fact of returning is displayed.
+    if (response.status !== 200) {
+      console.log("/packaging.json Error", response.status);
+    }
+  }
+
   async function viewStatus(key = []) {
     resetVariables();
     hidemanipulate = true; // Most likely we don't want to manipulate from a status lookup
@@ -187,11 +229,11 @@
       // I haven't yet found a better way to copy the array...
       var endkey = JSON.parse(JSON.stringify(key));
       endkey.push({});
-      var statusdocs = await packagingstatus(token, {
+      var statusdocs = await packagingget("status", {
         reduce: false,
         startkey: JSON.stringify(key),
         endkey: JSON.stringify(endkey),
-        include_docs: what === "d"
+        include_docs: what === "d",
       });
       if (!Array.isArray(statusdocs)) {
         // TODO: Do something better for this error condition
@@ -199,7 +241,7 @@
       }
       if (what === "d") {
         var tempdocs = [];
-        statusdocs.forEach(function(statusdoc) {
+        statusdocs.forEach(function (statusdoc) {
           if ("doc" in statusdoc) {
             tempdocs.push(statusdoc.doc);
           }
@@ -209,7 +251,7 @@
         updateaiplist();
       } else {
         var templist = [];
-        statusdocs.forEach(function(statusdoc) {
+        statusdocs.forEach(function (statusdoc) {
           templist.push(statusdoc.id);
         });
         idlist = templist;
@@ -227,11 +269,11 @@
       // I haven't yet found a better way to copy the array...
       var endkey = JSON.parse(JSON.stringify(key));
       endkey.push({});
-      var confstages = await packagingfilesystem(token, {
+      var confstages = await packagingget("filesystem", {
         reduce: false,
         startkey: JSON.stringify(key),
         endkey: JSON.stringify(endkey),
-        include_docs: what === "d"
+        include_docs: what === "d",
       });
       if (!Array.isArray(confstages)) {
         // TODO: Do something better for this error condition
@@ -239,7 +281,7 @@
       }
       if (what === "d") {
         var tempdocs = [];
-        confstages.forEach(function(confstage) {
+        confstages.forEach(function (confstage) {
           if ("doc" in confstage) {
             tempdocs.push(confstage.doc);
           }
@@ -249,7 +291,7 @@
         updateaiplist();
       } else {
         var templist = [];
-        confstages.forEach(function(confstage) {
+        confstages.forEach(function (confstage) {
           templist.push(confstage.id);
         });
         idlist = templist;
@@ -262,7 +304,7 @@
 
   function setIngestChecks() {
     ingestchecks = {};
-    packagedocs.forEach(function(doc) {
+    packagedocs.forEach(function (doc) {
       // Set the checkbox to true, but only if certain conditions met.
       if (
         "label" in doc &&
@@ -277,7 +319,7 @@
   }
 
   async function createEmpty(aip = "") {
-    await packagingrequests(token, [aip], {});
+    await packagingrequests([aip], {});
     viewFind();
   }
 
@@ -318,9 +360,13 @@
       findnotvalidText = laterelize(tempnotvalid);
     }
 
-    var mydocs = await packagingdocs(token, AIPlist, {
-      include_docs: what === "d"
-    });
+    var mydocs = await packagingget(
+      "docs",
+      {
+        include_docs: what === "d",
+      },
+      AIPlist
+    );
     if (!Array.isArray(mydocs)) {
       // TODO: Do something better for this error condition
       return;
@@ -328,7 +374,7 @@
     var tempdocs = [];
     var tempids = [];
     var tempnotfound = [];
-    mydocs.forEach(function(doc) {
+    mydocs.forEach(function (doc) {
       if ("doc" in doc) {
         tempdocs.push(doc.doc);
       } else if ("id" in doc) {
@@ -354,7 +400,7 @@
       "i2objid" in configs[packageconfig] &&
       Array.isArray(configs[packageconfig].i2objid)
     ) {
-      configs[packageconfig].i2objid.forEach(function(value = {}) {
+      configs[packageconfig].i2objid.forEach(function (value = {}) {
         identifier = identifier.replace(
           new RegExp(value.search, "g"),
           value.replace
@@ -368,9 +414,9 @@
     document.getElementById("buttonmove-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
     var req = {
       nocreate: true,
-      processreq: JSON.stringify({ request: "move", stage: move[identifier] })
+      processreq: JSON.stringify({ request: "move", stage: move[identifier] }),
     };
-    await packagingrequests(token, [identifier], req);
+    await packagingrequests([identifier], req);
   }
 
   async function createIdentifier(identifier) {
@@ -386,10 +432,10 @@
         empty: true,
         configid: packageconfig,
         identifier:
-          identifier in AIPidentifier ? AIPidentifier[identifier] : objid
-      })
+          identifier in AIPidentifier ? AIPidentifier[identifier] : objid,
+      }),
     };
-    await packagingrequests(token, [identifier], req);
+    await packagingrequests([identifier], req);
   }
 
   async function exportIdentifier(identifier) {
@@ -400,26 +446,26 @@
         request: "export",
         type: exporttype[identifier],
         wipDir: "Temp/export/" + packageconfig,
-        createdest: true
-      })
+        createdest: true,
+      }),
     };
-    await packagingrequests(token, [identifier], req);
+    await packagingrequests([identifier], req);
   }
 
   async function silenceIdentifier(identifier) {
     document.getElementById("silence-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
     var req = {
       nocreate: true,
-      silence: true
+      silence: true,
     };
-    await packagingrequests(token, [identifier], req);
+    await packagingrequests([identifier], req);
   }
 
   async function retryIdentifier(identifier, oldreq) {
     document.getElementById("retry-" + identifier).style.display = "none"; // Should I create new hash and use {if} ?
     if (Array.isArray(oldreq)) {
       var processreq = [{ request: "move", stage: "Processing" }];
-      oldreq.forEach(function(thisReq) {
+      oldreq.forEach(function (thisReq) {
         delete thisReq["processhost"];
         delete thisReq["processdate"];
         processreq.push(thisReq);
@@ -427,14 +473,14 @@
     }
     var req = {
       nocreate: true,
-      processreq: JSON.stringify(processreq)
+      processreq: JSON.stringify(processreq),
     };
-    await packagingrequests(token, [identifier], req);
+    await packagingrequests([identifier], req);
   }
 
   async function updateaiplist() {
     var tempaiplist = [];
-    Object.keys(ingestchecks).forEach(function(checkaip) {
+    Object.keys(ingestchecks).forEach(function (checkaip) {
       if (ingestchecks[checkaip]) {
         tempaiplist.push(checkaip);
       }
@@ -466,7 +512,7 @@
           request: "manipmd",
           label: ilabel,
           clabel: clabel,
-          dmdsec: idmd
+          dmdsec: idmd,
         });
       }
     }
@@ -474,7 +520,7 @@
       requests.push({
         request: "ingest",
         type: ingestType,
-        changelog: changelog
+        changelog: changelog,
       });
     }
     if (processstages.cs) {
@@ -487,20 +533,20 @@
     processindication = {
       start: true,
       reqs: requests.length,
-      aips: aiplist.length
+      aips: aiplist.length,
     };
 
     var req = {
       nocreate: true,
-      processreq: JSON.stringify(requests)
+      processreq: JSON.stringify(requests),
     };
-    await packagingrequests(token, aiplist, req);
+    await packagingrequests(aiplist, req);
 
     // changing start to false alone isn't reacted to
     processindication = {
       start: false,
       reqs: requests.length,
-      aips: aiplist.length
+      aips: aiplist.length,
     };
   }
 
@@ -510,22 +556,6 @@
     return output;
   }
 </script>
-
-<style>
-  ul {
-    list-style-type: disc;
-    list-style-position: inside;
-  }
-  dd,
-  dl,
-  dt {
-    display: block;
-    unicode-bidi: embed;
-  }
-  dd {
-    margin-left: 5%;
-  }
-</style>
 
 <svelte:head>
   <title>Packaging</title>
@@ -593,7 +623,7 @@
         {/each}
       </select>
     </legend>
-    {#if packageconfig !== '' && !hideconfig}
+    {#if packageconfig !== "" && !hideconfig}
       <table border="1" id="confTable">
         <tr>
           <th>Variable</th>
@@ -604,8 +634,8 @@
           <td>{packageconfig}</td>
         </tr>
         {#each Object.entries(configs[packageconfig]) as [property, value]}
-          {#if property.charAt() !== '_'}
-            {#if property === 'metsproc'}
+          {#if property.charAt() !== "_"}
+            {#if property === "metsproc"}
               <tr>
                 <td>metsproc commands</td>
                 <td>
@@ -626,11 +656,10 @@
                         </td>
                       </tr>
                     {/each}
-
                   </table>
                 </td>
               </tr>
-            {:else if property === 'fileconfig'}
+            {:else if property === "fileconfig"}
               <tr>
                 <td>File Configuration</td>
                 <td>
@@ -654,11 +683,10 @@
                         </td>
                       </tr>
                     {/each}
-
                   </table>
                 </td>
               </tr>
-            {:else if property === 'i2objid'}
+            {:else if property === "i2objid"}
               <tr>
                 <td>Identifier to Object ID mappings</td>
                 <td>
@@ -678,11 +706,10 @@
                         </td>
                       </tr>
                     {/each}
-
                   </table>
                 </td>
               </tr>
-            {:else if typeof value === 'string' || typeof value === 'boolean'}
+            {:else if typeof value === "string" || typeof value === "boolean"}
               <tr>
                 <td>{property}</td>
                 <td>{value}</td>
@@ -724,7 +751,7 @@
     </select>
   </legend>
   {#if !hidegroup}
-    {#if whichgroup === 'fs'}
+    {#if whichgroup === "fs"}
       {#if Array.isArray(filesystem)}
         <table border="1" id="typeTable">
           <tr>
@@ -740,7 +767,8 @@
                 <button
                   on:click={() => {
                     viewConfstage(confstage.key);
-                  }}>
+                  }}
+                >
                   {confstage.value}
                 </button>
               </td>
@@ -748,7 +776,7 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == 'status'}
+    {:else if whichgroup == "status"}
       <p class="children-inline">
         Show
         <select id="statustype" bind:value={statustype} on:blur={loadgroup}>
@@ -800,7 +828,8 @@
                 <button
                   on:click={() => {
                     viewStatus(status.key);
-                  }}>
+                  }}
+                >
                   {status.value}
                 </button>
               </td>
@@ -808,9 +837,9 @@
           {/each}
         </table>
       {/if}
-    {:else if whichgroup == 'find'}
+    {:else if whichgroup == "find"}
       {#if configs}
-        {#if packageconfig !== ''}
+        {#if packageconfig !== ""}
           <br />
           <p>Fill in identifiers in one of the following formats:</p>
           <ul>
@@ -831,8 +860,9 @@
               (example: C-10682)
             </li>
           </ul>
-          What is allowed as an identifier is specific to the chosen
-          configuration. An LAC reel was used only as an example. With {configs[packageconfig].title}
+          What is allowed as an identifier is specific to the chosen configuration.
+          An LAC reel was used only as an example. With {configs[packageconfig]
+            .title}
           the depositor is "{configs[packageconfig].depositor}"
           <textarea id="identifiers" bind:value={findidentifiers} />
 
@@ -840,7 +870,8 @@
             type="submit"
             on:click={() => {
               viewFind();
-            }}>
+            }}
+          >
             Find
           </button>
 
@@ -849,7 +880,8 @@
             <textarea
               id="findnotvalidtext"
               disabled="true"
-              bind:value={findnotvalidText} />
+              bind:value={findnotvalidText}
+            />
           {/if}
         {:else}Please choose a packaging configuration.{/if}
       {/if}
@@ -876,7 +908,8 @@
               type="submit"
               on:click={() => {
                 createEmpty(notfoundid);
-              }}>
+              }}
+            >
               Create empty record
             </button>
           </li>
@@ -911,7 +944,8 @@
           <input
             type="checkbox"
             id="hidemanipulate"
-            bind:checked={hidemanipulate} />
+            bind:checked={hidemanipulate}
+          />
           Hide?
         </label>
         ) Create/Manipulate AIPs in list
@@ -924,7 +958,7 @@
           <option value="metadata">Manipulate Metadata (update AIP)</option>
         </select>
 
-        {#if ingestType !== 'metadata'}
+        {#if ingestType !== "metadata"}
           <p>
             SIP ingest type:
             <br />
@@ -933,8 +967,9 @@
               type="text"
               size="50"
               id="changelog"
-              bind:value={changelog} />
-            {#if typeof changelog !== 'string' || changelog.length < 5}
+              bind:value={changelog}
+            />
+            {#if typeof changelog !== "string" || changelog.length < 5}
               <span class="danger">(Must be at least 5 characters)</span>
             {/if}
             <br />
@@ -983,7 +1018,17 @@
               on:click={() => {
                 startprocess();
               }}
-              disabled={typeof changelog !== 'string' || changelog.length < 5 || !(processstages.pre || processstages.imageconv || processstages.sip || processstages.i || processstages.cs || processstages.post)}>
+              disabled={typeof changelog !== "string" ||
+                changelog.length < 5 ||
+                !(
+                  processstages.pre ||
+                  processstages.imageconv ||
+                  processstages.sip ||
+                  processstages.i ||
+                  processstages.cs ||
+                  processstages.post
+                )}
+            >
               Ingest SIP
             </button>
             {#if !(processstages.pre || processstages.imageconv || processstages.sip || processstages.i || processstages.cs || processstages.post)}
@@ -1008,7 +1053,7 @@
           </ul>
           Changelog:
           <input type="text" size="50" id="changelog" bind:value={changelog} />
-          {#if typeof changelog !== 'string' || changelog.length < 5}
+          {#if typeof changelog !== "string" || changelog.length < 5}
             <span class="danger">(Must be at least 5 characters)</span>
           {/if}
           <br />
@@ -1052,7 +1097,16 @@
               on:click={() => {
                 startprocess();
               }}
-              disabled={typeof changelog !== 'string' || changelog.length < 5 || !(processstages.pre || processstages.manipmd || processstages.i || processstages.cs || processstages.post)}>
+              disabled={typeof changelog !== "string" ||
+                changelog.length < 5 ||
+                !(
+                  processstages.pre ||
+                  processstages.manipmd ||
+                  processstages.i ||
+                  processstages.cs ||
+                  processstages.post
+                )}
+            >
               Manipulate Metadata
             </button>
             {#if !(processstages.pre || processstages.manipmd || processstages.i || processstages.cs || processstages.post)}
@@ -1074,7 +1128,8 @@
         <input
           type="checkbox"
           id="hidepackagedetails"
-          bind:checked={hidepackagedetails} />
+          bind:checked={hidepackagedetails}
+        />
         Hide?
       </label>
       ) Details about group of AIPs
@@ -1102,7 +1157,8 @@ Some buttons to show/hide specific parts
                   <input
                     type="checkbox"
                     bind:checked={ingestchecks[doc._id]}
-                    on:change={updateaiplist} />
+                    on:change={updateaiplist}
+                  />
                 {/if}
                 {doc._id}
               </strong>
@@ -1110,16 +1166,17 @@ Some buttons to show/hide specific parts
             </span>
           </dt>
           <dd>
-
-            {#if 'filesystem' in doc && 'stage' in doc.filesystem}
+            {#if "filesystem" in doc && "stage" in doc.filesystem}
               <li>
-                wip/{doc.filesystem.stage}/{doc.filesystem.configid}/{doc.filesystem.identifier}
+                wip/{doc.filesystem.stage}/{doc.filesystem.configid}/{doc
+                  .filesystem.identifier}
                 <span class="children-inline" id="buttonmove-{doc._id}">
                   (
                   <button
                     on:click={() => {
                       moveIdentifier(doc._id);
-                    }}>
+                    }}
+                  >
                     Move to
                   </button>
                   <select bind:value={move[doc._id]}>
@@ -1130,13 +1187,14 @@ Some buttons to show/hide specific parts
                   )
                 </span>
               </li>
-            {:else if packageconfig !== ''}
+            {:else if packageconfig !== ""}
               <li>
                 <span class="children-inline" id="buttoncreate-{doc._id}">
                   <button
                     on:click={() => {
                       createIdentifier(doc._id);
-                    }}>
+                    }}
+                  >
                     Create in
                   </button>
                   <select bind:value={create[doc._id]}>
@@ -1148,13 +1206,13 @@ Some buttons to show/hide specific parts
               </li>
             {/if}
 
-            {#if !('label' in doc)}
+            {#if !("label" in doc)}
               <li>No item label found</li>
-            {:else if !('_attachments' in doc) || !('dmd.xml' in doc._attachments)}
+            {:else if !("_attachments" in doc) || !("dmd.xml" in doc._attachments)}
               <li>No dmd.xml found</li>
             {/if}
 
-            {#if 'classify' in doc && Object.keys(doc.classify).length > 0}
+            {#if "classify" in doc && Object.keys(doc.classify).length > 0}
               <li>
                 Classification:
                 {#each Object.keys(doc.classify) as thiskey, index}
@@ -1164,7 +1222,7 @@ Some buttons to show/hide specific parts
               </li>
             {/if}
 
-            {#if 'repos' in doc && Array.isArray(doc.repos)}
+            {#if "repos" in doc && Array.isArray(doc.repos)}
               <li>
                 Found in TDR date={doc.reposManifestDate} Repos=
                 {#each doc.repos as thisrepo, index}
@@ -1173,7 +1231,7 @@ Some buttons to show/hide specific parts
                 {/each}
               </li>
 
-              {#if packageconfig !== ''}
+              {#if packageconfig !== ""}
                 <li class="children-inline" id="export-{doc._id}">
                   <select bind:value={exporttype[doc._id]}>
                     <option value="aip">aip</option>
@@ -1185,21 +1243,23 @@ Some buttons to show/hide specific parts
                     type="submit"
                     on:click={() => {
                       exportIdentifier(doc._id);
-                    }}>
+                    }}
+                  >
                     export to Temp/export/{packageconfig}
                   </button>
                 </li>
               {/if}
             {/if}
 
-            {#if 'processReq' in doc && Array.isArray(doc.processReq) && doc.processReq.length > 0}
+            {#if "processReq" in doc && Array.isArray(doc.processReq) && doc.processReq.length > 0}
               <li>
-                Next processing request is {doc.processReq[0].request} of {doc.processReq.length}
+                Next processing request is {doc.processReq[0].request} of {doc
+                  .processReq.length}
                 request(s)
               </li>
             {/if}
 
-            {#if 'processHistory' in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0}
+            {#if "processHistory" in doc && Array.isArray(doc.processHistory) && doc.processHistory.length > 0}
               {#if !doc.processHistory[0].status}
                 <li class="children-inline">
                   Last request failed: {doc.processHistory[0].request}
@@ -1208,7 +1268,8 @@ Some buttons to show/hide specific parts
                     type="submit"
                     on:click={() => {
                       silenceIdentifier(doc._id);
-                    }}>
+                    }}
+                  >
                     Silence error
                   </button>
                   <button
@@ -1216,13 +1277,14 @@ Some buttons to show/hide specific parts
                     type="submit"
                     on:click={() => {
                       retryIdentifier(doc._id, doc.processHistory[0].req);
-                    }}>
+                    }}
+                  >
                     Retry {doc.processHistory[0].req.length} requests
                   </button>
                 </li>
               {/if}
 
-              {#if showmessage && 'message' in doc.processHistory[0] && doc.processHistory[0].message !== ''}
+              {#if showmessage && "message" in doc.processHistory[0] && doc.processHistory[0].message !== ""}
                 <textarea disabled="true">
                   {doc.processHistory[0].message}
                 </textarea>
@@ -1234,3 +1296,19 @@ Some buttons to show/hide specific parts
     {/if}
   </fieldset>
 {/if}
+
+<style>
+  ul {
+    list-style-type: disc;
+    list-style-position: inside;
+  }
+  dd,
+  dl,
+  dt {
+    display: block;
+    unicode-bidi: embed;
+  }
+  dd {
+    margin-left: 5%;
+  }
+</style>
