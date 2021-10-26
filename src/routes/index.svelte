@@ -50,11 +50,9 @@
     <h2>Access (post-split)</h2>
     <ul>
       <li>
-        <a href="/archivalmanifest">Archival Manifest</a>
+        <a href="https://access.canadiana.ca/">Access platform administration</a>
       </li>
     </ul>
-    <h3>Edit content</h3>
-    <SlugSelector />
   </aside>
 
   <aside>
