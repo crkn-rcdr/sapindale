@@ -29,6 +29,7 @@ const getReplicate = async () => {
     group_level: 1,
   });
   if (response.status === 200) {
+    for (const repo in replicate) delete replicate[repo]; // Clear old values first
     for (const row of response.content.rows) {
       replicate[row.key] = row.value;
     }
