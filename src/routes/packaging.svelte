@@ -59,9 +59,6 @@
     "Processing",
     "Trashcan",
     "Rejected",
-    "OCR",
-    "Ready",
-    "Proofed",
   ];
 
   onMount(() => {
