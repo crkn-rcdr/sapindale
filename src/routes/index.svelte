@@ -38,24 +38,6 @@
   </aside>
 
   <aside>
-    <h2>Access (pre-split)</h2>
-    <ul>
-      <li>
-        <a href="/internalmeta">Approval and collection tagging</a>
-      </li>
-    </ul>
-  </aside>
-
-  <aside>
-    <h2>Access (post-split)</h2>
-    <ul>
-      <li>
-        <a href="https://access.canadiana.ca/">Access platform administration</a>
-      </li>
-    </ul>
-  </aside>
-
-  <aside>
     <h2>Utilities</h2>
     <ul>
       <li>
@@ -66,4 +48,14 @@
       </li>
     </ul>
   </aside>
+
+  <aside>
+    <h2>Access</h2>
+    <ul>
+      <li>
+        <a href="https://access.canadiana.ca/">Access platform administration</a>
+      </li>
+    </ul>
+  </aside>
+
 </section>
