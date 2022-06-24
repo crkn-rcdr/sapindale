@@ -951,7 +951,6 @@
         <textarea id="aiplist" disabled="true" bind:value={aiplistview} />
         <select bind:value={ingestType}>
           <option value="new">Generate SIP (new AIP)</option>
-          <option value="update">Generate SIP (update AIP)</option>
           <option value="metadata">Manipulate Metadata (update AIP)</option>
         </select>
 
