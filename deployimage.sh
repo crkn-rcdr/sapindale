@@ -72,6 +72,6 @@ fi
 echo
 echo "Push sucessful. Create a new issue at:"
 echo
-echo "https://github.com/crkn-rcdr/Systems-Administration/issues/new?title=New+Metadata+Bus+image:+%60$DISTIMAGE%60&body=Please+describe+the+changes+in+this+update%2e"
+echo "https://github.com/crkn-rcdr/Systems-Administration/issues/new?title=New+Sapindale+image:+%60$DISTIMAGE%60&body=Please+describe+the+changes+in+this+update%2e"
 echo
 echo "to alert the systems team. Don't forget to describe what's new!"
