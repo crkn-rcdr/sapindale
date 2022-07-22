@@ -38,7 +38,6 @@
     changelog = "",
     processstages = {
       pre: true,
-      imageconv: false,
       sip: true,
       manipmd: true,
       i: true,
@@ -97,7 +96,6 @@
     changelog = "";
     processstages = {
       pre: true,
-      imageconv: false,
       sip: true,
       manipmd: true,
       i: true,
@@ -497,9 +495,6 @@
       requests.push({ request: "move", stage: "Processing" });
     }
     if (ingestType !== "metadata") {
-      if (processstages.imageconv) {
-        requests.push({ request: "imageconv", fileconfig: true });
-      }
       if (processstages.sip) {
         requests.push({ request: "buildsip" });
       }
@@ -978,10 +973,6 @@
               Move to Processing
             </li>
             <li>
-              <input type="checkbox" bind:checked={processstages.imageconv} />
-              Image Conversion
-            </li>
-            <li>
               <input type="checkbox" bind:checked={processstages.sip} />
               Build SIP
             </li>
@@ -1018,7 +1009,6 @@
                 changelog.length < 5 ||
                 !(
                   processstages.pre ||
-                  processstages.imageconv ||
                   processstages.sip ||
                   processstages.i ||
                   processstages.cs ||
@@ -1027,7 +1017,7 @@
             >
               Ingest SIP
             </button>
-            {#if !(processstages.pre || processstages.imageconv || processstages.sip || processstages.i || processstages.cs || processstages.post)}
+            {#if !(processstages.pre || processstages.sip || processstages.i || processstages.cs || processstages.post)}
               <span class="danger">(At least one stage must be chosen)</span>
             {/if}
           {/if}
