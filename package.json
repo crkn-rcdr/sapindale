@@ -49,6 +49,6 @@
     "svelte-icons": "^2.1",
     "svelte-loader": "^2.13",
     "svelte-spinner": "^2.0",
-    "webpack": "^4.41"
+    "webpack": "^4.44"
   }
 }
