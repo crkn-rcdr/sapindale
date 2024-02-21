@@ -14,6 +14,8 @@ services:
       - ./static:/sapindale/static
     environment:
       PORT: 8080
+    ports:
+      - "8080:8080"
 networks:
   access-platform:
     external: true

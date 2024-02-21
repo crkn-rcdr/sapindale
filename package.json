@@ -22,8 +22,8 @@
     "dev": "sapper dev",
     "build": "sapper build -p $PORT",
     "start": "node __sapper__/build",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml -f docker-compose.override.yml up --build",
-    "docker:prod": "docker-compose -f docker-compose.prod.yml -f docker-compose.override.yml up --build"
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build --force-recreate",
+    "docker:prod": "docker compose -f docker-compose.prod.yml up --build --force-recreate"
   },
   "dependencies": {
     "compression": "^1.7",

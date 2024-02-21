@@ -12,6 +12,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
+    ports:
+      - "8080:8080"
 networks:
   access-platform:
     external: true

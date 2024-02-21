@@ -2,6 +2,8 @@ import qs from "query-string";
 import fetch from "cross-fetch";
 
 const couchUrl = process.env.COUCH;
+const couchUser = process.env.COUCH_USER;
+const couchPassword = process.env.COUCH_PASWORD;
 
 /**
  * @typedef {{
@@ -28,12 +30,16 @@ async function _request(path, options, method = "GET", payload) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      'Authorization': 'Basic ' + Buffer.from(couchUser + ":" + couchPassword, 'binary').toString('base64')
     },
   };
   if (method) fetchOptions.method = method;
   if (payload) fetchOptions.body = JSON.stringify(payload);
 
+
+  console.log(url, fetchOptions)
   const response = await fetch(url, fetchOptions);
+  console.log("res: ", response.status, response.statusText)
 
   const rv = { status: response.status, content: null };
   if (response.status >= 500) {

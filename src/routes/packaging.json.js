@@ -8,7 +8,6 @@ const packagingdatabase = "wipmeta";
 // If this was designed in the context of having server-side logic, an appropriate
 // abstraction should be used so that the visual interface doesn't need to be concerned
 // with what database the data for its requests are coming from.
-
 //  Hopefully the old preservation platform will go away before anyone thinks about doing a refactor.
 
 export async function post(req, res) {
