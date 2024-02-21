@@ -3,7 +3,7 @@ import fetch from "cross-fetch";
 
 const couchUrl = process.env.COUCH;
 const couchUser = process.env.COUCH_USER;
-const couchPassword = process.env.COUCH_PASWORD;
+const couchPassword = process.env.COUCH_PASSWORD;
 
 /**
  * @typedef {{
