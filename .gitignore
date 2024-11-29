@@ -4,6 +4,6 @@
 yarn-error.log
 /cypress/screenshots/
 /__sapper__/
-docker-compose.override.yml
-docker-compose.yml
+docker compose.override.yml
+docker compose.yml
 /.vscode/

@@ -109,6 +109,7 @@
   }
 
   async function loadwipwalk() {
+    console.log("h1")
     var mywipwalk;
     try {
       var mywipwalk = await packagingget(
@@ -173,6 +174,7 @@
   }
 
   async function packagingget(action, options, docs) {
+    console.log ("hi")
     const response = await fetch("/packaging.json", {
       method: "POST",
       credentials: "same-origin",
